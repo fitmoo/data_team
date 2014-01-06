@@ -1,0 +1,42 @@
+{
+	"database": {
+        "mongodb": {
+            "connectionString": "mongodb://127.0.0.1:27017/ScrapingData"
+        }
+    },      
+    "activeScrape" : {
+    	"api_key" : "6et7a8xrw3v57vumt54e68sp"
+    },
+
+    "fileUpload" : {
+    	"uri" : "staticFiles"
+    },
+    
+    "limiter": 
+    {
+        "tokensPerInterval": 250,
+        "interval": "hour"
+    },
+
+    "exportData":
+    {
+        "folder": "exports"
+    },
+
+    "aspectRatio":
+    {
+        "width" : 150,
+        "height" : 150,
+        "minRatio": 0.5,
+        "maxRatio": 4,
+        "maxRequests": 1,
+        "timeout": 20000
+    },
+
+    "crawlingCriteria":
+    {
+        "totalImages": 50,
+        "spendMins": 2
+    }
+}
+

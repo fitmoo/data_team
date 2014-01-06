@@ -1,0 +1,64 @@
+<div class="container-fluid">
+	<section>
+		<div class="page-header sub-header">
+			<h1>Events</h1>
+			<a href="#create-event" class="btn btn-success">Add New</a>
+			<button href="javascript:void(0);" id="crawl-event" class="btn btn-info" disabled="disabled">Crawl</button>
+			<div class="clearfix"></div>
+		</div>
+		<div class="events-container">
+			<div class="indicator"></div>
+
+			<table class="table table-striped table-condensed">
+
+				<thead>
+					<tr>
+						<td colspan="6">
+							<div class="paginations">
+								<ul>
+									<li><a href="javascript:void(0);" class="previous btn"><</a></li>
+									<li><a href="javascript:void(0);" class="next btn">></a></li>
+									<li><input type="number" class="current-page" value="1">/<span class="total-pages"></span></li>
+									<li><a href="javascript:void(0);" class="goto-btn btn" page="first">Go To</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				</thead>
+
+				<thead>
+					<tr>
+						<th class="sort-btn arrow-default" sortBy="eventName">Event<span class="caret"></span></th>
+						<th class="sort-btn arrow-default" sortBy="startDateTime">Start Date<span class="caret"></span></th>
+						<th class="sort-btn arrow-default tc" sortBy="endDateTime">End Date<span class="caret"></span></th>
+						<th class="sort-btn arrow-default" sortBy="timezone">Time Zones<span class="caret"></span></th>
+						<th class="sort-btn arrow-default place-col" sortBy="stateProvinceCode">Place<span class="caret"></span></th>
+						<th class="sort-btn arrow-default" sortBy="activities">Activity</th>
+						<th class="btn-col"></th>
+					</tr>
+				</thead>
+
+				<tbody class="events-content">
+				</tbody>
+
+				<tfoot>
+					<tr>
+						<td colspan="6">
+							<div class="paginations">
+								<ul>
+									<li><a href="javascript:void(0);" class="previous btn"><</a></li>
+									<li><a href="javascript:void(0);" class="next btn">></a></li>
+									<li><input type="number" class="current-page" value="1">/<span class="total-pages"></span></li>
+									<li><a href="javascript:void(0);" class="goto-btn btn" page="first">Go To</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				</tfoot>
+
+			</table>
+		</div>
+		
+		
+	</section>
+</div>

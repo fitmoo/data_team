@@ -1,0 +1,32 @@
+{
+  "name": "admin-tool",
+  "version": "0.0.0",
+  "dependencies": {
+    "sass-bootstrap": "~2.3.2",
+    "requirejs": "~2.1.8",
+    "modernizr": "~2.6.2",
+    "jquery": "~1.10.2",
+    "jquery-file-upload": "~9.2.1",
+    "jquery-mockjax": "~1.5.3",
+    "requirejs-domready": "latest",
+    "requirejs-text": "latest",
+    "underscore": "~1.5.2",
+    "backbone": "~1.0.0",
+    "backbone-validation": "latest",
+    "backbone.wreqr": "~0.2.0",
+    "backbone.babysitter": "~0.0.6",
+    "backbone.marionette": "~1.1.0",
+    "backbone.localStorage": "~1.1.6",
+    "backbone-eventbroker": "git://github.com/efeminella/backbone-eventbroker.git#master",
+    "requirejs-hbs": "latest",
+    "require-handlebars-plugin": "~0.5.0",
+    "momentjs": "~2.1.0",
+    "backbone.paginator": "~0.8.1",
+    "backbone.stickit": "~0.6.3",
+    "jquery.ui": "~1.10.3",
+    "backbone-route-filter": "~0.1.0",
+    "requirejs-plugins": "~1.0.2",
+    "PxLoader": "*"
+  },
+  "devDependencies": {}
+}

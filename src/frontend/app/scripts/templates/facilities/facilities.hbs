@@ -1,0 +1,60 @@
+<div class="container-fluid">
+	<section>
+		<div class="page-header sub-header">
+			<h1>Facilities List</h1>
+			<a href="#create-facility" id="add-facility" role="button" class="btn btn-success">Add New</a>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="facilities-container">
+			<div class="indicator"></div>
+
+			<table class="table table-striped table-condensed">
+
+				<thead>
+					<tr>
+						<td colspan="6">
+							<div class="paginations">
+								<ul>
+									<li><a href="javascript:void(0);" class="previous btn"><</a></li>
+									<li><a href="javascript:void(0);" class="next btn">></a></li>
+									<li><input type="number" class="current-page" value="1">/<span class="total-pages"></span></li>
+									<li><a href="javascript:void(0);" class="goto-btn btn" page="first">Go To</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				</thead>
+				<thead>
+					<tr>
+						<th class="sort-btn arrow-default status-col" sortBy="verified">Status<span class="caret"></span></th>
+						<th class="sort-btn arrow-default" sortBy="facilityName">Name<span class="caret"></span></th>
+						<th class="sort-btn arrow-default" sortBy="state">State<span class="caret"></span></th>
+						<th class="tc sort-btn arrow-default" sortBy="city">City<span class="caret"></span></th>
+						<th class="zip-col">Zipcode</th>
+						<th class="btn-col"></th>
+					</tr>
+				</thead>
+				
+				<tbody class="list-content">
+				</tbody>
+
+				<tfoot>
+					<tr>
+						<td colspan="6">
+							<div class="paginations">
+								<ul>
+									<li><a href="javascript:void(0);" class="previous btn"><</a></li>
+									<li><a href="javascript:void(0);" class="next btn">></a></li>
+									<li><input type="number" class="current-page" value="1">/<span class="total-pages"></span></li>
+									<li><a href="javascript:void(0);" class="goto-btn btn" page="first">Go To</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+			
+	</section>
+</div>

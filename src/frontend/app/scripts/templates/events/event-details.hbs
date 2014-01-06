@@ -1,0 +1,283 @@
+
+<div class="container-fluid">
+	<section  id="editing-event" class="editing-wrapper">
+		<div class="page-header">
+			<h1>Edit Event</h1>
+			<div class="clearfix"></div>
+		</div>
+		<div class="span6 edit-form">
+			<form class="form-horizontal" onsubmit="return false;">
+					<fieldset>
+				<div class="control-group">
+					<label class="control-label" for="facility">Name:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" id="ev-eventName" value="{{eventName}}">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="event">Start Date:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{startDateTime}}" id="ev-startDateTime">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="event">End Date:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{endDateTime}}" id="ev-endDateTime">
+					</div>
+				</div>
+
+				<div class="control-group">
+        		<label class="control-label">Start Time</label>
+                <div class="controls">
+                  <select id="ev-startHour">
+                    {{#select startHour}}
+                    <option value="00">00</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    {{/select}}
+                  </select>
+                  <select id="ev-startMins">
+                    {{#select startMins}}
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    {{/select}}
+                  </select>
+                  <select id="ev-startMeridiem">
+                    {{#select startMeridiem}}
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                    {{/select}}
+                  </select>
+        				</div>
+        			</div>
+
+        			<div class="control-group">
+        				<label class="control-label">End Time</label>
+                <div class="controls">
+                  <select id="ev-endHour">
+                    {{#select endHour}}
+                    <option value="00">00</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    {{/select}}
+                  </select>
+                  <select id="ev-endMins">
+                    {{#select endMins}}
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    {{/select}}
+                  </select>
+                  <select id="ev-endMeridiem">
+                    {{#select endMeridiem}}
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                    {{/select}}
+                  </select>
+        		</div>
+        	</div>
+
+				<div class="control-group">
+					<label class="control-label" for="timezone">Time Zones:</label>
+					<div class="controls">
+						<select name="DropDownTimezone" id="ev-dropDownTimezone">
+				      <option value="-12.0">(UTC -12:00) Eniwetok, Kwajalein</option>
+				      <option value="-11.0">(UTC -11:00) Midway Island, Samoa</option>
+				      <option value="-10.0">(UTC -10:00) Hawaii</option>
+				      <option value="-9.0">(UTC -9:00) Alaska</option>
+				      <option value="-8.0">(UTC -8:00) Pacific Time (US &amp; Canada)</option>
+				      <option value="-7.0">(UTC -7:00) Mountain Time (US &amp; Canada)</option>
+				      <option value="-6.0">(UTC -6:00) Central Time (US &amp; Canada), Mexico City</option>
+				      <option value="-5.0">(UTC -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
+				      <option value="-4.0">(UTC -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
+				      <option value="-3.5">(UTC -3:30) Newfoundland</option>
+				      <option value="-3.0">(UTC -3:00) Brazil, Buenos Aires, Georgetown</option>
+				      <option value="-2.0">(UTC -2:00) Mid-Atlantic</option>
+				      <option value="-1.0">(UTC -1:00 hour) Azores, Cape Verde Islands</option>
+				      <option value="0.0">(UTC) Western Europe Time, London, Lisbon, Casablanca</option>
+				      <option value="1.0">(UTC +1:00 hour) Brussels, Copenhagen, Madrid, Paris</option>
+				      <option value="2.0">(UTC +2:00) Kaliningrad, South Africa</option>
+				      <option value="3.0">(UTC +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
+				      <option value="3.5">(UTC +3:30) Tehran</option>
+				      <option value="4.0">(UTC +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
+				      <option value="4.5">(UTC +4:30) Kabul</option>
+				      <option value="5.0">(UTC +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+				      <option value="5.5">(UTC +5:30) Bombay, Calcutta, Madras, New Delhi</option>
+				      <option value="5.75">(UTC +5:45) Kathmandu</option>
+				      <option value="6.0">(UTC +6:00) Almaty, Dhaka, Colombo</option>
+				      <option value="7.0">(UTC +7:00) Bangkok, Hanoi, Jakarta</option>
+				      <option value="8.0">(UTC +8:00) Beijing, Perth, Singapore, Hong Kong</option>
+				      <option value="9.0">(UTC +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
+				      <option value="9.5">(UTC +9:30) Adelaide, Darwin</option>
+				      <option value="10.0">(UTC +10:00) Eastern Australia, Guam, Vladivostok</option>
+				      <option value="11.0">(UTC +11:00) Magadan, Solomon Islands, New Caledonia</option>
+				      <option value="12.0">(UTC +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="event">Address 1:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{address1}}" id="ev-address1">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Address 2:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{address2}}" id="ev-address2">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Registration URL:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" id="ev-registrationSiteURL" value="r{{registrationSiteURL}}">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Host Email:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{hostEmail}}" id="ev-hostEmail">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Host Name:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{hostName}}" id="ev-hostName">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Host Phone:</label>
+					<div class="controls">
+						<input type="tel" class="input-xlarge" value="{{hostPhone}}" id="ev-hostPhone">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Country:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{country}}" id="ev-country">
+					</div>
+				</div>
+
+				<div class="control-group city">
+					<label class="control-label" for="facility">City:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{city}}" id="ev-city">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Postal Code:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{postalCode}}" id="ev-postal-code">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">State Province Code:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" value="{{stateProvinceCode}}" id="ev-stateProvinceCode">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label">Description:</label>
+					<div class="controls">
+						<textarea rows="5" class="input-xlarge" id="ev-eventDescription">{{eventDescription}}</textarea>
+					</div>
+				</div>
+
+				<div class="control-group tag-wrapper">
+					<label class="control-label" for="tags">Tags:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" id="ev-tags" value="{{tags}}" data-role="tagsinput" placeholder="Add tags">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Price:</label>
+					<div class="controls">
+						{{#if eventPrice}}
+							{{#each eventPrice}}
+							<input type="text" class="input-xlarge" value="{{price}}" id="ev-price">
+							{{/each}}
+
+						{{else}}
+							<input type="text" class="input-xlarge" value="" id="ev-price">
+
+						{{/if}}
+					</div>
+				</div>
+
+				<div class="control-group" class="activities">
+					<table class="table table-striped table-condensed">
+						<thead>
+							<tr>
+								<th>Activity Name</th>
+								<th class="align-right">Price($)</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody class="activities-list">
+							{{#each activities}}
+							<tr>
+								<td>
+									<input type="text" class="input-xlarge activity-name" value="{{name}}" required>
+								</td>
+								<td class="align-right control-group">
+									<input type="text" class="input-xlarge align-right activity-price" value="{{price}}" required>
+									<span class="help-inline error-message">Price must be a valid number</span>
+								</td>
+								<td class="tr btn-col">
+									<a href="javaScript:void(0);" class="btn rm-activity-btn"><i class="icon-remove"></i></a>
+								</td>
+							</tr>
+							{{/each}}
+						</tbody>
+					</table>
+					<a class="add-btn btn"><i class="icon-plus"></i> Add Activity</a>
+				</div>
+
+		  	<div class="form-actions">
+		      <button type="submit" class="btn btn-primary save-btn">Save changes</button>
+		      <button class="btn cancel-btn">Cancel</button>
+		  	</div>
+
+			</fieldset>
+		</form>
+	  </div>
+	</section>
+
+</div>

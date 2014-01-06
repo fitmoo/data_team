@@ -1,0 +1,23 @@
+<div class="container-fluid">
+	<section id="editing-facility" class="editing-wrapper">
+		<div class="page-header">
+			<h1>DATA INPUT FORM</h1>
+			<a href="javascript:void(0);" id="delete-facility" class="btn btn-danger">Delete</a>
+			{{#if verified}}
+			<a href="javascript:void(0);" id="vefify-facility" class="btn btn-success">Verified</a>
+			{{else}}
+			<a href="javascript:void(0);" id="vefify-facility" class="btn btn-warning">Unverified</a>
+			{{/if}}
+			<div class="clearfix"></div>
+		</div>
+		<div class="span6 details-block edit-form">
+			<div class="facility-wrapper"></div>
+			<div class="media-wrapper"></div>
+			
+		</div>
+		<!-- class VIEW-->
+		<div class="span6" id="calendar"></div>
+		
+	</section>
+
+</div>

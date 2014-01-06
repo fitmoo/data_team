@@ -1,0 +1,157 @@
+
+			<div class="control-group">
+				<label class="control-label" for="cl-className">Name:</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="cl-className" value="{{className}}">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="instructor">Instructor:</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="cl-instructor" value="{{instructor}}">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="select-date">Days of week:</label>
+                <div class="controls">
+                    <ul id="cl-dayOfWeek">
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Monday'}} {{/each}}"
+                             value="Monday">
+                            <label class="date-name">Monday</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Tuesday'}} {{/each}}"
+                             value="Tuesday">
+                            <label class="date-name">Tuesday</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Wednesday'}} {{/each}}"
+                             value="Wednesday">
+                            <label class="date-name">Wednesday</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Thursday'}} {{/each}}"
+                             value="Thursday">
+                            <label class="date-name">Thursday</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Friday'}} {{/each}}"
+                             value="Friday">
+                            <label class="date-name">Friday</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Saturday'}} {{/each}}"
+                             value="Saturday">
+                            <label class="date-name">Saturday</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="cl-dayOfWeek"
+                            checked ="{{#each dayOfWeek}} {{find this 'Sunday'}} {{/each}}"
+                             value="Sunday">
+                            <label class="date-name">Sunday</label>
+                        </li>
+                    </ul>
+                </div>
+			</div>
+
+        	<div class="control-group">
+        		<label class="control-label">Start Time:</label>
+                <div class="controls">
+                  <select class="st-select-hour cl-startTime">
+                    {{#select stHour}}
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    {{/select}}
+                  </select>
+                  <select class="st-select-minute cl-startTime">
+                    {{#select stMinute}}
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    {{/select}}
+                  </select>
+                  <select class="st-select-meridiem cl-startTime">
+                    {{#select stMeridiem}}
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                    {{/select}}
+                  </select>
+        				</div>
+        			</div>
+
+			<div class="control-group">
+				<label class="control-label">End Time:</label>
+                <div class="controls">
+                  <select class="et-select-hour cl-endTime">
+                    {{#select etHour}}
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    {{/select}}
+                  </select>
+                  <select class="et-select-minute cl-endTime">
+                    {{#select etMinute}}
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    {{/select}}
+                  </select>
+                  <select class="et-select-meridiem cl-endTime">
+                    {{#select etMeridiem}}
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                    {{/select}}
+                  </select>
+        		</div>
+        	</div>
+
+            <div class="control-group">
+                <label class="control-label" for="classDescription">Description:</label>
+                <div class="controls">
+                    <textarea rows="5" id="cl-classDescription" class="input-xlarge">{{classDescription}}</textarea>
+                </div>
+            </div>
+
+			<div class="control-group">
+				<label class="control-label" for="price">Price($):</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="cl-price" value="{{price}}">
+				</div>
+			</div>
+
+            <div class="control-group tag-wrapper">
+                <label class="control-label" for="tags">Tags:</label>
+                <div class="controls">
+                    <input type="text" class="input-xlarge" id="cl-tags" value="{{tags}}" data-role="tagsinput" placeholder="Add tags">
+                </div>
+            </div>

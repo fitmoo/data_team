@@ -1,0 +1,132 @@
+<div class="navbar navbar-fixed-top m-header" id="header">
+  <div class="navbar-inner m-inner">
+    <div class="container-fluid">
+      <a class="brand m-brand" href="./index.html"><img src="img/fitmoo.png" width="80" height="54"></a>
+      
+      <form class="form-search m-search span8">
+        <input type="text" placeholder="Type to search" class="span5 search-query">
+        <button class="btn btn-primary">Search</button>
+        <div class="bs-docs-example" id="advanced-search">
+            <a href="#" class="advanced-search">Advanced Search</a>
+            <div class="popover fade bottom in">
+              <div class="arrow"></div>
+
+              <div class="popover-content">
+                <div class="control-group">
+                  <label class="control-label" for="adress">Website URL:</label>
+                  <div class="controls">
+                    <input type="text" class="input-xlarge" class="website-url">
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="adress">State:</label>
+                  <div class="controls">
+                    <input type="text" class="input-xlarge">
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <div class="controls">
+                    <input type="checkbox">
+                    <label>Class</label>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <div class="controls">
+                    <input type="checkbox">
+                    <label>Photo</label>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <div class="controls">
+                    <input type="checkbox">
+                    <label>Video</label>
+                  </div>
+                </div>
+            </div>
+            <button class="btn btn-primary">Search</button>
+        </div>
+      </div>
+      </form>
+
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+          
+      <div class="nav-collapse collapse">
+
+        <div class="btn-group pull-right">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-user"></i> John Doe
+              <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <!-- <li><a href="#"><i class="icon-user"></i>Profile</a></li> -->
+            <!-- <li><a href="#account-settings-popup" id="account-settings" data-toggle="modal"><i class="icon-cog"></i>Settings</a></li>
+            <li class="divider"></li> -->
+            <li><a href="login.html"><i class="icon-off"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div id="account-settings-popup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <form class="form-horizontal" onsubmit="return false;">
+    <fieldset>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+        <h3 id="myModalLabel">Account Settings</h3>
+        <a href="#" class="btn "><i class="icon-edit"></i></a>
+        <div class="clear-fix"></div>
+      </div>
+      <div class="modal-body">
+        <div class="control-group">
+          <label class="control-label" for="facility">Username:</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" class="facility-name" disabled="disabled" value="John Doe">
+            <span class="data">John Doe</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="facility">Current Password:</label>
+          <div class="controls">
+            <input type="password" class="input-xlarge" class="confirm-password">
+            <span class="data">*******</span>
+          </div>
+        </div>
+
+        <div class="control-group hide-group">
+          <label class="control-label" for="facility">New Password:</label>
+          <div class="controls">
+            <input type="password" class="input-xlarge" class="password">
+          </div>
+        </div>
+
+        <div class="control-group hide-group">
+          <label class="control-label" for="facility">Confirm Password:</label>
+          <div class="controls">
+            <input type="password" class="input-xlarge" class="retype-password">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="facility">Email:</label>
+          <div class="controls">
+            <input type="email" class="input-xlarge" class="facility-class" value="john.doe@domain.com">
+            <span class="data">john.doe@domain.com</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary" href="javascript:void(0);" data-dismiss="modal" aria-hidden="true">Save</a>
+      </div>
+    </fieldset>
+  </form>
+</div> -->

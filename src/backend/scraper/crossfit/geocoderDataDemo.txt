@@ -1,0 +1,240 @@
+0 52736a815c4c8caa03000022 {"zip":"","country":"CA"}
+1 52736a775c4c8caa03000018 {"zip":"","country":"CR"}
+2 52736ad65c4c8caa03000072 {"zip":"","country":"CA"}
+3 52736ae05c4c8caa0300007b {"zip":"","country":"GB"}
+4 52736aea5c4c8caa03000085 {"zip":"80138","country":"US"}
+5 52736aeb5c4c8caa03000086 {"zip":"3205","country":"AU"}
+6 52736b005c4c8caa03000099 {"zip":"V0H 1Z0","country":"CA"}
+7 52736b055c4c8caa0300009e {"zip":"","country":"SG"}
+
+0 52736a815c4c8caa03000022 {"zip":"L0P","country":"CA"}
+1 52736a775c4c8caa03000018 {"zip":"","country":"CR"}
+2 52736ad65c4c8caa03000072 {"zip":"S9X","country":"CA"}
+3 52736ae05c4c8caa0300007b {"zip":"TD7","country":"GB"}
+4 52736b055c4c8caa0300009e {"zip":"","country":"SG"}
+5 52736b1a5c4c8caa030000b2 {"zip":"22407","country":"US"}
+6 52736b995c4c8caa03000129 {"zip":"","country":""}
+678 527386455c4c8caa03001a3b {"zip":"","country":""}
+
+//ERROR CASE
+{ error_message: 'You have exceeded your daily request quota for this API.',
+  results: [],
+  status: 'OVER_QUERY_LIMIT' }
+
+  
+
+
+{
+"results":[
+	{
+		"address_components":[
+			{"long_name":"2715","short_name":"2715","types":["street_number"]},
+			{"long_name":"Dickinson Street","short_name":"Dickinson St","types":["route"]},
+			{"long_name":"Miles City","short_name":"Miles City","types":["locality","political"]},
+			{"long_name":"Custer","short_name":"Custer","types":["administrative_area_level_2","political"]},
+			{"long_name":"Montana","short_name":"MT","types":["administrative_area_level_1","political"]},
+			{"long_name":"United States","short_name":"US","types":["country","political"]},
+			{"long_name":"59301","short_name":"59301","types":["postal_code"]}],
+		"formatted_address":"2715 Dickinson Street, Miles City, MT 59301, USA",
+		"geometry":{
+			"bounds":{
+				"northeast":{"lat":46.4045833,"lng":-105.8264361},
+				"southwest":{"lat":46.4045706,"lng":-105.8264361}},
+				"location":{"lat":46.4045833,"lng":-105.8264361},
+				"location_type":"RANGE_INTERPOLATED",
+				"viewport":{
+					"northeast":{"lat":46.4059259302915,"lng":-105.8250871197085},
+					"southwest":{"lat":46.4032279697085,"lng":-105.8277850802915}
+				}
+		},
+		"partial_match":true,"types":["street_address"]
+	}
+]
+,"status":"OK"
+}
+
+
+ReverseGeocode: 
+{
+	"results":[
+		{
+			"address_components":
+			[
+				{"long_name":"234","short_name":"234","types":["street_number"]},
+				{"long_name":"West 6th Avenue","short_name":"W 6th Ave","types":["route"]},
+				{"long_name":"West Eugene","short_name":"West Eugene","types":["neighborhood","political"]},
+				{"long_name":"Eugene","short_name":"Eugene","types":["locality","political"]},
+				{"long_name":"Lane County","short_name":"Lane County","types":["administrative_area_level_2","political"]},
+				{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},
+				{"long_name":"United States","short_name":"US","types":["country","political"]},
+				{"long_name":"97401","short_name":"97401","types":["postal_code"]}
+			],
+			"formatted_address":"234 West 6th Avenue, Eugene, OR 97401, USA",
+			"geometry":
+				{"location":
+					{"lat":44.0529873,"lng":-123.096346},
+					"location_type":"ROOFTOP",
+					"viewport":{
+						"northeast":{"lat":44.0543362802915,"lng":-123.0949970197085},"southwest":{"lat":44.0516383197085,"lng":-123.0976949802915}
+					}
+				},
+			"types":["street_address"]
+		},
+		{
+			"address_components":[
+				{
+					"long_name":"W/S of Charnelton N of 6th",
+					"short_name":"W/S of Charnelton N of 6th",
+					"types":["bus_station","transit_station","establishment"]
+				},
+				{"long_name":"Market District","short_name":"Market District","types":["neighborhood","political"]},
+				{"long_name":"Eugene","short_name":"Eugene","types":["locality","political"]},
+				{"long_name":"Lane County","short_name":"Lane County","types":["administrative_area_level_2","political"]},
+				{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},
+				{"long_name":"United States","short_name":"US","types":["country","political"]},
+				{"long_name":"97401","short_name":"97401","types":["postal_code"]}
+			],
+			"formatted_address":"W/S of Charnelton N of 6th, Eugene, OR 97401, USA",
+			"geometry":{
+				"location":{"lat":44.05340390000001,"lng":-123.0958469},
+				"location_type":"APPROXIMATE",
+				"viewport":{
+					"northeast":{"lat":44.05475288029151,"lng":-123.0944979197085},
+					"southwest":{"lat":44.05205491970851,"lng":-123.0971958802915}}
+			},
+			"types":["bus_station","transit_station","establishment"]
+		},
+		{
+			"address_components":
+			[
+				{"long_name":"West Eugene","short_name":"West Eugene","types":["neighborhood","political"]},
+				{"long_name":"Eugene","short_name":"Eugene","types":["locality","political"]},
+				{"long_name":"Lane County","short_name":"Lane County","types":["administrative_area_level_2","political"]},
+				{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},
+				{"long_name":"United States","short_name":"US","types":["country","political"]}
+			],
+			"formatted_address":"West Eugene, Eugene, OR, USA",
+			"geometry":
+				{
+					"bounds":{"northeast":{"lat":44.053503,"lng":-123.0928981},"southwest":{"lat":44.040246,"lng":-123.118699}},
+					"location":{"lat":44.0492525,"lng":-123.1056089},
+					"location_type":"APPROXIMATE",
+					"viewport":{"northeast":{"lat":44.053503,"lng":-123.0928981},"southwest":{"lat":44.040246,"lng":-123.118699}}
+				},
+			"types":["neighborhood","political"]
+		},
+		{
+			"address_components":
+			[
+				{"long_name":"97401","short_name":"97401","types":["postal_code"]},
+				{"long_name":"Eugene","short_name":"Eugene","types":["locality","political"]},
+				{"long_name":"Lane County","short_name":"Lane County","types":["administrative_area_level_2","political"]},
+				{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},
+				{"long_name":"United States","short_name":"US","types":["country","political"]}
+			],
+			"formatted_address":"Eugene, OR 97401, USA",
+			"geometry":
+				{
+					"bounds":{"northeast":{"lat":44.095185,"lng":-123.046417},"southwest":{"lat":44.03345300000001,"lng":-123.118716}},
+					"location":{"lat":44.0637173,"lng":-123.0847061},
+					"location_type":"APPROXIMATE",
+					"viewport":{"northeast":{"lat":44.095185,"lng":-123.046417},"southwest":{"lat":44.03345300000001,"lng":-123.118716}}
+				},
+			"types":["postal_code"]
+		},
+		{
+			"address_components":
+				[
+					{"long_name":"Eugene","short_name":"Eugene","types":["locality","political"]},
+					{"long_name":"Lane County","short_name":"Lane County","types":["administrative_area_level_2","political"]},
+					{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},
+					{"long_name":"United States","short_name":"US","types":["country","political"]}
+				],
+			"formatted_address":"Eugene, OR, USA",
+			"geometry":{
+				"bounds":{"northeast":{"lat":44.13261989999999,"lng":-123.0366989},"southwest":{"lat":43.9887109,"lng":-123.2084019}},"location":{"lat":44.0520691,"lng":-123.0867536},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":44.13261989999999,"lng":-123.0366989},"southwest":{"lat":43.9887109,"lng":-123.2084019}}
+			},
+			"types":["locality","political"]
+		},
+		{
+			"address_components":
+			[
+				{"long_name":"Юджин-Спрингфилд, ОР","short_name":"Юджин-Спрингфилд, ОР","types":["political"]},
+				{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},
+				{"long_name":"United States","short_name":"US","types":["country","political"]}
+			],
+			"formatted_address":"Юджин-Спрингфилд, ОР, OR, USA",
+			"geometry":{
+				"bounds":{"northeast":{"lat":44.290548,"lng":-121.76735},"southwest":{"lat":43.437142,"lng":-124.1586845}},
+				"location":{"lat":43.9610092,"lng":-122.6618227},
+				"location_type":"APPROXIMATE",
+				"viewport":{"northeast":{"lat":44.290548,"lng":-121.76735},"southwest":{"lat":43.437142,"lng":-124.1586845}}
+			},
+			"types":["political"]
+		},
+		{"address_components":[{"long_name":"Lane County","short_name":"Lane County","types":["administrative_area_level_2","political"]},{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},{"long_name":"United States","short_name":"US","types":["country","political"]}],"formatted_address":"Lane County, OR, USA","geometry":{"bounds":{"northeast":{"lat":44.290548,"lng":-121.76735},"southwest":{"lat":43.437142,"lng":-124.1587665}},"location":{"lat":43.9610092,"lng":-122.6618227},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":44.290548,"lng":-121.76735},"southwest":{"lat":43.437142,"lng":-124.1587665}}},"types":["administrative_area_level_2","political"]},
+		{"address_components":[{"long_name":"Oregon","short_name":"OR","types":["administrative_area_level_1","political"]},{"long_name":"United States","short_name":"US","types":["country","political"]}],"formatted_address":"Oregon, USA","geometry":{"bounds":{"northeast":{"lat":46.2920157,"lng":-116.463262},"southwest":{"lat":41.991794,"lng":-124.6129365}},"location":{"lat":43.8041334,"lng":-120.5542012},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":46.2920157,"lng":-116.463262},"southwest":{"lat":41.991794,"lng":-124.6129365}}},"types":["administrative_area_level_1","political"]},
+		{"address_components":[{"long_name":"United States","short_name":"US","types":["country","political"]}],"formatted_address":"United States","geometry":{"bounds":{"northeast":{"lat":90,"lng":180},"southwest":{"lat":-90,"lng":-180}},"location":{"lat":37.09024,"lng":-95.712891},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":49.38,"lng":-66.94},"southwest":{"lat":25.82,"lng":-124.39}}},"types":["country","political"]}
+	],//End results
+	"status":"OK"
+}
+
+
+
+{"results":
+	[
+		{
+			"address_components":
+			[
+				{"long_name":"R403","short_name":"R403","types":["route"]},
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_2","political"]},
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_1","political"]},
+				{"long_name":"Ireland","short_name":"IE","types":["country","political"]}
+			],
+			"formatted_address":"R403, Co. Kildare, Ireland",
+			"geometry":{"bounds":{"northeast":{"lat":53.3420388,"lng":-6.5183829},"southwest":{"lat":53.3418478,"lng":-6.5192936}},"location":{"lat":53.3419391,"lng":-6.5188358},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":53.34329228029149,"lng":-6.517489269708498},"southwest":{"lat":53.34059431970849,"lng":-6.520187230291502}}},
+			"types":["route"]
+		},
+		{
+			"address_components":
+			[
+				{"long_name":"Ballyoulster","short_name":"Ballyoulster","types":["neighborhood","political"]},
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_2","political"]},
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_1","political"]},
+				{"long_name":"Ireland","short_name":"IE","types":["country","political"]}
+			],
+			"formatted_address":"Ballyoulster, Co. Kildare, Ireland",
+			"geometry":{"bounds":{"northeast":{"lat":53.3445875,"lng":-6.5080291},"southwest":{"lat":53.3346339,"lng":-6.523838800000001}},"location":{"lat":53.3403634,"lng":-6.515111099999999},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":53.3445875,"lng":-6.5080291},"southwest":{"lat":53.3346339,"lng":-6.523838800000001}}},
+			"types":["neighborhood","political"]
+		},
+		{
+			"address_components":
+			[
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_2","political"]},
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_1","political"]},
+				{"long_name":"Ireland","short_name":"IE","types":["country","political"]}
+			],
+			"formatted_address":"Kildare, Co. Kildare, Ireland",
+			"geometry":{"bounds":{"northeast":{"lat":53.4512374,"lng":-6.459963999999999},"southwest":{"lat":52.8575788,"lng":-7.1689306}},"location":{"lat":53.2120434,"lng":-6.819470799999999},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":53.4512374,"lng":-6.459963999999999},"southwest":{"lat":52.8575788,"lng":-7.1689306}}},
+			"types":["administrative_area_level_2","political"]
+		},
+		{
+			"address_components":
+			[
+				{"long_name":"Kildare","short_name":"Kildare","types":["administrative_area_level_1","political"]},
+				{"long_name":"Ireland","short_name":"IE","types":["country","political"]}
+			],
+			"formatted_address":"Co. Kildare, Ireland",
+			"geometry":{"bounds":{"northeast":{"lat":53.4512374,"lng":-6.459963999999999},"southwest":{"lat":52.8575788,"lng":-7.1689306}},"location":{"lat":53.2137545,"lng":-6.8661128},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":53.4512374,"lng":-6.459963999999999},"southwest":{"lat":52.8575788,"lng":-7.1689306}}},
+			"types":["administrative_area_level_1","political"]},
+		{	
+			"address_components":
+			[
+				{"long_name":"Ireland","short_name":"IE","types":["country","political"]}
+			],
+			"formatted_address":"Ireland",
+			"geometry":{"bounds":{"northeast":{"lat":55.3885,"lng":-5.9947},"southwest":{"lat":51.4219377,"lng":-10.66956}},"location":{"lat":53.41291,"lng":-8.24389},"location_type":"APPROXIMATE","viewport":{"northeast":{"lat":55.38849,"lng":-5.99471},"southwest":{"lat":51.4221955,"lng":-10.66949}}},
+			"types":["country","political"]}],"status":"OK"}
+
+
+

@@ -1,0 +1,100 @@
+<!-- Media -->
+<section class="clearfix">
+	<div class="row-fluid m-botton-group">
+		<div class="span8">
+			<div class="btn-group" data-toggle="buttons-radio">
+        <button class="btn video-btn">Video</button>
+        <button class="btn photo-btn active">Image</button>
+      </div>
+		</div>
+	</div>
+
+	
+	<div class="row-fluid" id="photos-wrapper">
+		<div class="span12">
+    	<div class="btn-group pull-right">
+    		<input id="photo-upload" type="file" accept="image/*" name="files[]" data-url="/api/facilities/{{id}}/uploadImages" multiple>
+			</div>
+      <div><a data-toggle="modal" class="btn btn-success" id="find-images-btn" href="#myModal">Add Photos</a></div>
+		</div>
+		<div class="well edit-photos clearfix">
+			<ul class="thumbnails m-media-container photos-list">
+			</ul>
+			<div class="no-photos">No Photos</div>
+		</div>
+	</div>
+
+	<div class="row-fluid" id="videos-wrapper">
+		<div class="span12">
+      <div><a data-toggle="modal" class="btn btn-success" id="find-videos-btn" href="#videos-popup">Add Videos</a></div>
+		</div>
+		<div class="well edit-videos clearfix">
+			<ul class="thumbnails m-media-container videos-list">
+			</ul>
+			<div class="no-videos">No Videos</div>
+		</div>
+	</div>
+
+	<div id="m-modal">
+		<div class="modal hide" id="myModal">
+			<div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal">x</button>
+		    	<h3>Choose Photos</h3>
+			</div>
+			<div class="modal-body">
+		    	<form class="form-horizontal">
+		    		<div class="m-upload-add well">
+		    			<input type="text" class="input-xlarge" id="find-photos-txt" value="{{websiteURL}}">
+		    			<a class="btn btn-success find-btn">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Find</span>
+              </a>
+		    		</div>
+		    	</form>
+
+		    	<div class="m-upload-list row-fluid picker">
+		    		<p class="no-image hide">Image not found</p>
+		    		<select multiple="multiple" class="image-picker hide">
+			      </select>
+		    	</div>
+		 	</div>
+		 	<div class="modal-footer">
+				<a href="javascript:void(0);" class="btn close-btn" data-dismiss="modal">Close</a>
+				<a href="javascript:void(0);" class="btn btn-primary upload-photos-btn">Upload</a>
+			</div>
+			<div class="overlay">
+				<div class="indicator"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal hide" id="videos-popup">
+		<div class="modal-header">
+	    	<button type="button" class="close" data-dismiss="modal">x</button>
+	    	<h3>Choose Videos</h3>
+		</div>
+		<div class="modal-body">
+	    	<form class="form-horizontal">
+	    		<div class="m-upload-add well">
+	    			<input type="text" class="input-xlarge" id="find-videos-txt" value="{{websiteURL}}">
+	    			<a class="btn btn-success find-videos-btn">
+              <i class="glyphicon glyphicon-plus"></i>
+              <span>Find</span>
+            </a>
+	    		</div>
+	    	</form>
+
+	    	<div class="m-upload-list row-fluid picker">
+		      <ul class="video-results">
+		      </ul>
+	    	</div>
+	 	</div>
+	 	<div class="modal-footer">
+			<a href="javascript:void(0);" class="btn close-btn" data-dismiss="modal">Close</a>
+			<a href="javascript:void(0);" class="btn btn-primary upload-videos-btn">Add</a>
+		</div>
+		<div class="overlay">
+			<div class="indicator"></div>
+		</div>
+	</div>
+</section>

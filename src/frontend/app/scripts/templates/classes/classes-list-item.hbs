@@ -1,0 +1,22 @@
+<td>{{className}}</td>
+{{#if facilityName}}
+<td><a href="#facilities/{{facilityID}}">{{facilityName}}</a></td>
+{{else}}
+<td><a href="#facilities/{{facilityID}}">N/A</a></td>
+{{/if}}
+<td>{{#each dayOfWeek}}{{#if @index}},{{/if}} {{this}}{{/each}}</td>
+<td class="tc">{{startTime}}</td>
+<td>{{endTime}}</td>
+<td>
+	{{#if timeZone}}
+	UTC {{timeZone}}
+	{{/if}}
+</td>
+<td class="align-right">
+	{{#if price}}
+	{{price}}$
+	{{/if}}
+</td>
+<td class="tr btn-col">	
+	<a href="javaScript:void(0);" class="btn"><i class="icon-remove"></i></a>
+</td>

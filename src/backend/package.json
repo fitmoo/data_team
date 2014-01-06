@@ -1,0 +1,45 @@
+{
+  "name": "Fitmoo",
+  "version": "0.0.1",
+  "devDependencies" : {
+    "mocha" : "1.14.0",
+    "expect.js" : "0.2.0",
+    "superagent" : "0.15.7"
+  },
+
+  "dependencies": {
+
+    "async": "0.2.9",
+    "underscore": "1.5.2",
+   	"request": "2.27.0",
+    "mongoose": "3.6.x",
+    "mongoose-pagination": "1.x",
+    "node-g3": "0.0.2",
+    "limiter": "1.0.4",
+ 	  "nconf": "0.6.7",
+    "mongodb" : "0.9.9-8",
+    "commander": "2.0.0",
+    
+    "winston": "0.7.2",
+    "winston-graylog2": "0.1.x",
+
+    "aws-sdk" : "1.12.0",
+    "geocoder" : "0.1.0",
+
+    "imagesize" : "1.0.0",
+    "lazy" : "1.0.11",
+    "mime" : "1.2.11",
+
+    "tar" : "0.1.18",
+    "fstream" : "0.1.25",
+
+    "passport-local " : "0.1.6",
+    "passport" : "0.1.17",
+    "connect-flash" : "0.1.1",
+    "jwt-simple" : "0.1.0",
+
+    "knox" : "0.8.8",
+    "express": "3.3.8",
+    "express-namespace" : "0.1.1"
+  }
+}
