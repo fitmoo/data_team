@@ -1,0 +1,11 @@
+#!/bin/bash
+
+FILEPATH=${BASH_SOURCE}
+DIR=${FILEPATH%/*}
+DIR=${DIR%/*}
+
+# Start crawl facility website
+forever start -a -l forever_crawl.log -o out_crawl.log -e err_crawl.log $DIR/bin/start_CrawlFacilitiesWebsite.js
+
+
+forever start -a -l forever_crawl.log -o out_crawl.log -e err_crawl.log scraper/facilityWebsite/start_CrawlFacilitiesWebsite.js

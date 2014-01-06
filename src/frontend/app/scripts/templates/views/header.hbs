@@ -1,0 +1,81 @@
+<div class="navbar navbar-fixed-top m-header">
+  <div class="navbar-inner m-inner">
+    <div class="container-fluid">
+      <h1><a class="brand m-brand" href="#"></a></h1>
+      
+      <form class="form-search m-search span8">
+        <input type="text" placeholder="Type to search" class="span5 search-query">
+        <a class="btn btn-primary btn-search">Search</a>
+
+        <div class="bs-docs-example" id="advanced-search">
+            <a href="javascript:void(0);" class="advanced-search">Advanced Search</a>
+            <div class="popover fade bottom in">
+              <div class="arrow"></div>
+
+              <div class="popover-content">
+                <ul class="adv-price">
+                  <li><strong>Price</strong>
+                    <div class="control-group">
+                      <label class="control-label" for="adv-endDateTime">
+                    From $ </label>
+                      <div class="controls control-group">
+                        <input id="adv-price-from" type="text">
+                        <span class="help-inline error-message">Price must be a valid number</span>
+                      </div>
+                    </div>
+
+                    <div class="control-group">
+                      <label class="control-label" for="adv-endDateTime">to $</label>
+                      <div class="controls control-group">
+                        <input id="adv-price-to" type="text">
+                        <span class="help-inline error-message">Price must be a valid number</span>
+                      </div>
+                    </div>
+                  </li>
+
+                  <li class="adv-date">
+                    <div class="control-group">
+                      <label class="control-label" for="adv-startDateTime"><strong>Start Date</strong></label>
+                      <div class="controls">
+                        <input type="text" value="" id="adv-startDateTime">
+                      </div>
+                    </div>
+                  </li>
+
+                  <li class="adv-date">
+                    <div class="control-group">
+                      <label class="control-label" for="adv-endDateTime"><strong>End Date</strong></label>
+                      <div class="controls">
+                        <input type="text" value="" id="adv-endDateTime">
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+
+              </div>
+            <a class="btn btn-primary btn-search-adv">Search</a>
+          </div>
+        </div>
+      </form>
+
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+          
+      <div class="nav-collapse collapse">
+
+        <div class="btn-group pull-right">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+              <i class="icon-user"></i> <span id="user-name"></span>
+              <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="javascript:void(0);" id="logout"><i class="icon-off"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

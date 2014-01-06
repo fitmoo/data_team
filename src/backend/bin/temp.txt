@@ -1,0 +1,84 @@
+#S3
+#http://stackoverflow.com/questions/14269233/node-js-how-to-read-a-stream-into-a-buffer
+
+
+#!/bin/bash
+
+echo 'Install node lib'
+npm install 
+
+
+#note
+#npm install aws-sdk
+#phantomjs
+#install nodejs
+#install npm
+
+
+scp -i ~/AsoftProjects/vanda/bin/conf/scraper.pem dist.zip ubuntu@54.221.228.118:~/
+scp -i ~/AsoftProjects/vanda/bin/conf/scraper.pem vanda.zip ubuntu@54.221.228.118:~/
+
+#export crawl statistic
+mongoexport  --db ScrapingData --collection facilities --fields _id,facilityName,websiteURL,crawlPhotos,crawlVideos,spendTime --query '{isCrawl : true, crawlPhotos : { $gt : 0}}' --csv --out ~/crawlStatistics.csv
+exported 8974 records
+
+scp -i ~/AsoftProjects/vanda/bin/conf/scraper.pem ubuntu@54.221.228.122:~/crawlStatistics.csv ~/
+
+#db
+scp -i ~/AsoftProjects/vanda/bin/conf/scraper.pem dump.zip ubuntu@54.221.228.122:~/
+
+
+
+
+mongodump -d ScrapingData
+
+db.users.insert({username: "Jeff", password: "test@123"})
+db.users.insert({username: "Mick", password: "test@123"})
+db.users.insert({username: "Corbin", password: "test@123"})
+db.users.insert({username: "Reid", password: "test@123"})
+db.users.insert({username: "George", password: "test@123"})
+
+db.users.insert({username: "tran", password: "12345"})
+db.users.insert({username: "tran2", password: "12345"})
+db.users.insert({username: "trung", password: "test@123"})
+Jeff, Mick, Corbin, Reid, George.
+
+
+#!/bin/bash
+
+# Start Mongo Service
+mongod &
+
+
+forever start -a -l forever.log -o out.log -e err.log 
+
+
+
+echo "Install system lib"
+sudo apt-get install unzip
+
+echo "Install git"
+sudo apt-get install build-essential openssl libssl-
+sudo apt-get install git
+git clone git://github.com/joyent/node.git
+cd node
+./configure
+make
+sudo make install
+
+
+git clone https://github.com/isaacs/npm.git
+cd npm     
+sudo make install
+
+
+#Install mongodb
+sudo mkdir -p /data/db
+
+
+#install nginx
+sudo apt-get install nginx -y
+sudo cp nginx_vhost /etc/nginx/sites-available/fitmoo.com
+sudo rm /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/fitmoo.com /etc/nginx/sites-enabled/default
+sudo service nginx start

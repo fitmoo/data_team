@@ -1,0 +1,116 @@
+<aside class="sidebar">
+  <ul class="nav nav-tabs nav-stacked">
+    <li class="active">
+      <a href="index.html">
+        <div>
+          <div class="ico">
+            <img src="./img/ico/ico-home.png">
+          </div>
+          <div class="title">
+            Home
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="bubble-arrow-border"></div>
+          <div class="bubble-arrow"></div>
+        </div>
+      </a>
+    </li>
+
+    <li class="">
+      <a href="notification.html">
+        <span class="badge badge-important m-badge-notification">5</span>
+        <div>
+          <div class="ico">
+            <img src="./img/ico/ico-notification.gif">
+          </div>
+          <div class="title">
+            Notification
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="bubble-arrow-border"></div>
+          <div class="bubble-arrow"></div>
+        </div>
+      </a>
+    </li>    
+
+    <!-- Facilities -->
+    <li class="">
+      <a href="facilities.html">
+        <div>
+          <div class="ico">
+            <img src="./img/ico/ico-more.png">
+          </div>
+          <div class="title">
+            Facilities
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="bubble-arrow-border"></div>
+          <div class="bubble-arrow"></div>
+        </div>
+      </a>
+    </li>
+
+
+
+    <!-- Classes -->
+    <li class="">
+      <a href="classes.html">
+        <div>
+          <div class="ico">
+            <img src="./img/ico/ico-more.png">
+          </div>
+          <div class="title">
+            Classes
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="bubble-arrow-border"></div>
+          <div class="bubble-arrow"></div>
+        </div>
+      </a>
+    </li>
+
+    <!-- Events -->
+    <li class="">
+      <a href="events.html">
+        <div>
+          <div class="ico">
+            <img src="./img/ico/ico-more.png">
+          </div>
+          <div class="title">
+            Events
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="bubble-arrow-border"></div>
+          <div class="bubble-arrow"></div>
+        </div>
+      </a>
+    </li>
+
+    <li class="" style="display: none;">
+      <a href="media.html">
+        <div>
+          <div class="ico">
+            <img src="./img/ico/ico-media.gif">
+          </div>
+          <div class="title">
+            Media
+          </div>
+        </div>
+        <div class="arrow">
+          <div class="bubble-arrow-border"></div>
+          <div class="bubble-arrow"></div>
+        </div>
+      </a>
+    </li>
+  </ul>
+</aside>

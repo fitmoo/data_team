@@ -1,0 +1,16 @@
+<td class="status-col">
+	{{#if verified}}
+	<i class="icon-ok"></i>
+	{{/if}}
+</td>
+{{#if facilityName}}
+<td><a href="#facilities/{{id}}" class="facility-item">{{facilityName}}</a></td>
+{{else}}
+<td><a href="#facilities/{{id}}" class="facility-item">N/A</a></td>
+{{/if}}
+<td>{{state}}</td>
+<td class="tc">{{city}}</td>
+<td class="zip-col">{{zip}}</td>
+<td class="tr btn-col">
+	<a href="javaScript:void(0);" class="btn"><i class="icon-remove"></i></a>
+</td>

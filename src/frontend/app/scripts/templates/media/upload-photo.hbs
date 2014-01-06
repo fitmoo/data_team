@@ -1,0 +1,26 @@
+<div class="modal hide" id="myModal">
+	<div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal">x</button>
+    	<h3>Choose Photos</h3>
+	</div>
+	<div class="modal-body">
+    	<form class="form-horizontal">
+    		<div class="m-upload-add well">
+    			<input type="text" class="input-xlarge" id="add-photo" value="{{websiteURL}}">
+    			<span class="btn btn-success fileinput-button">
+              <i class="glyphicon glyphicon-plus"></i>
+              <span>Find</span>
+          </span>
+    		</div>
+    	</form>
+
+    	<div class="m-upload-list row-fluid picker">
+    		<select multiple="multiple" class="image-picker">
+	      </select>
+    	</div>
+ 	</div>
+ 	<div class="modal-footer">
+		<a href="javascript:void(0);" class="btn" data-dismiss="modal">Close</a>
+		<a href="javascript:void(0);" class="btn btn-primary upload-btn">Upload</a>
+	</div>
+</div>

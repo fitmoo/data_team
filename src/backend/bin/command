@@ -1,0 +1,190 @@
+#!/usr/bin/env node
+
+var async = require('async'),
+	_ = require('underscore'),
+	assert = require('assert'),
+	program = require('commander');
+
+var dateUtils = require('../utils/dateUtils'),
+	activeScraper = require('../scraper/active/activeScraper'),
+	DatabaseManager = require('../data/'),
+	configs = require('../utils/configs');
+	crossfitSraper = require('../scraper/crossfit/crossfitScraper'),
+	facilityWebsite = require('../scraper/facilityWebsite');
+
+program
+  .version('0.0.1')
+  .option('    --scraper [api]', 'Runs scraper api (crossfit, active, facilityWebsite).')
+  .option('    --mode [modeValue]', 'Continue/reset mode for active')
+  .option('    --crawlStatusID [_id in DB]', '_id in crawlStatus collection')
+  .option('    --updateFacilityOrder ', 'Update facilities order index to display on queue')
+  .option('    --countFacilitiesHaveClass ', 'Count facility has class')
+  .parse(process.argv);
+
+
+/*
+* Scrape map.crossfit.com
+*/
+function scrapeCrossfit(callback){
+	if (!program.scraper) return callback();
+
+    if (program.scraper === 'crossfit') {
+		crossfitSraper.start(
+			function(err, result){
+				if (err) console.log('Error:' + err);
+				else if (result && _.isArray(result))
+					console.log('Finish scrape facility on map.crossfit.com. Total facilities have been retrieved: ' + result.length);
+				else{
+					console.log('Unknow error');
+				};
+				callback && callback();
+			}
+		);
+    }
+    else{
+        callback && callback();
+    }
+};
+
+function scrapeActive(callback){
+	if (!program.scraper) return callback();
+
+    if (program.scraper === 'active') {
+    	var mode = program.mode;
+    	var crawlStatusID = program.crawlStatusID;
+    	
+    	if (!mode || (mode != 'continue' && mode != 'reset')) {
+    		console.log('Please provide running mode: continue/reset. Syntax: --mode [continue][reset]');
+    	} else{
+    		var running = false,
+				jobFinishCount = 0,
+				times = 0;
+
+			var interval = setInterval(
+				function(){
+					if (!running){
+						running = true;
+						jobFinishCount = 0;
+
+						if (times != 0) 
+							sleepTime = 10*60*1000;
+						else 
+							sleepTime = 0;
+
+						setTimeout(function(){
+							times++;
+							
+							if(mode == 'continue'){
+								console.log('Reset activeScraper');
+								activeScraper.reset();
+							}
+
+						   	activeScraper.start(crawlStatusID, mode, function(err, scraperResult){
+								if (err){
+									console.log('Error: ' + err);
+								}
+								//If active.com return errorCode show we should restart the process
+								else if (scraperResult && scraperResult.responseCode && scraperResult.responseCode !== 200) {
+									console.log('The active.com server returns errorCode : %s', scraperResult.responseCode);
+									console.log('The ActiveScraper is taking a nap.');
+									mode = 'continue';
+									running = false;
+								}
+								//All response data have been saved
+								else if (scraperResult && scraperResult.savedAll){
+									console.log('Active Scrapper: Saved all %s events for %s requests', scraperResult.totalSavedRecords, scraperResult.totalSavedResponse,  dateUtils.getCurrentTime());
+									jobFinishCount++;
+								} 
+								//All requests have been sent
+								else if (scraperResult && scraperResult.sendingFinish){
+									console.log('Active Scrapper: Sent %s request(s) to active.com at %s', scraperResult.sentRequests, dateUtils.getCurrentTime());
+									jobFinishCount++;	
+								}
+								else {
+									console.log('Unknow error.');
+								}
+							})
+
+						}, sleepTime);
+					}
+					else if (jobFinishCount == 2){
+						console.log('Finish');
+						clearInterval(interval);
+					}
+				}, 1000);
+    	}
+	} else{
+		callback && callback();
+	}
+};
+
+/*
+* Update facilities order index to display on queue
+*/
+function updateFacilityOrder(callback){
+	if (!program.updateFacilityOrder) return callback();
+	var db = new DatabaseManager(configs);
+	db.init(["Facility", "Class"], function(){
+		var facilityService = db.getInstance("Facility");
+		facilityService.calculateMissingFields(function(err){
+			if(!err){
+				facilityService.updateQueueIndex(callback);
+			} else{
+				callback && callback();
+			}
+		});
+	});
+};
+
+/*
+* Update facilities order index to display on queue
+*/
+function countFacilitiesHaveClass(callback){
+	if (!program.countFacilitiesHaveClass) return callback();
+
+	var db = new DatabaseManager(configs);
+
+	db.init(["Class"], function(){
+		var classService = db.getInstance("Class");	
+		classService.countFacilitiesHaveClass(function(err, count){
+			console.log('Total facilites have class: %s', count);
+			callback && callback(err, count);
+		});
+	});
+};
+
+
+/*
+*	Crawl facility website
+*/
+function crawlFacilityWebsite(callback){
+	if (!program.scraper) return callback();
+    if (program.scraper === 'facilityWebsite') {
+
+		facilityWebsite.crawlMedia('', function(err, result){
+			console.log('Crawl website media finish');
+			callback && callback(err);
+		})
+	} else{
+		callback && callback();
+	}
+}
+
+async.series([
+    scrapeCrossfit,
+	scrapeActive,
+    updateFacilityOrder,
+	countFacilitiesHaveClass,
+    crawlFacilityWebsite
+], function(err, res) {
+    assert.ok(!err, "E9984837323. Command fail");
+
+    var exit = function () {
+        process.exit(0);
+    }
+
+    if (!program.waitingExit)
+        exit();
+    else
+        setTimeout(exit, program.waitingExit);
+});

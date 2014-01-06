@@ -1,0 +1,5 @@
+db.facilities.remove()
+db.events.remove()
+db.classes.remove()
+db.countries.remove()
+db.states.remove()

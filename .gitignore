@@ -1,0 +1,42 @@
+# Common
+*.log
+*.rdb
+*.pyc
+
+# Docpad
+.docpad.db
+
+# Yeoman
+node_modules
+src/frontend/dist
+.tmp
+.sass-cache
+bower_components
+
+# Backend
+src/backend/server/uploadFiles/images-upload/
+src/backend/server/exportsbackend/
+src/backend/bin/conf
+src/backend/bin/dump
+src/backend/server/routes/dump
+src/backend/bin/dump*
+
+
+# Design
+src/design/out
+
+
+
+# IDE
+*.sublime-project
+*.sublime-workspace
+
+# Mac Files
+.idea
+.DS_Store
+
+# Configuration files
+*.pem
+
+# Vagrant
+.vagrant

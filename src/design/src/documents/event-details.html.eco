@@ -1,0 +1,232 @@
+---
+layout: default
+title: Dashboard Page 2 2
+description: A sample dash board page
+sidebar: sidebar/default
+topnav: topnav/default
+breadcrumb: breadcrumb/default
+---
+
+
+<div class="container-fluid">
+	<section  id="editing-facility">
+		<div class="page-header">
+			<h1>Edit Event</h1>
+			<a href="#" class="btn "><i class="icon-edit"></i></a>
+		</div>
+		<div class="span6" id="facility-edit-form">
+			<form class="form-horizontal" onsubmit="return false;">
+					<fieldset>
+				<div class="control-group">
+					<label class="control-label" for="facility">Name:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" class="facility-name" value="City Running Tours - Boston Personalized Running Tours">
+						<span class="data">City Running Tours - Boston Personalized Running Tours</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Start Date</label>
+					<div class="controls">
+						<input type="date" class="input-xlarge" class="facility-class">
+						<span class="data">11/01/2013</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">End Date</label>
+					<div class="controls">
+						<input type="date" class="input-xlarge" class="facility-class">
+						<span class="data">11/03/2013</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="cld-price">Time Zones</label>
+					<div class="controls">
+						<select name="DropDownTimezone" id="DropDownTimezone">
+				      <option value="-12.0">(UTC -12:00) Eniwetok, Kwajalein</option>
+				      <option value="-11.0">(UTC -11:00) Midway Island, Samoa</option>
+				      <option value="-10.0">(UTC -10:00) Hawaii</option>
+				      <option value="-9.0">(UTC -9:00) Alaska</option>
+				      <option value="-8.0">(UTC -8:00) Pacific Time (US &amp; Canada)</option>
+				      <option value="-7.0">(UTC -7:00) Mountain Time (US &amp; Canada)</option>
+				      <option value="-6.0">(UTC -6:00) Central Time (US &amp; Canada), Mexico City</option>
+				      <option value="-5.0">(UTC -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
+				      <option value="-4.0">(UTC -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
+				      <option value="-3.5">(UTC -3:30) Newfoundland</option>
+				      <option value="-3.0">(UTC -3:00) Brazil, Buenos Aires, Georgetown</option>
+				      <option value="-2.0">(UTC -2:00) Mid-Atlantic</option>
+				      <option value="-1.0">(UTC -1:00 hour) Azores, Cape Verde Islands</option>
+				      <option value="0.0">(UTC) Western Europe Time, London, Lisbon, Casablanca</option>
+				      <option value="1.0">(UTC +1:00 hour) Brussels, Copenhagen, Madrid, Paris</option>
+				      <option value="2.0">(UTC +2:00) Kaliningrad, South Africa</option>
+				      <option value="3.0">(UTC +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
+				      <option value="3.5">(UTC +3:30) Tehran</option>
+				      <option value="4.0">(UTC +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
+				      <option value="4.5">(UTC +4:30) Kabul</option>
+				      <option value="5.0">(UTC +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+				      <option value="5.5">(UTC +5:30) Bombay, Calcutta, Madras, New Delhi</option>
+				      <option value="5.75">(UTC +5:45) Kathmandu</option>
+				      <option value="6.0">(UTC +6:00) Almaty, Dhaka, Colombo</option>
+				      <option value="7.0">(UTC +7:00) Bangkok, Hanoi, Jakarta</option>
+				      <option value="8.0">(UTC +8:00) Beijing, Perth, Singapore, Hong Kong</option>
+				      <option value="9.0">(UTC +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
+				      <option value="9.5">(UTC +9:30) Adelaide, Darwin</option>
+				      <option value="10.0">(UTC +10:00) Eastern Australia, Guam, Vladivostok</option>
+				      <option value="11.0">(UTC +11:00) Magadan, Solomon Islands, New Caledonia</option>
+				      <option value="12.0">(UTC +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+						</select>
+						<span class="data">UTC -5:00</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Address 1</label>
+					<div class="controls">
+						<input type="textbox" class="input-xlarge" class="facility-class" value="54th Street, 18th Floor11/01/2013">
+						<span class="data">54th Street, 18th Floor11/01/2013</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Address 2</label>
+					<div class="controls">
+						<input type="textbox" class="input-xlarge" class="facility-class">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Registration URL:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" class="facility-name" value="registration.domain.com">
+						<span class="data">registration.domain.com</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Host Email:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" class="facility-name" value="contact@domain.com">
+						<span class="data">contact@domain.com</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Host Name:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" class="facility-name" value="Miley">
+						<span class="data">Miley</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Host Phone:</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" class="facility-name" value="(212) 111-111">
+						<span class="data">(212) 111-111</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">City</label>
+					<div class="controls">
+						<input type="textbox" class="input-xlarge" class="facility-class" value="New York">
+						<span class="data">New York</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Postal Code</label>
+					<div class="controls">
+						<input type="textbox" class="input-xlarge" class="facility-class" value="1111111">
+						<span class="data">1111111</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">State Province Code</label>
+					<div class="controls">
+						<input type="textbox" class="input-xlarge" class="facility-class" value="1111111">
+						<span class="data">1111111</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="facility">Country</label>
+					<div class="controls">
+						<input type="textbox" class="input-xlarge" class="facility-class" value="USA">
+						<span class="data">USA</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label">Description:</label>
+					<div class="controls">
+						<textarea rows="5" class="input-xlarge">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</textarea>
+							<span class="data">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</textarea>
+						<span class="data">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</textarea>
+							<span class="data">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</span>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="tags">Tags:</label>
+					<div class="controls">
+						<textarea rows="3" class="input-xlarge">Boston, CrossFit, Running</textarea>
+						<span class="data">Boston, CrossFit, Running</span>
+					</div>
+				</div>
+
+				<div class="control-group" id="activities">
+					<table class="table table-striped table-condensed">
+							<thead>
+								<tr>
+									<th>Activity Name</th>
+									<th class="align-right">Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<span class="data">Running</span>
+										<input type="textbox" class="input-xlarge facility-class" value="Running">
+									</td>
+									<td class="align-right">
+										<span class="data">100 $</span>
+										<input type="number" class="input-xlarge facility-class align-right" value="100">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<span class="data">Jumping</span>
+										<input type="textbox" class="input-xlarge facility-class" value="Running">
+									</td>
+									<td class="align-right">
+										<span class="data">180 $</span>
+										<input type="number" class="input-xlarge facility-class align-right" value="180">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					<button class="add-btn btn"><i class="icon-plus"></i> Add Activity</button>
+				</div>
+
+		  	<div class="form-actions">
+		      <button type="submit" class="btn btn-primary">Save changes</button>
+		      <button class="btn">Cancel</button>
+		  	</div>
+			</fieldset>
+		</form>
+	  </div>
+	</section>
+
+</div>
+
+        </div>
+	</section>
+</div>
+
+
+
+

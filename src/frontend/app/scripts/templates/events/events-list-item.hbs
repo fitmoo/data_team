@@ -1,0 +1,15 @@
+<td><a href="#events/{{_id}}">{{eventName}}</a></td>
+<td>{{momentCalendar startDateTime}}</td>
+<td class="tc">{{momentCalendar endDateTime}}</td>
+<td>{{timezone}}</td>
+<td class="place-col">{{stateProvinceCode}}</td>
+<td>
+	<ul>
+		{{#each activities}}
+		<li>{{name}}: {{#if price}}{{price}}${{/if}}</li>
+		{{/each}}
+	</ul>
+</td>
+<td class="tr btn-col">
+	<a href="javaScript:void(0);" class="btn rm-event-btn"><i class="icon-remove"></i></a>
+</td>
