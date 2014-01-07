@@ -24,7 +24,8 @@ define([
 			instructor: '',
 			startTime: '01:00 AM',
 			endTime: '01:00 AM',
-			classDescription: ''
+			classDescription: '',
+			schedule: []
 		},
 
 		validation: {

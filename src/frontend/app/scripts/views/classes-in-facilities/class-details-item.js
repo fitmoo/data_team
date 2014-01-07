@@ -5,7 +5,9 @@ define([
 
 	// template
 	'hbs!templates/classes/class-details-item',
+	'hbs!templates/queue/class-details-item',
 	'hbs!templates/classes/edit-class',
+	'hbs!templates/queue/edit-class',
 	'views/classes-in-facilities/class-details-view',
 
 	'backbone.marionette'
@@ -13,7 +15,9 @@ define([
 	Handlebars,
 	stickit,
 	classTpl,
+	queueClassTpl,
 	editClassTpl,
+	queueEditClassTpl,
 	classDetailsView
 ) {
 	'use strict';
@@ -26,6 +30,13 @@ define([
 		events: {
 			'click .remove': 'onRemove',
 			'click .edit': 'onEdit'
+		},
+
+		initialize: function() {
+			var path = Backbone.history.location.hash;
+    	this.currentView = path.split('/')[0];
+    	if (this.currentView === '#queue')
+				this.template = queueClassTpl;
 		},
 
 		onRemove: function() {
@@ -42,7 +53,7 @@ define([
 		},
 
 		onEdit: function() {
-			console.log('Edit class:', this.model.id);
+			console.log('Edit class:', this.model);
 
 			var model = this.model,
 					startTime = this.model.get('startTime'),
@@ -58,7 +69,10 @@ define([
 			model.set('etMinute', endTime.substring(3,5));
 			model.set('etMeridiem', endTime.substring(6,8));
 
-			calendarForm.html(editClassTpl(model.toJSON()));
+			if (this.currentView === '#queue')
+				calendarForm.html(queueEditClassTpl(model.toJSON()));
+			else
+				calendarForm.html(editClassTpl(model.toJSON()));
 
 			Backbone.EventBroker.trigger('class:updateModel',model);
 
