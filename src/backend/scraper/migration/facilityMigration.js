@@ -5,7 +5,6 @@ var async = require('async'),
 	fs = require('fs');
 
 var facilityFileName =  path.resolve(__dirname, 'Fm_tbl_data.csv'),
-	classFileName =  path.resolve(__dirname, 'Fm_tbl_classes.csv'),
 	configs = require('../../utils/configs'),
 	DatabaseManager = require('../../data/');
 
@@ -18,6 +17,10 @@ var parserUtil = require('../../utils/parserUtil');
 module.exports = {
 
 	facilityService : null,
+	redundantChars : [','],
+	addressKeyWord : {
+		street : ["st.", "street", "st"]
+	},
 
 	migrateFacility: function(done){
 		var self = this;
@@ -29,7 +32,6 @@ module.exports = {
 		async.waterfall(tasks, function(err, result){
 			if(err) console.log(err);
 			else
-				
 				done && done();
 		});
 	},
@@ -164,17 +166,26 @@ module.exports = {
 	mapObjectToFitmooModel: function(rawObject){
 		var facility = Object();
 		facility.fitmooFacilityID = parseInt(rawObject.Id);
-		facility.facilityName = rawObject.Facility_name;
+		facility.facilityName = rawObject.Facility_name.trim();
 		facility.lat = rawObject.Lat && rawObject.Lat.replace(",",".");
 		facility.lng = rawObject.Longt.replace(",",".");
 		facility.address  = rawObject.Address;
-		facility.city  = rawObject.City;
+		//Normalize address
+		facility.addressArray = this.normalizeStreet(facility.address );
+		//Remove redundance characters
+		facility.city  = this.removeRedundantChars(rawObject.City);
+		if(facility.city )
+			facility.cityLowerCase = facility.city .toLowerCase();
+		
 		facility.state = rawObject.State;
+		if(facility.state)
+			facility.stateLowerCase = facility.state.toLowerCase();
+
 		facility.zip = rawObject.Zip;
 		facility.country = '';
 		facility.phoneNumber = rawObject.Phone;
 		facility. email  = rawObject.Email;
-		facility.websiteURL  = rawObject.Website_url;
+		facility.websiteURL  = rawObject.Website_url.trim();
 		facility.aboutus  = rawObject.About_us;
 		facility.ownersName = rawObject.Owners_name;
 		
@@ -201,5 +212,44 @@ module.exports = {
 		return facility;
 	},
 	
+	removeRedundantChars: function(str){
+		var length = str && str.length;
+		if(length > 0 && _.contains(this.redundantChars,str[length -1])){
+			str = str.substring(0, length -1);
+		}
+		return str;
+
+	},
+
+	normalizeStreet: function(str){
+		var streetArray = [];
+		var len = this.addressKeyWord.street.length;
+
+		if(str && str.length > 0){
+			str = str.toLowerCase();
+			var temp = str.split(' ');
+			var intersection = _.intersection(temp, this.addressKeyWord.street);
+
+			if(intersection && intersection.length > 0){
+				streetArray.push(str);
+				str = str + ' ';
+				_.each(this.addressKeyWord.street, function(element, index, list){
+					for(var i = 0; i < len; i++){
+						if(i != index){
+							if(str.indexOf(' ' + element + ' ') > 0){
+								streetArray.push(str.replace(' ' + element + ' ', ' ' + list[i] + ' ' ).trim());
+							}
+						}
+					}
+				})
+			}
+		}
+		return streetArray;
+	},
+
+	capitaliseFirstLetter: function(string)
+	{
+    	return string.charAt(0).toUpperCase() + string.slice(1);
+	}
 }
 

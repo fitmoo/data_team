@@ -112,10 +112,14 @@ module.exports = {
 		async.mapSeries(bundle,
 			function(classObject, done){
 
+				if(index % 50 == 0){
+					console.log('index: %s', index);
+				}
 				index++;
-				self.facilityService.getOne({fitmooFacilityID : classObject.fitmooFacilityID}, function(err, facility){
+				self.facilityService.getOne({ $or : [ {fitmooFacilityID : classObject.fitmooFacilityID}, {fitmooFacilityIDArray : { $in : [classObject.fitmooFacilityID]}}] }, function(err, facility){
 					if(err || !facility){
 						countError++;
+						console.log('index: %s', index);
 						console.log(classObject);
 						classObject.migrationStatus = 0;
 						classObject.migrationNote = 'Facility not exist';
@@ -124,7 +128,7 @@ module.exports = {
 						classObject.facilityName = facility.facilityName;
 						classObject.migrationStatus = 1;
 					}
-					console.log('index: %s', index);
+					//console.log('index: %s', index);
 					self.classService.createClass(classObject, done);
 				})
 			},
@@ -165,6 +169,9 @@ module.exports = {
 	mapObjectToFitmooModel: function(rawObject){
 		var classObject = Object();
 		classObject.fitmooFacilityID = rawObject.Facility_id;
+		if(classObject.fitmooFacilityID && classObject.fitmooFacilityID.length > 0){
+			classObject.fitmooFacilityID = parseInt(classObject.fitmooFacilityID);
+		}
 		classObject.className = rawObject.Class_name;
 		var dayOfWeek = dateUtils.getDayOfWeek(rawObject.Dow);
 

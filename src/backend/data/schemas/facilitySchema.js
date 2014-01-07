@@ -6,12 +6,19 @@ var FacilitySchema = new mongoose.Schema({
 	
 	//This is FacilityID of existing Fitmoo facility
 	fitmooFacilityID: Number,
+	//There are duplicate facility in Fitmoo data so we add fitmooFacilityID for migration classes.
+	fitmooFacilityIDArray: [],
 	facilityName : String,
 	lat : Number,
 	lng : Number,
 	address  : String,
 	city  : String,
 	state : String,
+	/*For migration only*/
+	addressLowerCase : String,
+	cityLowerCase : String,
+	stateLowerCase : String,
+	/********************/
 	zip : String,
 	country : String,
 	phoneNumber : String,
