@@ -214,46 +214,71 @@ module.exports = BaseDBService.extend({
     checkDupAndCreateBundle: function(bundle, fn){
         if(!bundle || bundle.length == 0)
             return;
-        var self = this;
+        var self = this,
+            index = 0;
+
         async.mapSeries(bundle,
             function (item, done) {
-                self.modelClass.find(
+                self.modelClass.findOne(
                     {
                         $or : [
                                 {
-                                    address: item.address,
-                                    city  : item.city ,
-                                    state : item.state,
+                                    addressLowerCase: {$in :item.addressArray},
+                                    cityLowerCase  : item.cityLowerCase ,
+                                    stateLowerCase : item.stateLowerCase,
                                 },
                                 {
                                     facilityName : item.facilityName,
                                     websiteURL : item.websiteURL,
+                                },
+                                {
+                                    facilityName : item.facilityName,
+                                    cityLowerCase  : item.cityLowerCase ,
+                                    stateLowerCase : item.stateLowerCase,
+                                },
+                                {
+                                    facilityName : item.facilityName,
+                                    cityLowerCase  : item.cityLowerCase ,
+                                    zip : { $exists : true, $ne : '', $in : [item.zip]},
+                                },
+                                {
+                                    facilityName : item.facilityName,
+                                    stateLowerCase : item.stateLowerCase,
+                                    zip : { $exists : true, $ne : '', $in : [item.zip]},
+                                    
                                 }
                         ]
                     }, 
-                    function (err, facilities){
-                        var temp = [];
-                        var facility;
-                            
-                        if(facilities && facilities.length > 0){
-                            temp = _.where(facilities, {fitmooFacilityID: parseInt(item.fitmooFacilityID) });
-                            if(temp && temp.length > 0) facility = temp[0];
-                        }
-
-                        if (err || !facilities || facilities.length == 0 || temp.length <= 0){
-                            
-                            self.create(item, function(err, saveFacility){
-                                saveFacility.exist = false;
-                                done && done(err, saveFacility);
-                            });
-                        } else {
-                            _.each(item, function (value, key) {
-                                facility[key] = value;
-                            });
-                            facility.save(function(err, saveFacility){
-                                if(!err && saveFacility) saveFacility.exist = true;
-                                done && done(err, saveFacility);
-                            });
+                    function (err, facility){
+                        if(err) done(err, null);
+                        else{
+                            index++;
+                            //Create new
+                            if (!facility){
+                                self.create(item, function(err, saveFacility){
+                                    console.log('Facility Index: %s : Create new', index);
+                                    done && done(err, {_id: saveFacility._id, exist: false});
+                                });
+                            //Update
+                            } else {
+                                _.each(item, function (value, key) {
+                                    if(key === 'fitmooFacilityID'){
+                                        //Add duplicated fitmooFacilityID for migration classes.
+                                        if(!_.contains(facility.fitmooFacilityIDArray, value))
+                                            facility.fitmooFacilityIDArray.push(value);
+                                    }
+                                    
+                                    if(value && value.toString().length > 0 && (!facility[key] || facility[key].toString().length === 0)){
+                                        facility[key] = value;
+                                        
+                                    }
+                                });
+                                
+                                facility.save(function(err, saveFacility){
+                                    console.log('Facility Index: %s : Update', index);
+                                    done && done(err, {_id: saveFacility._id, exist: true});
+                                });
+                            }
                         }
                     }
                 );
@@ -282,8 +307,8 @@ module.exports = BaseDBService.extend({
     },
 
     countTotalVideo : function(fn){
-       
         var o = {};
+
         o.map = function(){ 
             emit(1, this.videoCount); 
         };
@@ -294,6 +319,26 @@ module.exports = BaseDBService.extend({
         this.modelClass.mapReduce(o, function(err, results){
             if(!err && results && results.length == 1)
                 fn && fn(null, results[0].value);
+            else
+                fn && fn(null, 0);
+        });
+    },
+
+    findDuplicateFacilityName: function(fn){
+        var o = {};
+
+        o.map = function(){ 
+            if(this.facilityName){
+                emit(this.facilityName + '-' + this.state, 1);     
+            }
+        };
+        o.reduce = function(key, values){
+            return values.reduce(function(pv, cv) { return pv + cv; }, 0);
+        };
+
+        this.modelClass.mapReduce(o, function(err, results){
+            if(!err && results)
+                fn && fn(null, results);
             else
                 fn && fn(null, 0);
         });

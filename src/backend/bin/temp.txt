@@ -2,6 +2,22 @@
 #http://stackoverflow.com/questions/14269233/node-js-how-to-read-a-stream-into-a-buffer
 
 
+db.facilities.find().forEach(
+  function(e) {
+  	if(e.city)
+    	e.cityLowerCase = e.city.toLowerCase();
+    if(e.state)
+    	e.stateLowerCase = e.state.toLowerCase();
+    db.facilities.save(e);
+  }
+)
+
+db.facilities.find({_id : ObjectId("52736aea5c4c8caa03000085")}).forEach(
+  function(e) {
+    e.stateLowerCase = e.state.toLowerCase();
+  }
+)
+
 #!/bin/bash
 
 echo 'Install node lib'

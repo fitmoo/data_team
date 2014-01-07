@@ -16,8 +16,10 @@ bower_components
 # Backend
 src/backend/server/uploadFiles/images-upload/
 src/backend/server/exportsbackend/
+src/backend/server/exports/
 src/backend/bin/conf
 src/backend/bin/dump
+src/backend/dump
 src/backend/server/routes/dump
 src/backend/bin/dump*
 

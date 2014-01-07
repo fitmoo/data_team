@@ -1,0 +1,17 @@
+<td>{{className}}</td>
+<td>{{instructor}}</td>
+<td>
+{{#each schedule}}
+	{{#if @index}}</br>
+	{{/if}}
+		<strong>- {{dayOfWeek}}:</strong> 
+		{{#each times}}
+			{{#if @index}}, {{/if}} {{startTime}} - {{endTime}}
+		{{/each}}
+{{/each}}
+</td>
+<td>{{classDescription}}</td>
+<td class="tr btn-col">
+	<a href="javascript:void(0);" class="btn remove"><i class="icon-remove"></i></a>
+	<a href="javascript:void(0);" class="btn edit"><i class="icon-edit"></i></a>
+</td>

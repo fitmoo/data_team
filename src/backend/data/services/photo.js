@@ -29,9 +29,11 @@ module.exports = BaseDBService.extend({
                         }, 
                         function (err, photo) {
                             if (err || !photo) {
-                                self.create({ facilityID: facilityID, sourceURL: url }, done);
+                                self.create({ facilityID: facilityID, sourceURL: url }, function(err, savedPhoto){
+                                    setTimeout(function(){ done && done();}, 10);
+                                });
                             } else {
-                               done && done();
+                               setTimeout(function(){ done && done();}, 10);
                             }
                         }
                     );
@@ -143,7 +145,6 @@ module.exports = BaseDBService.extend({
                                                             fn && fn(err, results);
                                                         }
                                                     });
-                                                    
                                                 } else{
                                                     fn && fn(err, results);
                                                 }
@@ -176,12 +177,15 @@ module.exports = BaseDBService.extend({
             if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
             else{
                 //Get latest Image 
-                self.photoViewLogModel.findOne({userName : userName, debugData: true}, function(err, photoviewLogItem){
+                self.photoViewLogModel.findOne({userName : userName}, function(err, photoviewLogItem){
+                    
+                    //console.log('userName: %s' ,userName);
+                    //console.log('photoviewLogItem: %j' ,photoviewLogItem);
 
                     if(err) fn && fn(err);
                     else{
                         var search = {};
-                        console.log(photoviewLogItem);
+                      //  console.log(photoviewLogItem);
                         if(photoviewLogItem && photoviewLogItem.latestPhotoByDate){
                             search = { createdDate : { $gt :photoviewLogItem.latestPhotoByDate },  markDelete : false};
                         } else{
@@ -193,7 +197,7 @@ module.exports = BaseDBService.extend({
                             sort : { createdDate : 1},
                             search : search
                         }
-                        //console.log('%j', opt);
+                       // console.log('%j', opt);
                         self.find(opt, fn);
                     }
                 });

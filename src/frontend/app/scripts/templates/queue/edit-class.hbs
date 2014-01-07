@@ -1,0 +1,127 @@
+
+			<div class="control-group">
+				<label class="control-label" for="cl-className">Name:</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="cl-className" value="{{className}}">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="instructor">Instructor:</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="cl-instructor" value="{{instructor}}">
+				</div>
+			</div>
+
+            <div class="classes-manager">
+                <div class="control-group">
+                    <label class="control-label" for="select-date">Days of week:</label>
+                    <div class="controls">
+
+                      <select id="day-of-week">
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                        <option value="sunday">Sunday</option>
+                      </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Start Time:</label>
+                    <div class="controls">
+                      <select class="st-select-hour cl-startTime">
+                        <option>01</option>
+                        <option>02</option>
+                        <option>03</option>
+                        <option>04</option>
+                        <option>05</option>
+                        <option>06</option>
+                        <option>07</option>
+                        <option>08</option>
+                        <option>09</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                      </select>
+                      <select class="st-select-minute cl-startTime">
+                        <option>00</option>
+                        <option>15</option>
+                        <option>30</option>
+                        <option>45</option>
+                      </select>
+                      <select class="st-select-meridiem cl-startTime">
+                        <option>AM</option>
+                        <option>PM</option>
+                      </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">End Time:</label>
+                    <div class="controls">
+                      <select class="et-select-hour cl-endTime">
+                        <option>01</option>
+                        <option>02</option>
+                        <option>03</option>
+                        <option>04</option>
+                        <option>05</option>
+                        <option>06</option>
+                        <option>07</option>
+                        <option>08</option>
+                        <option>09</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                      </select>
+                      <select class="et-select-minute cl-endTime">
+                        <option>00</option>
+                        <option>15</option>
+                        <option>30</option>
+                        <option>45</option>
+                      </select>
+                      <select class="et-select-meridiem cl-endTime">
+                        <option>AM</option>
+                        <option>PM</option>
+                      </select>
+                    </div>
+                </div>
+                <a href="javascript:void(0)" class="btn btn-info" id="day-add-btn">Add Day/Time</a>
+                <table class="table table-striped table-condensed">
+                    {{#if schedule}}
+                    <thead  id="classes-calendar-head">
+                    {{else}}
+                    <thead  id="classes-calendar-head" style="display:none;">
+                    {{/if}}
+                        <tr>
+                            <th>Day Of Week</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody  id="days-list">
+                        {{#each schedule}}
+                            {{#each times}}
+                            <tr>
+                                <td class="dayOfWeek">{{../dayOfWeek}}</td>
+                                <td class="startTime">{{startTime}}</td>
+                                <td class="endTime">{{endTime}}</td>
+                                <td class="tr btn-col">
+                                    <a href="javascript:void(0);" class="btn remove-calendar"><i class="icon-remove"></i></a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="classDescription">Description:</label>
+                <div class="controls">
+                    <textarea rows="5" id="cl-classDescription" class="input-xlarge">{{classDescription}}</textarea>
+                </div>
+            </div>

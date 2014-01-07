@@ -10,7 +10,9 @@ var dateUtils = require('../utils/dateUtils'),
 	DatabaseManager = require('../data/'),
 	configs = require('../utils/configs');
 	crossfitSraper = require('../scraper/crossfit/crossfitScraper'),
-	facilityWebsite = require('../scraper/facilityWebsite');
+	facilityWebsite = require('../scraper/facilityWebsite'),
+	facilityMigration = require('../scraper/migration/facilityMigration.js'),
+	classMigration = require('../scraper/migration/classMigration.js');
 
 program
   .version('0.0.1')
@@ -19,6 +21,8 @@ program
   .option('    --crawlStatusID [_id in DB]', '_id in crawlStatus collection')
   .option('    --updateFacilityOrder ', 'Update facilities order index to display on queue')
   .option('    --countFacilitiesHaveClass ', 'Count facility has class')
+  .option('    --migration [resource]', 'Migrate resource: [facility, classes]')
+  .option('    --findDuplicateFacility', 'Find duplicate facilityName')
   .parse(process.argv);
 
 
@@ -170,12 +174,58 @@ function crawlFacilityWebsite(callback){
 	}
 }
 
+function migrateFacility(callback){
+	if (!program.migration) return callback();
+    if (program.migration === 'facility') {
+		facilityMigration.migrateFacility(function(){
+			console.log('Facility migration finished.');
+			callback && callback();
+		})
+	} else{
+		callback && callback();
+	}
+}
+
+function migrateClass(callback){
+	if (!program.migration) return callback();
+    if (program.migration === 'class') {
+		classMigration.migrate(function(){
+			console.log('Class migration finished.');
+			callback && callback();
+		})
+	} else{
+		callback && callback();
+	}
+}
+
+function findDuplicateFacility(callback){
+	if (!program.findDuplicateFacility) return callback();
+	else{
+		var db = new DatabaseManager(configs);
+		db.init(["Facility"], function(){
+			var facilityService = db.getInstance("Facility");
+			facilityService.findDuplicateFacilityName(function(err, results){
+				var duplicatedFacilities = _.filter(results, function(facility){
+					return facility.value >= 2;
+				});
+				console.log('Duplicated facilities');
+				console.log(duplicatedFacilities);
+				callback && callback();
+			});
+		});
+	}
+}
+
+
 async.series([
     scrapeCrossfit,
 	scrapeActive,
     updateFacilityOrder,
 	countFacilitiesHaveClass,
-    crawlFacilityWebsite
+    crawlFacilityWebsite,
+    migrateFacility,
+    migrateClass,
+    findDuplicateFacility
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
 

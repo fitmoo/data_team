@@ -46,7 +46,7 @@ define([
 			'keyup textarea': 'disableQuickKeyCode',
 
 			// events of facility details queue
-			'click .btn-info': 'saveAndFinishLater',
+			'click #save-finish-btn': 'saveAndFinishLater',
 			'click .queue-save-btn': 'saveAndDone',
 			'click .cancel-btn': 'onCancel'
 		},

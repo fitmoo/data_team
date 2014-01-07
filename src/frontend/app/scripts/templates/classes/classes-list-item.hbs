@@ -4,9 +4,16 @@
 {{else}}
 <td><a href="#facilities/{{facilityID}}">N/A</a></td>
 {{/if}}
-<td>{{#each dayOfWeek}}{{#if @index}},{{/if}} {{this}}{{/each}}</td>
-<td class="tc">{{startTime}}</td>
-<td>{{endTime}}</td>
+<td>
+{{#each schedule}}
+	{{#if @index}}</br>
+	{{/if}}
+		<strong>- {{dayOfWeek}}:</strong> 
+		{{#each times}}
+			{{#if @index}}, {{/if}} {{startTime}} - {{endTime}}
+		{{/each}}
+{{/each}}
+</td>
 <td>
 	{{#if timeZone}}
 	UTC {{timeZone}}

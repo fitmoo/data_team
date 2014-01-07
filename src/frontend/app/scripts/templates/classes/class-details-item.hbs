@@ -1,8 +1,15 @@
 <td>{{className}}</td>
 <td>{{instructor}}</td>
-<td>{{#each dayOfWeek}}{{#if @index}},{{/if}} {{this}}{{/each}}</td>
-<td class="tc">{{startTime}}</td>
-<td>{{endTime}}</td>
+<td class="calendar">
+{{#each schedule}}
+	{{#if @index}}</br>
+	{{/if}}
+		<strong>- {{dayOfWeek}}:</strong> 
+		{{#each times}}
+			{{#if @index}}, {{/if}} {{startTime}} - {{endTime}}
+		{{/each}}
+{{/each}}
+</td>
 <td>{{classDescription}}</td>
 <td>{{tags}}</td>
 <td class="align-right">{{#if price}}{{price}}${{/if}}</td>

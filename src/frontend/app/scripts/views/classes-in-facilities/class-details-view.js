@@ -10,6 +10,7 @@ define([
 	'hbs!templates/queue/class-details',
 	'hbs!templates/classes/edit-class',
 	'hbs!templates/queue/class',
+	'hbs!templates/classes/day-item',
 
 	// views
 	'views/classes-in-facilities/classes-details-list',
@@ -27,6 +28,7 @@ define([
 	queueclassDetailsTpl,
 	editClassTpl,
 	queueClassTpl,
+	dayItemTpl,
 	classesDetailsList,
 	classModel
 ) {
@@ -64,7 +66,9 @@ define([
 			'change .st-select-hour': 'updateEndTimeHour',
 			'change .st-select-minute': 'updateEndTimeMins',
 			'change .st-select-meridiem': 'updateEndTimeMeridiem',
-			'click .date-name': 'checkedDateInput'
+			'click .date-name': 'checkedDateInput',
+			'click #day-add-btn': 'addDay',
+			'click .remove-calendar': 'removeCalendar'
 		},
 
 		otherBindings: {
@@ -80,6 +84,7 @@ define([
 
 		initialize: function() {
 			var path = Backbone.history.location.hash;
+			this.schedule = [];
     	this.currentView = path.split('/')[0];
     	if (this.currentView === '#queue') {
     		this.template = queueclassDetailsTpl;
@@ -118,6 +123,7 @@ define([
 
 		newModelForCreateClass: function(attr) {
 			this.ui.calendarForm.removeClass('editing');
+			$('#classes-calendar-head').hide();
 
 			if (this.currentView !== '#queue')
 				this.initAutocompleteSearch(conf.allTagName);
@@ -127,6 +133,8 @@ define([
 			} else
 				this.otherModel = new classModel();
 
+			this.schedule = this.otherModel.get('schedule');
+			console.log(this.otherModel);
 			this.enableStickit(this.otherModel);
 
 			// init backbone validation for create a class
@@ -196,13 +204,16 @@ define([
 				this.otherModel.set('facilityID', this.model.get('id'));
 			}
 
+			this.otherModel.set('schedule', _.clone(this.schedule));
+
 			if (this.currentView !== '#queue') {
 				var tagsVal = $('#cl-tags').val().split(',');
-					this.otherModel.set('tags', tagsVal);
+				this.otherModel.set('tags', tagsVal);
 
 				this.otherModel.save(this.otherModel.toJSON(), {
 					success: function(res) {
 						console.log(res);
+						self.schedule = [];
 						self.classesDetailsList.collection.create(res);
 						self.classListStatusChecking(true);
 
@@ -220,16 +231,16 @@ define([
 				});
 
 			} else {
-				var _class = this.otherModel.attributes,
+				var _class = this.otherModel.toJSON(),
 						classes = this.model.get('classes'),
 						isValid = this.otherModel.isValid(true),
 						isValidName = this.otherModel.isValid('className');
-
-						if (isValid || isValidName) {
-							self.classesDetailsList.collection.add(_class);
-							classes.push(_class);
-							self.classListStatusChecking(true);
-						}
+						
+				if (isValid || isValidName) {
+					self.classesDetailsList.collection.add(_class);
+					classes.push(_class);
+					self.classListStatusChecking(true);
+				}
 			}
 		},
 
@@ -247,12 +258,12 @@ define([
 		},
 
 		clearFormData: function(otherModel) {
-			var selectDate = this.ui.dayOfWeek;
-
-		 	otherModel.unset('id');
-			otherModel.unset('_id');
-			otherModel.set('dayOfWeek', selectDate.val());
+		 // 	otherModel.unset('id');
+			// otherModel.unset('_id');
 			this.newModelForCreateClass(_.clone(otherModel.attributes));
+			if (this.schedule.length > 0) {
+				$('#classes-calendar-head').show();
+			}
 		},
 
 		checkedDateInput: function(e) {
@@ -268,6 +279,7 @@ define([
 		 	startTime.prop('selectedIndex', 0);
 		 	endTime.prop('selectedIndex', 0);
 			this.newModelForCreateClass(true);
+			$('#days-list').html('');
 			this.ui.addClassForm.hide();
 			// console.log('Undo input class value');
 			// console.log(this.lastModelAttr);
@@ -276,6 +288,113 @@ define([
 			// } else {
 			// 	this.ui.calendarForm.html(editClassTpl(this.lastModelAttr.toJSON()));
 			// }
+		},
+
+		addDay: function() {
+			console.log('Add day btn');
+			var self = this,
+					day = {},
+					dayOfWeek = this.$el.find('#day-of-week').val(),
+					// start time value
+					stHour = this.$el.find('.st-select-hour').val(),
+					stMins = this.$el.find('.st-select-minute').val(),
+					stMeridiem = this.$el.find('.st-select-meridiem').val(),
+					startTime = [stHour, ':', stMins,' ', stMeridiem].join(''),
+					// end time value
+					etHour = this.$el.find('.et-select-hour').val(),
+					etMins = this.$el.find('.et-select-minute').val(),
+					etMeridiem = this.$el.find('.et-select-meridiem').val(),
+					endTime = [etHour, ':', etMins,' ', etMeridiem].join(''),
+					dayLenght = this.schedule.length;
+			$('#classes-calendar-head').show();
+			if (dayLenght > 0) {
+				for(var i=0; i < dayLenght; i++) {
+					var currentSchedule = self.schedule[i];
+					if (dayOfWeek === currentSchedule.dayOfWeek) {
+						var length = currentSchedule.times.length,
+								times = currentSchedule.times;
+
+						for (var j=0; j < length; j++) {
+							// check duplicate input calendar
+							if (times[j].startTime === startTime && times[j].endTime === endTime) {
+								alert("Duplicate calendar");
+								return;
+							} else if (j ===  length - 1) {
+								console.log('ab');
+								day = self.dayVal(dayOfWeek, startTime, endTime);
+								currentSchedule.times.push({
+									startTime: startTime,
+									endTime: endTime
+								});
+								$('#days-list').append(dayItemTpl(day));
+								return;
+							}
+
+						}
+					}
+					if (i === dayLenght - 1) {
+						console.lo
+						day = self.dayVal(dayOfWeek, startTime, endTime);
+						this.schedule.push(day);
+						break;
+					}
+				}
+			} else {
+				day = self.dayVal(dayOfWeek, startTime, endTime);
+				this.schedule.push(day);
+			}
+			// append new class calendar to calendar list
+			$('#days-list').append(dayItemTpl(day));
+		},
+
+		removeCalendar: function(e) {
+			var self = this,
+					target = $(e.target),
+					schedule = this.schedule,
+					currentRow = target.closest('tr'),
+					length = schedule.length,
+					startTime = currentRow.find('.startTime').text(),
+					endTime = currentRow.find('.endTime').text(),
+					dayOfWeek = currentRow.find('.dayOfWeek').text();
+					console.log(this.schedule);
+			currentRow.remove();
+			// find and remove current item view and data
+			for (var i=0; i < length; i++) {
+				var currentItem = schedule[i],
+						itemDayOfWeek = currentItem.dayOfWeek,
+						times = currentItem.times,
+						timesLength = times.length;
+
+				if (currentItem.dayOfWeek === dayOfWeek) {
+					if (timesLength > 1) {
+						for (var j=0; j < timesLength; j++) {
+							if (times[j].startTime === startTime && times[j].endTime === endTime) {
+								self.schedule[i].times.splice(j, 1);
+								return;
+							}
+						}
+					} else {
+						console.log('aa');
+						self.schedule.splice(i, 1);
+						if (self.schedule.length === 0) {
+							$('#classes-calendar-head').hide();
+						}
+						break;
+					}
+				}
+			}
+		},
+
+		dayVal: function(dayOfWeek, startTime, endTime) {
+			return  day = {
+								dayOfWeek: dayOfWeek,
+								times: [
+									{
+										startTime: startTime,
+										endTime: endTime
+									}
+								]
+							};
 		},
 
 		invalid: function(view, attr, error, selector) {
@@ -307,6 +426,7 @@ define([
 
 	  updateModel: function(model) {
 	  	this.otherModel = model;
+			this.schedule = this.otherModel.get('schedule');
 	  	this.lastModelAttr = this.otherModel.clone();
 			this.enableStickit(this.otherModel);
 	  },
