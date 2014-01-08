@@ -1,0 +1,16 @@
+div
+  table(border=1,cellspacing=0)
+    thead
+      tr: th Duplicated facilities
+    tbody
+      tr
+          td FacilityName
+          td State
+          td City
+          td Zip
+      each facility, i in facilities
+        tr
+          td #{facility.facilityName}
+          td #{facility.state}
+          td #{facility.city}
+          td #{facility.zip}

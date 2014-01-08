@@ -111,6 +111,14 @@ module.exports = {
 			)
 		});
 	},
+	/*
+	*	List out duplicate facilities for testing purpose
+	*/
+	listDuplicate: function(req, res){
+		this.facilityService.listDuplicateFacility(function(err, results){
+			res.render('duplicateFacilities', { facilities: results });
+		})
+	},
 
 	getQueue: function(req, res){
 		var page = req.query.currentPage && req.query.currentPage > 0 ? req.query.currentPage - 1 : 0

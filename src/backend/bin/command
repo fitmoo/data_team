@@ -208,9 +208,11 @@ function findDuplicateFacility(callback){
 				var duplicatedFacilities = _.filter(results, function(facility){
 					return facility.value >= 2;
 				});
-				console.log('Duplicated facilities');
 				console.log(duplicatedFacilities);
-				callback && callback();
+				console.log('Duplicated facilities : %s', duplicatedFacilities.length);
+				facilityService.listDuplicateFacility(function(){
+					done && done();
+				})
 			});
 		});
 	}
