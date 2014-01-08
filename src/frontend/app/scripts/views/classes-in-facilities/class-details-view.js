@@ -45,8 +45,6 @@ define([
 			calendarForm: '.calendar-form',
 			classList: '.list-class-content',
 			tags: '#cl-tags',
-			startTime: '#cl-startTime',
-			endTime: '#cl-endTime',
 			ETHour: '.et-select-hour',
 			STHour: '.st-select-hour',
 			ETMins: '.et-select-minute',
@@ -73,9 +71,6 @@ define([
 
 		otherBindings: {
 			'#cl-className': 'className',
-			'.cl-dayOfWeek': 'dayOfWeek',
-			'#cl-startTime': 'startTime',
-			'#cl-endTime': 'endTime',
 			'#cl-instructor': 'instructor',
 			'#cl-price': 'price',
 			'#cl-tags': 'tags',
@@ -157,7 +152,7 @@ define([
 			this.otherModel.set({startTime: val});
 			setTimeout(function() {
 				self.updateEndTimeVal();
-			},50);
+			},80);
 		},
 
 		updateEndTimeVal: function() {
@@ -170,33 +165,52 @@ define([
 		},
 
 		updateEndTimeHour: function() {
-			var val = this.ui.STHour.val(),
-					ETHour = this.ui.ETHour;
+			var val = this.$el.find('.st-select-hour').val(),
+					ETHour = this.$el.find('.et-select-hour'),
+					ETMeridiem = this.$el.find('.et-select-meridiem');
 
 			if (val === '12')
 				ETHour.val('01');
 			else if (val < 9 )
 				ETHour.val('0' + (Number(this.ui.STHour.val()) + 1));
+			else if (val === '11' && ETMeridiem.val() === 'AM') {
+				ETHour.val(Number(this.ui.STHour.val()) + 1);
+				ETMeridiem.prop('selectedIndex', 1);
+			}
+			else if (val === '11' && ETMeridiem.val() === 'PM') {
+				ETMeridiem.prop('selectedIndex', 0);
+				ETHour.val(Number(this.ui.STHour.val()) + 1);
+
+			}
 			else
 				ETHour.val(Number(this.ui.STHour.val()) + 1);
 		},
 
 		updateEndTimeMins: function() {
-			var val = this.ui.STMins.val(),
-					ETMins = this.ui.ETMins;
+			var val = this.$el.find('.st-select-minute').val(),
+					ETMins = this.$el.find('.et-select-minute');
 
 			ETMins.val(val);
 		},
 
 		updateEndTimeMeridiem: function() {
-			var val = this.ui.STMeridiem.val(),
-					ETMeridiem = this.ui.ETMeridiem;
+			var val = this.$el.find('.st-select-meridiem').val(),
+					stHour = this.$el.find('.st-select-hour').val(),
+					ETMeridiem = this.$el.find('.et-select-meridiem');
 
-			ETMeridiem.val(val);
+			if (val === 'AM' && stHour === '11')
+				ETMeridiem.prop('selectedIndex', 1);
+			else if (val === 'PM' && stHour === '11')
+				ETMeridiem.prop('selectedIndex', 0);
+			else
+				ETMeridiem.val(val);
 		},
 
 		addNewClass: function(e) {
 			console.log('Add New Class');
+
+     e.preventDefault();
+     // return false;
 			var self = this;
 
 			if (!this.otherModel.get('facilityID')) {
@@ -209,39 +223,41 @@ define([
 			if (this.currentView !== '#queue') {
 				var tagsVal = $('#cl-tags').val().split(',');
 				this.otherModel.set('tags', tagsVal);
-
-				this.otherModel.save(this.otherModel.toJSON(), {
-					success: function(res) {
-						console.log(res);
-						self.schedule = [];
-						self.classesDetailsList.collection.create(res);
-						self.classListStatusChecking(true);
-
-						if (self.ui.calendarForm.hasClass('editing')) {
-							self.classesDetailsList.render();
-						}
-
-						// clear form data
-						self.clearFormData(res);
-					},
-
-					error: function(error) {
-						console.log(error);
-					}
-				});
-
-			} else {
-				var _class = this.otherModel.toJSON(),
-						classes = this.model.get('classes'),
-						isValid = this.otherModel.isValid(true),
-						isValidName = this.otherModel.isValid('className');
-						
-				if (isValid || isValidName) {
-					self.classesDetailsList.collection.add(_class);
-					classes.push(_class);
-					self.classListStatusChecking(true);
-				}
 			}
+
+			this.otherModel.save(this.otherModel.toJSON(), {
+				success: function(res) {
+					console.log(res);
+					self.schedule = [];
+					self.classesDetailsList.collection.create(res);
+					self.classListStatusChecking(true);
+
+					if (self.ui.calendarForm.hasClass('editing')) {
+						self.classesDetailsList.render();
+					}
+
+					// clear form data
+					self.clearFormData(res);
+					self.cancelEntry(true);
+				},
+
+				error: function(error) {
+					console.log(error);
+				}
+			});
+
+			// } else {
+			// 	var _class = this.otherModel.toJSON(),
+			// 			classes = this.model.get('classes'),
+			// 			isValid = this.otherModel.isValid(true),
+			// 			isValidName = this.otherModel.isValid('className');
+						
+			// 	if (isValid || isValidName) {
+			// 		self.classesDetailsList.collection.add(_class);
+			// 		classes.push(_class);
+			// 		self.classListStatusChecking(true);
+			// 	}
+			// }
 		},
 
 		classListStatusChecking: function(show) {
@@ -271,16 +287,18 @@ define([
 			checkbox.trigger('click');
 		},
 
-		cancelEntry: function() {
+		cancelEntry: function(showAddClassForm) {
 			console.log('Cancel Entry');
 			var startTime = this.$el.find('.cl-startTime'),
 					endTime = this.$el.find('.cl-endTime');
 
+			$('#default-dayOfWeek').click();
 		 	startTime.prop('selectedIndex', 0);
 		 	endTime.prop('selectedIndex', 0);
 			this.newModelForCreateClass(true);
 			$('#days-list').html('');
-			this.ui.addClassForm.hide();
+			if (!showAddClassForm)
+				this.ui.addClassForm.hide();
 			// console.log('Undo input class value');
 			// console.log(this.lastModelAttr);
 			// if (!this.otherModel.get('id')) {
@@ -294,7 +312,7 @@ define([
 			console.log('Add day btn');
 			var self = this,
 					day = {},
-					dayOfWeek = this.$el.find('#day-of-week').val(),
+					dayOfWeek = this.$el.find('.cl-dayOfWeek:checked').val(),
 					// start time value
 					stHour = this.$el.find('.st-select-hour').val(),
 					stMins = this.$el.find('.st-select-minute').val(),

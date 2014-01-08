@@ -19,11 +19,8 @@ define([
 		},
 
 		defaults: {
-			dayOfWeek: 'Monday',
 			className: '',
 			instructor: '',
-			startTime: '01:00 AM',
-			endTime: '01:00 AM',
 			classDescription: '',
 			schedule: []
 		},
