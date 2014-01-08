@@ -169,20 +169,22 @@ define([
 					ETHour = this.$el.find('.et-select-hour'),
 					ETMeridiem = this.$el.find('.et-select-meridiem');
 
+			if (val !== '11')
+				this.updateEndTimeMeridiem();
+			
 			if (val === '12')
 				ETHour.val('01');
 			else if (val < 9 )
 				ETHour.val('0' + (Number(this.ui.STHour.val()) + 1));
 			else if (val === '11' && ETMeridiem.val() === 'AM') {
-				ETHour.val(Number(this.ui.STHour.val()) + 1);
 				ETMeridiem.prop('selectedIndex', 1);
+				ETHour.val(Number(this.ui.STHour.val()) + 1);
 			}
 			else if (val === '11' && ETMeridiem.val() === 'PM') {
-				ETMeridiem.prop('selectedIndex', 0);
 				ETHour.val(Number(this.ui.STHour.val()) + 1);
-
+				ETMeridiem.prop('selectedIndex', 0);
 			}
-			else
+			else 
 				ETHour.val(Number(this.ui.STHour.val()) + 1);
 		},
 
