@@ -97,8 +97,13 @@ define([
 		},
 
 		saveAndDone: function() {
-			this.model.set('status', 2);
-			Backbone.EventBroker.trigger('facility:save', function() {});
+			var confirmPopup = confirm('This item will not be accessible again. Have you filled in as much information as possible?');
+
+			if (confirmPopup === true) {
+				console.log('Save and Done facility on queue', this.model);
+				this.model.set('status', 2);
+				Backbone.EventBroker.trigger('facility:save', function() {});
+			}
 		},
 
 		onVerifyFacility: function() {

@@ -56,18 +56,7 @@ define([
 			console.log('Edit class:', this.model);
 
 			var model = this.model,
-					startTime = this.model.get('startTime'),
-					endTime = this.model.get('endTime'),
 					calendarForm = $('.calendar-form');
-
-			// substring start Time, end Time to render template
-			model.set('stHour', startTime.substring(0,2));
-			model.set('stMinute', startTime.substring(3,5));
-			model.set('stMeridiem', startTime.substring(6,8));
-
-			model.set('etHour', endTime.substring(0,2));
-			model.set('etMinute', endTime.substring(3,5));
-			model.set('etMeridiem', endTime.substring(6,8));
 
 			if (this.currentView === '#queue')
 				calendarForm.html(queueEditClassTpl(model.toJSON()));

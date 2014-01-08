@@ -32,6 +32,12 @@ app.configure(function(){
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.json());
+
+  //For testing purpose---//
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  //--------------------//
+  
   app.use(express.urlencoded());
   app.use(express.multipart());
   app.use(express.methodOverride());
@@ -62,6 +68,9 @@ app.namespace('/api/logout', function(){
 app.namespace('/api/facilities', function(req, res, next){ user.verifyToken(req, res, next); } , function() {
   //Search Facility
   app.get('/', function(req, res){ facility.search(req, res); });
+
+  //List Duplicate Facility
+  app.get('/duplicate', function(req, res){ facility.listDuplicate(req, res); });
 
   //Search Facility Queue
   app.get('/queue', function(req, res){ facility.getQueue(req, res); });

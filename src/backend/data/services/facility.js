@@ -344,6 +344,35 @@ module.exports = BaseDBService.extend({
         });
     },
 
+    /*
+    *   List out duplciated facility for enduser
+    */
+    listDuplicateFacility: function(fn){
+        var self = this;
+        this.findDuplicateFacilityName(function(err, results){
+            var duplicatedFacilities = _.filter(results, function(facility){
+                    return facility.value >= 2;
+                });
+
+            var facilities = _.chain(duplicatedFacilities)
+             .pluck('_id')
+             .map(function(facilityName){
+                var index = facilityName.indexOf('-');
+                if(index >= 0)
+                    return facilityName.substring(0, index);
+                else
+                    return facilityName;
+             }).value();
+             
+             self.modelClass.find({facilityName : { $in : facilities}}, {_id : 1, facilityName : 1, city : 1, state : 1, zip : 1})
+                        .sort({facilityName : 1})
+                        .exec(function(err, results){
+                            fn && fn(err, { count : facilities.length, facilities: results});
+                        });
+        })
+        
+    },
+
     findMissingFacilities: function(fn){
         this.modelClass.find( { "country" : "" }, fn);
     },

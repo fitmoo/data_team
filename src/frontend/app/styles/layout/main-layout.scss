@@ -649,9 +649,9 @@ th.sorting .caret {
 #photos .thumbnail {
   -webkit-transition: inherit;
   transition: inherit;
-	width: 200px;
-	height: 200px;
-	line-height: 200px;
+	width: 125px;
+	height: 125px;
+	line-height: 125px;
 	overflow: hidden;
 	text-align: center;
 	padding: 0;
@@ -862,6 +862,7 @@ th.sorting .caret {
 }
 #cl-dayOfWeek {
 	margin-left: 0;
+	margin-top: -7px;
 	li {
 		list-style-type: none;
 		float: left;
@@ -870,6 +871,8 @@ th.sorting .caret {
 		display: inline-block;
 		label {
 			display: inline;
+			position: relative;
+			top: 3px;
 		}
 	}
 	input {
