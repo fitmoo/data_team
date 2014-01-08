@@ -40,6 +40,7 @@
 
     "knox" : "0.8.8",
     "express": "3.3.8",
+    "jade": "1.1.0",
     "express-namespace" : "0.1.1"
   }
 }

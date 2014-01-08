@@ -116,7 +116,7 @@ module.exports = {
 	*/
 	listDuplicate: function(req, res){
 		this.facilityService.listDuplicateFacility(function(err, results){
-			res.render('duplicateFacilities', { facilities: results });
+			res.render('duplicateFacilities', results);
 		})
 	},
 

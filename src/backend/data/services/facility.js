@@ -366,7 +366,9 @@ module.exports = BaseDBService.extend({
              
              self.modelClass.find({facilityName : { $in : facilities}}, {_id : 1, facilityName : 1, city : 1, state : 1, zip : 1})
                         .sort({facilityName : 1})
-                        .exec(fn);
+                        .exec(function(err, results){
+                            fn && fn(err, { count : facilities.length, facilities: results});
+                        });
         })
         
     },
