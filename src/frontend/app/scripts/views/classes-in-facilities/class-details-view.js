@@ -225,41 +225,40 @@ define([
 			if (this.currentView !== '#queue') {
 				var tagsVal = $('#cl-tags').val().split(',');
 				this.otherModel.set('tags', tagsVal);
-			}
 
-			this.otherModel.save(this.otherModel.toJSON(), {
-				success: function(res) {
-					console.log(res);
-					self.schedule = [];
-					self.classesDetailsList.collection.create(res);
-					self.classListStatusChecking(true);
+				this.otherModel.save(this.otherModel.toJSON(), {
+					success: function(res) {
+						console.log(res);
+						self.schedule = [];
+						self.classesDetailsList.collection.create(res);
+						self.classListStatusChecking(true);
 
-					if (self.ui.calendarForm.hasClass('editing')) {
-						self.classesDetailsList.render();
+						if (self.ui.calendarForm.hasClass('editing')) {
+							self.classesDetailsList.render();
+						}
+
+						// clear form data
+						self.clearFormData(res);
+						self.cancelEntry(true);
+					},
+
+					error: function(error) {
+						console.log(error);
 					}
+				});
 
-					// clear form data
-					self.clearFormData(res);
-					self.cancelEntry(true);
-				},
-
-				error: function(error) {
-					console.log(error);
-				}
-			});
-
-			// } else {
-			// 	var _class = this.otherModel.toJSON(),
-			// 			classes = this.model.get('classes'),
-			// 			isValid = this.otherModel.isValid(true),
-			// 			isValidName = this.otherModel.isValid('className');
+			} else {
+				var _class = this.otherModel.toJSON(),
+						classes = this.model.get('classes'),
+						isValid = this.otherModel.isValid(true),
+						isValidName = this.otherModel.isValid('className');
 						
-			// 	if (isValid || isValidName) {
-			// 		self.classesDetailsList.collection.add(_class);
-			// 		classes.push(_class);
-			// 		self.classListStatusChecking(true);
-			// 	}
-			// }
+				if (isValid || isValidName) {
+					self.classesDetailsList.collection.add(_class);
+					classes.push(_class);
+					self.classListStatusChecking(true);
+				}
+			}
 		},
 
 		classListStatusChecking: function(show) {
@@ -294,7 +293,6 @@ define([
 			var startTime = this.$el.find('.cl-startTime'),
 					endTime = this.$el.find('.cl-endTime');
 
-			$('#default-dayOfWeek').click();
 		 	startTime.prop('selectedIndex', 0);
 		 	endTime.prop('selectedIndex', 0);
 			this.newModelForCreateClass(true);
@@ -314,7 +312,7 @@ define([
 			console.log('Add day btn');
 			var self = this,
 					day = {},
-					dayOfWeek = this.$el.find('.cl-dayOfWeek:checked').val(),
+					daysOfWeek = this.$el.find('.cl-dayOfWeek:checked'),
 					// start time value
 					stHour = this.$el.find('.st-select-hour').val(),
 					stMins = this.$el.find('.st-select-minute').val(),
@@ -326,45 +324,60 @@ define([
 					etMeridiem = this.$el.find('.et-select-meridiem').val(),
 					endTime = [etHour, ':', etMins,' ', etMeridiem].join(''),
 					dayLenght = this.schedule.length;
-			$('#classes-calendar-head').show();
-			if (dayLenght > 0) {
-				for(var i=0; i < dayLenght; i++) {
-					var currentSchedule = self.schedule[i];
-					if (dayOfWeek === currentSchedule.dayOfWeek) {
-						var length = currentSchedule.times.length,
-								times = currentSchedule.times;
+					console.log(daysOfWeek);
 
-						for (var j=0; j < length; j++) {
-							// check duplicate input calendar
-							if (times[j].startTime === startTime && times[j].endTime === endTime) {
-								alert("Duplicate calendar");
-								return;
-							} else if (j ===  length - 1) {
-								console.log('ab');
-								day = self.dayVal(dayOfWeek, startTime, endTime);
-								currentSchedule.times.push({
-									startTime: startTime,
-									endTime: endTime
-								});
-								$('#days-list').append(dayItemTpl(day));
-								return;
+			if (daysOfWeek.length > 0) {
+				// show calendar table
+				$('#classes-calendar-head').show();
+
+				// save & append calendar to table
+				daysOfWeek.each(function() {
+					var dayOfWeek = $(this).val();
+
+					if (dayLenght > 0) {
+							for(var i=0; i < dayLenght; i++) {
+								var currentSchedule = self.schedule[i];
+								if (dayOfWeek === currentSchedule.dayOfWeek) {
+									var length = currentSchedule.times.length,
+											times = currentSchedule.times;
+
+									for (var j=0; j < length; j++) {
+										// check duplicate input calendar
+										if (times[j].startTime === startTime && times[j].endTime === endTime) {
+											alert("Duplicate calendar");
+											return false;
+										} else if (j ===  length - 1) {
+											// if the day was exit, add startTime and endTime to the day's times array
+											day = self.dayVal(dayOfWeek, startTime, endTime);
+											currentSchedule.times.push({
+												startTime: startTime,
+												endTime: endTime
+											});
+											$('#days-list').append(dayItemTpl(day));
+											return;
+										}
+
+									}
+								}
+								if (i === dayLenght - 1) {
+									day = self.dayVal(dayOfWeek, startTime, endTime);
+									self.schedule.push(day);
+									break;
+								}
 							}
-
-						}
-					}
-					if (i === dayLenght - 1) {
-						console.lo
+						
+					} else {
 						day = self.dayVal(dayOfWeek, startTime, endTime);
-						this.schedule.push(day);
-						break;
+						self.schedule.push(day);
 					}
-				}
+
+					// append new class calendar to calendar list
+					$('#days-list').append(dayItemTpl(day));
+				});
+
 			} else {
-				day = self.dayVal(dayOfWeek, startTime, endTime);
-				this.schedule.push(day);
+				alert("Please select day of Class");
 			}
-			// append new class calendar to calendar list
-			$('#days-list').append(dayItemTpl(day));
 		},
 
 		removeCalendar: function(e) {
@@ -377,8 +390,10 @@ define([
 					endTime = currentRow.find('.endTime').text(),
 					dayOfWeek = currentRow.find('.dayOfWeek').text();
 					console.log(this.schedule);
+
+			// remove the calendar row
 			currentRow.remove();
-			// find and remove current item view and data
+			// find and remove current item data
 			for (var i=0; i < length; i++) {
 				var currentItem = schedule[i],
 						itemDayOfWeek = currentItem.dayOfWeek,
@@ -394,7 +409,6 @@ define([
 							}
 						}
 					} else {
-						console.log('aa');
 						self.schedule.splice(i, 1);
 						if (self.schedule.length === 0) {
 							$('#classes-calendar-head').hide();
