@@ -87,7 +87,7 @@ describe('Test RESTFUL API', function(){
 	});
 
 	it('Undo checkout a Facility', function(done){
-	    var request = superagent.get(URI + '/facilities/undoCheckOut/' + facilityID + "?token=" + token);
+	    var request = superagent.post(URI + '/facilities/undoCheckOut/' + facilityID + "?token=" + token);
 
 	    request
 	    .end(function(e,res){

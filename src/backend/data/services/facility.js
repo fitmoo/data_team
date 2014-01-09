@@ -123,7 +123,7 @@ module.exports = BaseDBService.extend({
             if(err || !authentication) fn && fn(err, null);
             else{
                 var userName = authentication.username || "";
-                
+
                 self.modelClass.update({_id : facilityID},  { $set : { checkOutBy : ""} }, fn); 
             }
         })
@@ -261,7 +261,7 @@ module.exports = BaseDBService.extend({
                                 {
                                     facilityName : item.facilityName,
                                     stateLowerCase : item.stateLowerCase,
-                                    zip : { $exists : true, $ne : '', $in : [item.zip]},
+                                    //zip : { $exists : true, $ne : '', $in : [item.zip]},
                                     
                                 }
                         ]
