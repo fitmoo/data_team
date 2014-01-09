@@ -199,7 +199,7 @@ module.exports = BaseDBService.extend({
                             sort : { createdDate : 1},
                             search : search
                         }
-                       // console.log('%j', opt);
+
                         self.find(opt, fn);
                     }
                 });
@@ -212,21 +212,46 @@ module.exports = BaseDBService.extend({
     */
     migrateFacilitiesImage: function(fn){
         var self = this;
-
+        
         this.facilityModel.find({}, {_id: 1, images : 1},function(err, facilities){
+            var index = 0;
+
             async.eachSeries(facilities, function(facility, done){
+
                 if(facility && _.isArray(facility.images)){
-                    async.eachSeries(facility.images, function(image, done){
-                        self.modelClass.findOne({sourceURL : image.url, facilityID : facility._id}, function(err, photo){
-                            if(!err && !photo){
-                                //Copy image to photos collection
-                                
-                            }
-                        })
-                    })
+                    async.eachSeries(
+                        facility.images,
+                        function(image, done){
+                            self.modelClass.findOne({sourceURL : image.url, facilityID : facility._id}, function(err, photo){
+                                if(!err && !photo){
+                                    //Copy image to photos collection
+                                    self.modelClass.create({
+                                        facilityID : facility._id,
+                                        markDelete : false,
+                                        s3URL : "",
+                                        isFitmooData: true,
+                                        sourceURL : image.url
+                                    }, function(err, savedPhoto){
+                                        setTimeout(function(){ done && done(err); }, 500);
+                                    })
+                                    
+                                    
+                                } else{
+                                    console.log('Exists');
+                                    done && done();
+                                }
+                            })
+                        },
+                        function(err){
+                            index++;
+                            console.log('Finish facility index: %s', index);
+                            done && done(err);
+                    }); 
+                    
                 } else{
                     done && done();
                 }
+
             }, function(err){
                 fn && fn(err);
             });

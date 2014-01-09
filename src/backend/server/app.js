@@ -79,7 +79,7 @@ app.namespace('/api/facilities', function(req, res, next){ user.verifyToken(req,
   app.get('/checkout/:id', function(req, res){ facility.checkOut(req, res); });
 
   //Undo checkout
-  app.get('/undoCheckOut/:id', function(req, res){ facility.undoCheckOut(req, res); });
+  app.post('/undoCheckOut/:id', function(req, res){ facility.undoCheckOut(req, res); });
 
   
 

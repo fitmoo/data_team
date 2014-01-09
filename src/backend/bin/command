@@ -201,11 +201,12 @@ function migrateClass(callback){
 
 function migrateFacilityImage(callback){
 	if (!program.migration) return callback();
-    if (program.migration === 'facilityImage') {
+    if (program.migration === 'facilityimage') {
 		var db = new DatabaseManager(configs);
 		db.init(["Photo"], function(){
 			var photoService = db.getInstance("Photo");
 			photoService.migrateFacilitiesImage(function(err, results){
+				console.log('migrateFacilityImage Finished.');
 				callback && callback();		
 			})
 		});
