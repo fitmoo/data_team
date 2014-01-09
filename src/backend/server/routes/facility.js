@@ -127,7 +127,7 @@ module.exports = {
 		var token = req.query.token;
 
 		//undo checkout facility in queue for the current user
-		this.facilityService.undoCheckOut(token, function(err){
+		this.facilityService.undoCheckOutByUserName(token, function(err){
 			self.facilityService.getQueue(perPage, page, function(err, facilities, count){
 				var returnFacilities = [];
 
@@ -163,11 +163,23 @@ module.exports = {
 				res.send({status: false, msg: "Checked out by: " + checkoutInfo.checkOutBy});
 			}
 			else{
+				console.log(checkoutInfo);
 				self.findById(req, res);
 			}
 		})
 	},
 
+	undoCheckOut: function(req, res){
+		var facilityID = req.params.id,
+			token = req.query.token;
+
+		this.facilityService.undoCheckOut(token, facilityID, function(err, checkoutInfo){
+			if(err) res.send({status: false, msg: err});
+			else{
+				res.send({status: true, msg: "Undo checkout"});
+			}
+		})
+	},
 	//Count facilities don't have photo/video
 	facilityNeedUpdateMedia: function(req, res){
 		var opt = { $or : [ {images : {$exists : false} } , { images : { $size : 0}} , {video : {$exists : false} } , { video : { $size : 0} } ]};

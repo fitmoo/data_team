@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
     Authentication = require('../models/authenticationModel'),
     PhotoS3 = require('../models/photoS3Model'),
     uploadFile = require('../../utils/uploadFiles'),
+    facilityModel = require('../models/facilityModel'),
     photoViewLog = require('../models/photoViewLogModel');
 
 module.exports = BaseDBService.extend({
@@ -13,6 +14,7 @@ module.exports = BaseDBService.extend({
     photoViewLogModel: photoViewLog,
     authenticationModel: Authentication,
     photoS3: PhotoS3,
+    facilityModel : facilityModel,
 
      //Create a bunch of facility
     createBundle: function(facilityID, imageArray, fn){
@@ -185,11 +187,11 @@ module.exports = BaseDBService.extend({
                     if(err) fn && fn(err);
                     else{
                         var search = {};
-                      //  console.log(photoviewLogItem);
+
                         if(photoviewLogItem && photoviewLogItem.latestPhotoByDate){
                             search = { createdDate : { $gt :photoviewLogItem.latestPhotoByDate },  markDelete : false};
                         } else{
-                            search = { markDelete : false};    
+                            search = { markDelete : false};
                         }
 
                         var opt = {
@@ -203,6 +205,32 @@ module.exports = BaseDBService.extend({
                 });
             }
         });
-       
     },
+
+    /*
+    *   Migrate images in facilities collection 
+    */
+    migrateFacilitiesImage: function(fn){
+        var self = this;
+
+        this.facilityModel.find({}, {_id: 1, images : 1},function(err, facilities){
+            async.eachSeries(facilities, function(facility, done){
+                if(facility && _.isArray(facility.images)){
+                    async.eachSeries(facility.images, function(image, done){
+                        self.modelClass.findOne({sourceURL : image.url, facilityID : facility._id}, function(err, photo){
+                            if(!err && !photo){
+                                //Copy image to photos collection
+                                
+                            }
+                        })
+                    })
+                } else{
+                    done && done();
+                }
+            }, function(err){
+                fn && fn(err);
+            });
+        })
+    }
+
 });

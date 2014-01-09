@@ -21,7 +21,8 @@ program
   .option('    --crawlStatusID [_id in DB]', '_id in crawlStatus collection')
   .option('    --updateFacilityOrder ', 'Update facilities order index to display on queue')
   .option('    --countFacilitiesHaveClass ', 'Count facility has class')
-  .option('    --migration [resource]', 'Migrate resource: [facility, classes]')
+  .option('    --countTotalImages', 'Count total images exists in each facilities collection')
+  .option('    --migration [resource]', 'Migrate resource: [facility, classes, facilityimage]')
   .option('    --findDuplicateFacility', 'Find duplicate facilityName')
   .parse(process.argv);
 
@@ -198,6 +199,22 @@ function migrateClass(callback){
 	}
 }
 
+function migrateFacilityImage(callback){
+	if (!program.migration) return callback();
+    if (program.migration === 'facilityImage') {
+		var db = new DatabaseManager(configs);
+		db.init(["Photo"], function(){
+			var photoService = db.getInstance("Photo");
+			photoService.migrateFacilitiesImage(function(err, results){
+				callback && callback();		
+			})
+		});
+	} else{
+		callback && callback();
+	}
+}
+
+
 function findDuplicateFacility(callback){
 	if (!program.findDuplicateFacility) return callback();
 	else{
@@ -211,8 +228,22 @@ function findDuplicateFacility(callback){
 				console.log(duplicatedFacilities);
 				console.log('Duplicated facilities : %s', duplicatedFacilities.length);
 				facilityService.listDuplicateFacility(function(){
-					done && done();
+					callback && callback();
 				})
+			});
+		});
+	}
+}
+
+function countTotalImages(callback){
+	if (!program.countTotalImages) return callback();
+	else{
+		var db = new DatabaseManager(configs);
+		db.init(["Facility"], function(){
+			var facilityService = db.getInstance("Facility");
+			facilityService.countImages(function(err, results){
+				console.log(results);
+				callback && callback();
 			});
 		});
 	}
@@ -227,7 +258,9 @@ async.series([
     crawlFacilityWebsite,
     migrateFacility,
     migrateClass,
-    findDuplicateFacility
+    migrateFacilityImage,
+    findDuplicateFacility,
+    countTotalImages
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
 
