@@ -89,7 +89,8 @@ define([
 				'class:stickit': 'enableStickit',
 				'class:updateModel': 'updateModel',
 				'class:formShow': 'showCreateClassForm',
-				'class:new': 'showAddNewClass'
+				'class:new': 'showAddNewClass',
+				'class:remove': 'removeClassItem'
 			},this);
 		},
 
@@ -128,7 +129,7 @@ define([
 			} else
 				this.otherModel = new classModel();
 
-			this.schedule = this.otherModel.get('schedule');
+			// this.schedule = this.otherModel.get('schedule');
 			console.log(this.otherModel);
 			this.enableStickit(this.otherModel);
 
@@ -219,14 +220,15 @@ define([
 				// mapping facilityID from model to otherModel
 				this.otherModel.set('facilityID', this.model.get('id'));
 			}
-
 			this.otherModel.set('schedule', _.clone(this.schedule));
 
 			if (this.currentView !== '#queue') {
 				var tagsVal = $('#cl-tags').val().split(',');
 				this.otherModel.set('tags', tagsVal);
 
-				this.otherModel.save(this.otherModel.toJSON(), {
+				var otherModel = this.otherModel.clone();
+
+				otherModel.save(otherModel.toJSON(), {
 					success: function(res) {
 						console.log(res);
 						self.schedule = [];
@@ -248,17 +250,25 @@ define([
 				});
 
 			} else {
-				var _class = this.otherModel.toJSON(),
-						classes = this.model.get('classes'),
-						isValid = this.otherModel.isValid(true),
-						isValidName = this.otherModel.isValid('className');
-						
+				var isValid = this.otherModel.isValid(true),
+						isValidName = this.otherModel.isValid('className'),
+						otherModel = this.otherModel.clone();
+
 				if (isValid || isValidName) {
-					self.classesDetailsList.collection.add(_class);
-					classes.push(_class);
+					if (this.ui.calendarForm.hasClass('editing'))
+						self.classesDetailsList.collection.remove(this.otherModel);
+					
+					self.classesDetailsList.collection.add(otherModel);
+					self.model.set('classes', self.classesDetailsList.collection.toJSON())
 					self.classListStatusChecking(true);
+					self.cancelEntry(true);
 				}
 			}
+		},
+
+		removeClassItem: function(classModel) {
+			this.classesDetailsList.collection.remove(classModel);
+			this.model.set('classes', this.classesDetailsList.collection.toJSON());
 		},
 
 		classListStatusChecking: function(show) {
@@ -277,7 +287,7 @@ define([
 		clearFormData: function(otherModel) {
 		 // 	otherModel.unset('id');
 			// otherModel.unset('_id');
-			this.newModelForCreateClass(_.clone(otherModel.attributes));
+			this.newModelForCreateClass();
 			if (this.schedule.length > 0) {
 				$('#classes-calendar-head').show();
 			}
@@ -295,8 +305,10 @@ define([
 
 		 	startTime.prop('selectedIndex', 0);
 		 	endTime.prop('selectedIndex', 0);
-			this.newModelForCreateClass(true);
+		 	$('#cl-dayOfWeek').find('.cl-dayOfWeek').removeAttr('checked');
 			$('#days-list').html('');
+			this.schedule = [];
+			this.newModelForCreateClass();
 			if (!showAddClassForm)
 				this.ui.addClassForm.hide();
 			// console.log('Undo input class value');
@@ -389,7 +401,6 @@ define([
 					startTime = currentRow.find('.startTime').text(),
 					endTime = currentRow.find('.endTime').text(),
 					dayOfWeek = currentRow.find('.dayOfWeek').text();
-					console.log(this.schedule);
 
 			// remove the calendar row
 			currentRow.remove();
