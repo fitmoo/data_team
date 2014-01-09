@@ -163,7 +163,8 @@ define([
 		},
 
 		onRender: function() {
-			var model = this.model,
+			var self = this,
+					model = this.model,
 					currentView = Backbone.history.fragment,
 					FacilityDetailsView = new facilityDetailsView({model: model});
 
@@ -171,6 +172,14 @@ define([
 
 			if (currentView !== 'create-facility')
 				this.renderMediaAndClassView(model);
+
+			$(window).bind('beforeunload', function() {
+				if (self.currentView && self.currentView === '#queue')
+					api.post(['facilities/undoCheckOut/', self.model.id, '?token=', Session.get('user').token].join(''), {}, function(res) {
+						console.log(res);
+					});
+	    });
+				
 		}
 	});
 
