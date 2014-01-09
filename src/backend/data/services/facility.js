@@ -267,6 +267,8 @@ module.exports = BaseDBService.extend({
                         ]
                     }, 
                     function (err, facility){
+                        console.log('facility');
+                        console.log(facility);
                         if(err) done(err, null);
                         else{
                             index++;

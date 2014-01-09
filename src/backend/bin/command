@@ -22,7 +22,7 @@ program
   .option('    --updateFacilityOrder ', 'Update facilities order index to display on queue')
   .option('    --countFacilitiesHaveClass ', 'Count facility has class')
   .option('    --countTotalImages', 'Count total images exists in each facilities collection')
-  .option('    --migration [resource]', 'Migrate resource: [facility, classes, facilityimage]')
+  .option('    --migration [resource]', 'Migrate resource: [facility, classes, facilityimage, fixCrawlImage]')
   .option('    --findDuplicateFacility', 'Find duplicate facilityName')
   .parse(process.argv);
 
@@ -215,6 +215,15 @@ function migrateFacilityImage(callback){
 	}
 }
 
+function fixCrawlImage(callback){
+	if (!program.migration) return callback();
+    if (program.migration === 'fixCrawlImage') {
+		
+	} else{
+		callback && callback();
+	}
+}
+
 
 function findDuplicateFacility(callback){
 	if (!program.findDuplicateFacility) return callback();
@@ -260,6 +269,7 @@ async.series([
     migrateFacility,
     migrateClass,
     migrateFacilityImage,
+    fixCrawlImage,
     findDuplicateFacility,
     countTotalImages
 ], function(err, res) {
