@@ -10,7 +10,7 @@ var dateUtils = require('../utils/dateUtils'),
 	DatabaseManager = require('../data/'),
 	configs = require('../utils/configs');
 	crossfitSraper = require('../scraper/crossfit/crossfitScraper'),
-	facilityWebsite = require('../scraper/facilityWebsite'),
+	facilityWebsite = require('../scraper/facilitywebsite'),
 	facilityMigration = require('../scraper/migration/facilityMigration.js'),
 	classMigration = require('../scraper/migration/classMigration.js');
 
