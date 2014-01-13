@@ -44,6 +44,7 @@ define([
 
 			if (confirmPopup === true) {
 				console.log('Remove class', this.model);
+				Backbone.EventBroker.trigger('class:remove', this.model);
 				this.model.destroy();
 			}
 		},

@@ -30,9 +30,10 @@ define([
 		paginator_ui: {
 			firstPage: 1,
 			page: 1,
-			nextPage: '',
+			nextOnePage: [],
+			nextTwoPage: [],
 			putLastestId: true,
-			perPage: conf.PAGE_LIMIT,
+			perPage: conf.PHOTO_LIMIT,
 			totalPages: 50
 		},
 
@@ -64,6 +65,7 @@ define([
 			    // the event provides stats on the number of completed items 
 			    console.log(e.completedCount + ' / ' + e.totalCount);
 			    if (e.completedCount === e.totalCount) {
+						self.page = res.currentPage;
 						self.reset(res.photos);
 
 						// hide indicator

@@ -99,7 +99,7 @@ module.exports = BaseDBService.extend({
     /*
     * Undo checkout facilities edit by a user
     */
-    undoCheckOut: function(token, fn){
+    undoCheckOutByUserName: function(token, fn){
         var self = this;
 
         this.authenticationModel.findOne({token : token}, function(err, authentication){
@@ -108,6 +108,23 @@ module.exports = BaseDBService.extend({
                 var userName = authentication.username || "";
 
                 self.modelClass.update({checkOutBy : userName},  { $set : { checkOutBy : ""} }, { multi : true}, fn); 
+            }
+        })
+        
+    },
+
+    /*
+    * Undo checkout a Facility
+    */
+    undoCheckOut: function(token, facilityID, fn){
+        var self = this;
+
+        this.authenticationModel.findOne({token : token}, function(err, authentication){
+            if(err || !authentication) fn && fn(err, null);
+            else{
+                var userName = authentication.username || "";
+
+                self.modelClass.update({_id : facilityID},  { $set : { checkOutBy : ""} }, fn); 
             }
         })
         
@@ -244,12 +261,14 @@ module.exports = BaseDBService.extend({
                                 {
                                     facilityName : item.facilityName,
                                     stateLowerCase : item.stateLowerCase,
-                                    zip : { $exists : true, $ne : '', $in : [item.zip]},
+                                    //zip : { $exists : true, $ne : '', $in : [item.zip]},
                                     
                                 }
                         ]
                     }, 
                     function (err, facility){
+                        console.log('facility');
+                        console.log(facility);
                         if(err) done(err, null);
                         else{
                             index++;
@@ -377,6 +396,23 @@ module.exports = BaseDBService.extend({
         this.modelClass.find( { "country" : "" }, fn);
     },
 
+    /*
+    *   Count total facility.images.
+    */
+    countImages: function(fn){
+        this.modelClass.find({}, {_id: 1, images : 1}, function(err, results){
+
+            var facilities = _.reduce(results,function(memo, facility){
+                if(_.isArray(facility.images)){
+                    return memo + facility.images.length;    
+                } else
+                    return memo;
+                
+            }, 0)
+            fn && fn({totalFacility: results.length, totalImages : totalImages});
+        })
+    },
+
     //Update lat and lng
     updateLatLng: function(facilityId, lat, lng, fn){
         this.modelClass.update({facilityID : facilityId}, { $set : {lat : lat, lng : lng} }, { upsert:false }, fn )
@@ -496,6 +532,6 @@ module.exports = BaseDBService.extend({
         orderIndex += (!facility.ownersName || facility.ownersName == "") ? 1 : 0;
         orderIndex += (!facility.aboutus  || facility.aboutus  == "") ? 1 : 0;
         return orderIndex;
-    },
-
+    }
+    
 });

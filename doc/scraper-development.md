@@ -116,4 +116,11 @@ $ bin/command --scraper facilityWebsite
 	$ bin/stop_webserver
 ```
 
+### Photo de-select tool
+
+Upload qualified image to S3
+
+```
+$ ./bin/command --uploadtos3
+```
 

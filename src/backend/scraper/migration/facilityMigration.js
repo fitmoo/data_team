@@ -4,7 +4,7 @@ var async = require('async'),
 	_ = require('underscore'),
 	fs = require('fs');
 
-var facilityFileName =  path.resolve(__dirname, 'Fm_tbl_data.csv'),
+var facilityFileName =  path.resolve(__dirname, 'Fm_tbl_data_test.csv'),
 	configs = require('../../utils/configs'),
 	DatabaseManager = require('../../data/');
 

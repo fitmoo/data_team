@@ -78,6 +78,11 @@ app.namespace('/api/facilities', function(req, res, next){ user.verifyToken(req,
   //Search Facility Queue
   app.get('/checkout/:id', function(req, res){ facility.checkOut(req, res); });
 
+  //Undo checkout
+  app.post('/undoCheckOut/:id', function(req, res){ facility.undoCheckOut(req, res); });
+
+  
+
   //Get number of facilities don't have photo/video
   app.get('/needPhotoVideo', function(req, res){ facility.facilityNeedUpdateMedia(req, res); });
   

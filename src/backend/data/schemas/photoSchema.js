@@ -5,7 +5,11 @@ var PhotoSchema = new mongoose.Schema({
 	sourceURL: {type: String, default: ""},
 	s3URL: {type: String, default: ""},
 	markDelete: {type: Boolean, default: false},
-	createdDate: {type: Date, default: Date.now}
+	//Image migrated from fitmoo facilities data set
+	isFitmooData: {type: Boolean, default: false},
+	createdDate: {type: Date, default: Date.now},
+	debugData : {type: Boolean, default: false},
+	index: {type: Number}
 });
 
 PhotoSchema.set('toJSON', { getters: true });
