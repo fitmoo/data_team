@@ -108,11 +108,12 @@ module.exports = BaseDBService.extend({
                                                         
                                                         self.photoS3.findOne(photoS3Obj, 
                                                         function(err, s3Photo){
-                                                            if(err)
-                                                                done && done(err);
-                                                            else{
+                                                            if(!err && !s3Photo){
                                                                 photoS3Obj._id = qualifiedPhoto._id;
                                                                 self.photoS3.create(photoS3Obj, done);
+                                                            }
+                                                            else{
+                                                                done && done(err);
                                                             }
                                                         })
                                                     }, function(err){
@@ -273,113 +274,4 @@ module.exports = BaseDBService.extend({
             }
         })
     }
-    /*
-    markDelete: function(token, photos, firstPhotoId, latestPhotoId, fn){
-        var self = this;
-
-        this.getUserName(token, function(err, userName){
-            if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
-            else{
-            
-                async.mapSeries(photos, function(id, done){
-                    self.modelClass.findOneAndUpdate({_id : id}, {markDelete : true}, done);
-                }, function(err, results){
-                    if(!err){
-                        console.log('firstPhotoId: %s',firstPhotoId);
-                        console.log('latestPhotoId: %s',latestPhotoId);
-                        
-                        //Update user latest viewed image
-                        if(latestPhotoId && latestPhotoId !== '' && firstPhotoId && firstPhotoId !== ''){
-                            
-                            //Get last photo
-                            self.modelClass.findOne({_id : latestPhotoId}, function(err, photo){
-                                if(err || !photo){
-                                    fn && fn(err);
-                                } else{
-                                    //Get first photo
-                                    self.modelClass.findOne({_id : firstPhotoId}, function(err, firstphoto){
-                                        if(err || !firstphoto){
-                                            fn && fn(err);
-                                        } else{
-                                            self.photoViewLogModel.findOneAndUpdate({userName : userName}, {latestPhotoByDate: photo.createdDate}, {upsert: true}, function(err){
-                                                fn && fn(err, results);
-                                                //Disable upload to S3 while user de-select photo
-                                                if(!err){
-                                                    //Insert qualified image/photo to PhotoS3 collection for inserting process
-                                                    self.modelClass.find({createdDate : {$gte : firstphoto.createdDate, $lte : photo.createdDate}, markDelete: false} , function(err, qualifiedPhotos){
-                                                        if(!err){
-                                                            console.log('qualifiedPhotos: %s', qualifiedPhotos.length);
-                                                            async.eachSeries(qualifiedPhotos, function(qualifiedPhoto, done){
-                                                                console.log(qualifiedPhoto._id);
-                                                                var photoS3Obj = {facilityID : qualifiedPhoto.facilityID, sourceURL: qualifiedPhoto.sourceURL};
-
-                                                                self.photoS3.findOne(photoS3Obj, function(err, savedPhoto){
-                                                                    if(err){
-                                                                        done && done(err);
-                                                                    //If photo is already exitsts but have no chance to upload to S3 then start upload procedure
-                                                                    } else if(savedPhoto && !savedPhoto.s3UploadStatus){
-                                                                        //Upload to S3
-                                                                        uploadFile.uptoS3(savedPhoto._id.toString(), savedPhoto.sourceURL, function(err){
-                                                                            var updateData = {
-                                                                                s3UploadStatus : !err,
-                                                                                errMessage : err || "",
-                                                                            }
-
-                                                                            self.photoS3.findOneAndUpdate({_id: savedPhoto._id}, updateData, function(err, updated){
-                                                                                done && done(err);
-                                                                            });
-                                                                        });
-                                                                    //If photo doesn't exitsts then start upload procedure
-                                                                    } else{
-                                                                        //Create new record
-                                                                        photoS3Obj._id = qualifiedPhoto._id;
-                                                                        self.photoS3.create(photoS3Obj,function(err, newPhoto){
-                                                                            if(!err){
-                                                                                //Upload to S3
-                                                                                uploadFile.uptoS3(newPhoto._id.toString(), newPhoto.sourceURL, function(err){
-                                                                                    var updateData = {
-                                                                                        s3UploadStatus : !err,
-                                                                                        errMessage : err || "",
-                                                                                    }
-
-                                                                                    self.photoS3.findOneAndUpdate({_id: newPhoto._id}, updateData, function(err, updated){
-                                                                                        done && done(err);
-                                                                                    }); 
-                                                                                });
-                                                                            } else{
-                                                                                done && done(err);
-                                                                            }
-                                                                        })
-                                                                    }
-                                                                })
-
-                                                            }, function(err){
-                                                                fn && fn(err, results);
-                                                            });
-                                                            // Send response to server rigth after the upload process started
-                                                            fn && fn(err, results);
-                                                        } else{
-                                                            fn && fn(err, results);
-                                                        }
-                                                    });
-                                                } else{
-                                                    fn && fn(err, results);
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        } else{
-                            fn && fn(err, results);
-                        }
-                    }
-                    else {
-                        fn && fn(err, results);
-                    }
-                });
-            }
-        })
-    },
-    */
 });

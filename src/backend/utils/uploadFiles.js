@@ -34,6 +34,7 @@ module.exports = {
 		var self = this;
 
 		request.head(url, function(err, res, body){
+			console.log(__dirname);
     		var writeStream = fs.createWriteStream(path.resolve(__dirname, imageId));
     		
     		writeStream.on('error', function(err){

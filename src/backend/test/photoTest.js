@@ -68,6 +68,7 @@ describe('Test photos function', function(){
 				expect(e).to.eql(null);
 		    	var deletePhotos = _.filter(res.body, function(photo){ return photo && photo.markDelete === true });
 		    	console.log('Mark deleted photos: %s', deletePhotos.length);
+		    	console.log(res.body);
 		    	expect(deletePhotos.length).to.eql(MARKDELETE);
 
 		        done();

@@ -269,7 +269,7 @@ function uploadToS3(callback){
 			photoService.upLoadToS3(function(err){
 				if(err){
 					console.log('Upload qualified images to S3 error:');
-					console.log('%s', err);
+					console.log('%j', err);
 				} else{
 					console.log('Upload qualified images to S3 finish.');
 				}
