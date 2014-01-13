@@ -37,7 +37,7 @@ describe('Test photos function', function(){
 	})
 
   	it('Get photos', function(done){
-	    var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=100&page=1' );
+	    var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=50&page=1' );
 	    request
 	    .end(function(e,res){
 	    	expect(e).to.eql(null);
@@ -72,7 +72,7 @@ describe('Test photos function', function(){
   	})
 
 	it('Get photos after markdelete', function(done){
-  		var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=100&page=2' );
+  		var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=50&page=2' );
 	    request
 	    .end(function(e,res){
 	    	expect(e).to.eql(null);

@@ -185,9 +185,10 @@ module.exports = BaseDBService.extend({
                             search : search
                         };
 
-                        console.log(opt);
+                        console.log();
 
                         self.find(opt, function(err, photos, count){
+                            console.log('%j', photos[0]);
                             fn(err, {photos: photos, currentPage : pageIndex + 1, count: count});
                         });
                     }
