@@ -33,7 +33,6 @@ module.exports = {
 			this.photoService.markDelete(token, photos, firstPhotoId, latestPhotoId, function(err, updatedPhotos){
 				if(err) res.send(errorObject);
 				else{
-					console.log(updatedPhotos);
 					res.send(updatedPhotos);
 				}
 			})
