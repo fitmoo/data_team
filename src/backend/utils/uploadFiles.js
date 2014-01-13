@@ -35,6 +35,11 @@ module.exports = {
 
 		request.head(url, function(err, res, body){
     		var writeStream = fs.createWriteStream(path.resolve(__dirname, imageId));
+    		
+    		writeStream.on('error', function(err){
+    			fn && fn(err);
+    		});
+
     		writeStream.on('finish', function(){
     			fs.exists(writeStream.path, function(exits){
     				if(exits){
