@@ -29,19 +29,19 @@ module.exports = {
 	/*
 	*	Upload file from url to S3
 	*/
-	uptoS3 : function(imageId, url, fn){
+	uptoS3 : function(imageId, url, folderPath, fn){
 		var option = { url : url, method: 'GET'};
 		var self = this;
 
 		request.head(url, function(err, res, body){
-			console.log(__dirname);
-    		var writeStream = fs.createWriteStream(path.resolve(__dirname, imageId));
+    		var writeStream = fs.createWriteStream(path.resolve(folderPath, imageId));
     		
     		writeStream.on('error', function(err){
     			fn && fn(err);
     		});
 
     		writeStream.on('finish', function(){
+
     			fs.exists(writeStream.path, function(exits){
     				if(exits){
     					var data = fs.readFileSync(writeStream.path);
@@ -54,11 +54,13 @@ module.exports = {
 						var params = {Bucket: self.bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
 
 						self.s3.putObject(params, function(err, body) {
-						    if (err)
-						      console.log(err);
-						    fs.unlink(writeStream.path, function(){
+						    if (!err){
+						    	fs.unlink(writeStream.path, function(){
+						    		fn && fn(err);
+						    	});
+						    } else{
 						    	fn && fn(err);
-						    })
+						    }
 						});
     				} else{
     					fn && fn();

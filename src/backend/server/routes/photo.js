@@ -24,13 +24,14 @@ module.exports = {
 	
 	markDelete: function(req, res){
 		var token = req.query.token,
+			perpage = req.query.perPage,
 			photos = req.body.deletedPhotos,
 			latestPhotoId = req.body.latestPhoto;
 			firstPhotoId = req.body.firstPhoto;
 			
 		if(token && token !== ''){
 			if(!photos) photos = [];
-			this.photoService.markDelete(token, photos, firstPhotoId, latestPhotoId, function(err, updatedPhotos){
+			this.photoService.markDelete(token, photos, firstPhotoId, latestPhotoId, perpage, function(err, updatedPhotos){
 				if(err) res.send(errorObject);
 				else{
 					res.send(updatedPhotos);

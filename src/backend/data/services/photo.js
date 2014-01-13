@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     async = require('async'),
     _ = require('underscore'),
+    path = require('path'),
     BaseDBService = require('../base-mongodb-service'),
     Photo = require('../models/photoModel'),
     Authentication = require('../models/authenticationModel'),
@@ -61,8 +62,9 @@ module.exports = BaseDBService.extend({
     /*
     * Mark delete a series of photo
     */
-    markDelete: function(token, deletephotos, firstPhotoId, latestPhotoId, fn){
+    markDelete: function(token, deletephotos, firstPhotoId, latestPhotoId, perpage, fn){
         var self = this;
+        perpage = perpage || 0;
 
         this.getUserName(token, function(err, userName){
             if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
@@ -84,9 +86,9 @@ module.exports = BaseDBService.extend({
                                 }, function(err, results){
                                     if(err) fn && fn(err, results);
                                     else{
-                                        var lastPage = Math.floor((lastphoto.index + 1)/100);
+                                        var lastPage = Math.floor((lastphoto.index + 1)/perpage);
 
-                                        if(lastphoto.index % 100 == 0){
+                                        if(lastphoto.index % perpage == 0){
                                             lastPage -= 1;
                                         }
                                         
@@ -247,7 +249,6 @@ module.exports = BaseDBService.extend({
     *   Upload qualified photos to S3
     */
     upLoadToS3: function(fn){
-
         this.photoS3.find({sourceURL : {$exists : true}, s3UploadStatus : false}, function(err, photos){
             if(err) fn && fn(err);
             else{
@@ -255,10 +256,11 @@ module.exports = BaseDBService.extend({
                 var index = 0;
 
                 console.log('Total images: %s', length);
+                var folderPath = path.resolve(__dirname, '../../temp');
                 async.eachSeries(photos, function(photo, done){
                     index ++;
                     if(photo.sourceURL != ''){
-                        uploadFile.uptoS3(photo._id.toString(), photo.sourceURL, function(err){
+                        uploadFile.uptoS3(photo._id.toString(), photo.sourceURL, folderPath, function(err){
                             photo.s3UploadStatus = !err;
                             photo.errMessage = err;
                             photo.save(function(err){
@@ -268,7 +270,6 @@ module.exports = BaseDBService.extend({
                         })
                     }
                 }, function(err){
-                    console.log(err);
                     fn && fn(err);
                 })
             }
