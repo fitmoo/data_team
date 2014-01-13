@@ -15,7 +15,7 @@ describe('Test photos function', function(){
   	
 	var token = "";
 	var MARKDELETE = 6;
-
+	var perPage = 50;
 	var photos = {
 		 deletedPhotos : [], 
 		 latestPhoto : "",
@@ -37,7 +37,7 @@ describe('Test photos function', function(){
 	})
 
   	it('Get photos', function(done){
-	    var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=50&page=1' );
+	    var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=' + perPage + '&page=1' );
 	    request
 	    .end(function(e,res){
 	    	expect(e).to.eql(null);
@@ -47,6 +47,9 @@ describe('Test photos function', function(){
 	    	for(var i = 0; i < MARKDELETE; i++){
 	    		photos.deletedPhotos.push(res.body.photos[i]._id);
 	    	}
+	    	//Add out of range delete photo
+	    	photos.deletedPhotos.push("02001373e894ad16347efe01");
+
 	    	photos.firstPhoto = res.body.photos[0]._id;
 	    	photos.latestPhoto = res.body.photos[res.body.photos.length - 1]._id;
 	    	latestCreatedDate = res.body.photos[res.body.photos.length - 1].createdDate;
@@ -63,7 +66,8 @@ describe('Test photos function', function(){
 			.send(photos)
 			.end(function(e,res){
 				expect(e).to.eql(null);
-		    	var deletePhotos = _.filter(res.body, function(photo){ return photo.markDelete === true });
+		    	var deletePhotos = _.filter(res.body, function(photo){ return photo && photo.markDelete === true });
+		    	console.log('Mark deleted photos: %s', deletePhotos.length);
 		    	expect(deletePhotos.length).to.eql(MARKDELETE);
 
 		        done();
@@ -72,13 +76,13 @@ describe('Test photos function', function(){
   	})
 
 	it('Get photos after markdelete', function(done){
-  		var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=50&page=2' );
+  		var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=' + perPage + '&page=2' );
 	    request
 	    .end(function(e,res){
 	    	expect(e).to.eql(null);
 	    	var len = res.body.photos.length;
 
-	    	expect(len).to.equal(100);
+	    	expect(len).to.equal(perPage);
 	    	console.log(res.body.currentPage);
 	    	console.log(res.body.photos[0]);
 	        done();

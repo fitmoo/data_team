@@ -261,13 +261,18 @@ function countTotalImages(callback){
 }
 
 function uploadToS3(callback){
-	if (!program.uploadToS3) return callback();
+	if (!program.uploadtos3) return callback();
 	else{
 		var db = new DatabaseManager(configs);
 		db.init(["Photo"], function(){
 			var photoService = db.getInstance("Photo");
 			photoService.upLoadToS3(function(err){
-				console.log('Upload qualified images to S3 finish.');
+				if(err){
+					console.log('Upload qualified images to S3 error:');
+					console.log('%s', err);
+				} else{
+					console.log('Upload qualified images to S3 finish.');
+				}
 				callback && callback();
 			});
 		});

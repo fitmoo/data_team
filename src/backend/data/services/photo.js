@@ -61,81 +61,75 @@ module.exports = BaseDBService.extend({
     /*
     * Mark delete a series of photo
     */
-    markDelete: function(token, photos, firstPhotoId, latestPhotoId, fn){
+    markDelete: function(token, deletephotos, firstPhotoId, latestPhotoId, fn){
         var self = this;
 
         this.getUserName(token, function(err, userName){
             if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
             else{
-            
-                async.mapSeries(photos, function(id, done){
-                    self.modelClass.findOneAndUpdate({_id : id}, {markDelete : true}, done);
-                }, function(err, results){
-                    if(!err){
-                        console.log('firstPhotoId: %s',firstPhotoId);
-                        console.log('latestPhotoId: %s',latestPhotoId);
-                        
-                        //Update user latest viewed image
-                        if(latestPhotoId && latestPhotoId !== '' && firstPhotoId && firstPhotoId !== ''){
-                            //Get firstPhoto
-                            self.modelClass.findOne({_id : firstPhotoId}, function(err, firstphoto){
-                                if(err){
-                                    fn && fn(err, results);
-                                } else{
-                                    //Get last photo
-                                    self.modelClass.findOne({_id : latestPhotoId}, function(err, photo){
-                                        if(err || !photo){
-                                            fn && fn(err, results);
-                                        } else{
-                                            var lastPage = Math.floor((photo.index + 1)/ 100);
+                self.modelClass.findOne({_id : firstPhotoId}, function(err, firstphoto){
+                    if(err){
+                        fn && fn(err, null);
+                    } else{
+                        //Get last photo
+                        self.modelClass.findOne({_id : latestPhotoId}, function(err, lastphoto){
+                            if(err || !lastphoto){
+                                fn && fn(err, null);
+                            } else{
 
-                                            if(photo.index % 100 == 0){
-                                                lastPage -= 1;
-                                            }
-                                            console.log('Last page: %s', lastPage);
-                                            self.photoViewLogModel.findOneAndUpdate({userName : userName}, {latestPhotoByDate: photo.createdDate, lastPage: lastPage}, {upsert: true}, function(err){
-                                                //Move selected Photo to photoS3 collection
-                                                console.log('firstphoto.index : %s, lastphoto.index : %s' , firstphoto.index, photo.index);
-                                                self.modelClass.find({index : {$gte : firstphoto.index, $lte : photo.index}, markDelete: false} , function(err, qualifiedPhotos){
-                                                    if(err){
-                                                        fn && fn(err, results);
-                                                    } else{
-                                                        console.log(qualifiedPhotos.length);
-                                                        async.eachSeries(qualifiedPhotos, function(qualifiedPhoto, done){
-                                                            console.log(qualifiedPhoto.index);
-                                                            var photoS3Obj = {facilityID : qualifiedPhoto.facilityID, sourceURL: qualifiedPhoto.sourceURL};
-                                                            
-                                                            self.photoS3.findOne(photoS3Obj, 
-                                                            function(err, s3Photo){
-                                                                if(err)
-                                                                    done && done(err);
-                                                                else{
-                                                                    photoS3Obj._id = qualifiedPhoto._id;
-                                                                    self.photoS3.create(photoS3Obj, done);
-                                                                }
-                                                            })
-                                                        }, function(err){
+                                //Mark delete photos between first and last photos
+                                 async.mapSeries(deletephotos, function(id, done){
+                                    self.modelClass.findOneAndUpdate({_id : id, index : {$gte: firstphoto.index, $lte: lastphoto.index}}, {markDelete : true}, done);
+                                        
+                                }, function(err, results){
+                                    if(err) fn && fn(err, results);
+                                    else{
+                                        var lastPage = Math.floor((lastphoto.index + 1)/100);
 
-                                                            fn && fn(err, results);
-                                                        })    
-                                                    }
-                                                })
-                                                
-                                            });
+                                        if(lastphoto.index % 100 == 0){
+                                            lastPage -= 1;
                                         }
-                                    });
-                                }
-                            });
-                        } else{
-                            fn && fn(err, results);
-                        }
-                    }
-                    else {
-                        fn && fn(err, results);
+                                        
+                                        console.log('firstPhotoId: %s',firstPhotoId);
+                                        console.log('latestPhotoId: %s',latestPhotoId);
+                                        console.log('Last page: %s', lastPage);
+                                        console.log('firstphoto.index : %s, lastphoto.index : %s' , firstphoto.index, lastphoto.index);
+
+                                        self.photoViewLogModel.findOneAndUpdate({userName : userName}, {latestPhotoByDate: lastphoto.createdDate, lastPage: lastPage}, {upsert: true}, function(err){
+                                            
+                                            //Move selected Photo to photoS3 collection
+                                            
+                                            self.modelClass.find({index : {$gte : firstphoto.index, $lte : lastphoto.index}, markDelete: false} , function(err, qualifiedPhotos){
+                                                if(err){
+                                                    fn && fn(err, results);
+                                                } else{
+                                                    async.eachSeries(qualifiedPhotos, function(qualifiedPhoto, done){
+                                                        var photoS3Obj = {facilityID : qualifiedPhoto.facilityID, sourceURL: qualifiedPhoto.sourceURL};
+                                                        
+                                                        self.photoS3.findOne(photoS3Obj, 
+                                                        function(err, s3Photo){
+                                                            if(err)
+                                                                done && done(err);
+                                                            else{
+                                                                photoS3Obj._id = qualifiedPhoto._id;
+                                                                self.photoS3.create(photoS3Obj, done);
+                                                            }
+                                                        })
+                                                    }, function(err){
+
+                                                        fn && fn(err, results);
+                                                    })    
+                                                }
+                                            })
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
-        })
+        });
     },
 
     /*
@@ -252,21 +246,32 @@ module.exports = BaseDBService.extend({
     *   Upload qualified photos to S3
     */
     upLoadToS3: function(fn){
-         self.photoS3.find({sourceURL : {$exist : true}, s3UploadStatus : false}, function(err, photos){
+
+        this.photoS3.find({sourceURL : {$exists : true}, s3UploadStatus : false}, function(err, photos){
             if(err) fn && fn(err);
             else{
-                async.eachSeries(photos, function(photo, done){
-                    if(photo.sourceURL != ''){
-                        uploadFile.uptoS3(newPhoto._id.toString(), newPhoto.sourceURL, function(err){
-                            console.log(err);
+                var length = photos.length;
+                var index = 0;
 
+                console.log('Total images: %s', length);
+                async.eachSeries(photos, function(photo, done){
+                    index ++;
+                    if(photo.sourceURL != ''){
+                        uploadFile.uptoS3(photo._id.toString(), photo.sourceURL, function(err){
+                            photo.s3UploadStatus = !err;
+                            photo.errMessage = err;
+                            photo.save(function(err){
+                                console.log('Uploaded image: %s/%s', index, length);
+                                done && done(err);
+                            });
                         })
                     }
                 }, function(err){
-
+                    console.log(err);
+                    fn && fn(err);
                 })
             }
-         })
+        })
     }
     /*
     markDelete: function(token, photos, firstPhotoId, latestPhotoId, fn){
