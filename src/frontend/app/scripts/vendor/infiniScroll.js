@@ -57,17 +57,17 @@
     };
 
     self.fetchSuccess = function(collection, response) {
-      console.log(collection, response.photos);
+      // console.log(collection, collection.nextOnePage.photos);
       // if ((self.options.strict && collection.length >= (page + 1) * self.options.pageSize) || (!self.options.strict && response.photos.length > 0)) {
       if (response.totalRecords >= (page + 1) * self.options.pageSize) {
-        // self.enableFetch();
+        self.enableFetch();
         // collection.add(response.photos);
         // console.log(collection,page);
         // page += 1;
       } else {
         self.disableFetch();
       }
-      self.options.success(collection, response.photos);
+      self.options.success(collection, collection.nextOnePage.photos);
     };
 
     self.fetchError = function(collection, response) {
@@ -80,74 +80,44 @@
 
       var queryParams,
           scrollY = $target.scrollTop() + $target.height(),
-          docHeight = $target.get(0).scrollHeight;
+          docHeight = $target.get(0).scrollHeight,
+          photoSize = self.collection.nextOnePage.photos.length;
       if (!docHeight) {
         docHeight = $(document).height();
       }
       if (window.location.href.split('#')[1] === 'photos') {
         if (docHeight - scrollY <= 0) {
-          self.deleteModels();
-          if (!self.collection.checking  && self.collection.nextPage.photos.length > 0) {
-            self.collection.checking = true;
+          if (!self.collection.checking  && photoSize > 0) {
             var backDrop = $('#backdrop'),
                 indicator = $('#indicator');
 
             backDrop.show();
             indicator.show();
+            self.collection.checking = true;
 
             var checking = setInterval(function() {
               if (self.collection.onLoadingProgress) {
                 backDrop.hide();
                 indicator.hide();
-                self.collection.checking = false;
                 // if (scrollY >= docHeight - self.options.scrollOffset && fetchOn && prevScrollY <= scrollY) {
-                $(window).scrollTop(30);
-                var lastModel = self.collection.last();
-                if (!lastModel) { return; }
+                // $(window).scrollTop(30);
+                // var lastModel = self.collection.last();
+                // if (!lastModel) { return; }
 
-                self.onFetch();
-                self.disableFetch();
-                // console.log(self.collection.page);
-                self.collection.reset(self.collection.nextPage.photos);
-                // self.collection.fetch({
-                //   success: self.fetchSuccess,
-                //   error: self.fetchError,
-                //   remove: self.options.remove,
-                //   data: $.extend(buildQueryParams(lastModel, collection), self.options.extraParams)
-                // });
-                prevScrollY = scrollY;
+                // self.onFetch();
+                // self.disableFetch();
+                self.options.success(collection, collection.nextOnePage.photos);
+                self.collection.checking = false;
+                // self.fetchSuccess(self.collection, collection.nextOnePage.photos);
+                // prevScrollY = scrollY;
                 clearInterval(checking);
               }
             }, 1000);
+          } else if (photoSize === 0 && collection.nextTwoPage.photos.length === 0) {
+            self.options.success(collection, collection.nextOnePage.photos, true);
           }
         }
       }
-    };
-
-    self.deleteModels = function() {
-      var imagePicker = $('#photo-selection'),
-          deletedPhotos = imagePicker.val();
-              
-      if (deletedPhotos || self.collection.putLastestId) {
-        var firstPhotoId = self.collection.first().id,
-            lastPhotoId = self.collection.last().id,
-            data = {
-              deletedPhotos: deletedPhotos,
-              latestPhoto: lastPhotoId,
-              firstPhoto: firstPhotoId
-            };
-            
-        if (firstPhotoId) {
-          console.log('Delete photos viewed:', data, lastPhotoId);
-          self.collection.putLastestId = false;
-          self.options.api.put('photos?token=' + self.options.token, data, function(res) {
-           imagePicker.removeAttr('value');
-           self.collection.remove(res);
-           imagePicker.imagepicker();
-          });
-        }
-      }
-
     };
 
     function buildQueryParams(model) {

@@ -38,6 +38,7 @@ define([
   return {
     PREFIX: '/api/',
     PAGE_LIMIT: 50,
+    PHOTO_LIMIT: 100,
     facilitiesTotalPages: 1,
     eventsTotalPages: 1,
     classesTotalPages: 1,

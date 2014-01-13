@@ -1,5 +1,6 @@
 /* Global define */
 define([
+	'conf',
 	'api',
 	'models/session',
 	'backbone-eventbroker',
@@ -14,6 +15,7 @@ define([
 
 	'backbone.marionette'
 ], function(
+	conf,
 	api,
 	Session,
 	EventBroker,
@@ -35,27 +37,70 @@ define([
 				'photo:nextPage': 'loadingNextPage'
 			}, this);
 			this.collection = new photos();
+			this.endOfPage = 0;
 
 			this.listenTo(this.collection, 'reset', function() {
 				self.loadingNextPage();
 			});
 
     	this.collection.onLoadingProgress = true;
-			this.collection.fetch();
+    	this.collection.fetch();
 		},
 
 		onRender: function() {
 			var self = this,
 				options = {
-					pageSize: 50,
+					pageSize: conf.PHOTO_LIMIT,
 					scrollOffset: 1000,
 					includePage: true,
 					api: api,
 					token: Session.get('user').token,
-					success: function(collection, data) {
-						// console.log(data);
-						// collection.add(data);
-						// console.log(collection);
+					success: function(collection, data, currentPage) {
+						var photoLimitSize = conf.PHOTO_LIMIT,
+								length = self.collection.length,
+								dataLength = data.length;
+
+						if (currentPage) {
+							self.endOfPage++;
+						}
+						// delete first page and add new page when current page > 2 (100 items)
+						if (length >= photoLimitSize*2 || dataLength === 0) {
+							var firstPage;
+
+							// check last photo page
+							if (self.endOfPage === 2) {
+    						self.collection.onLoadingProgress = false;
+								firstPage = self.collection.models;
+							} else {
+								firstPage = self.collection.slice(0, photoLimitSize);
+							}
+							if (firstPage.length > 0) {
+								var firstPhotoId = firstPage[0].id,
+		            		lastPhotoId = firstPage[firstPage.length - 1].id,
+		            		deletedPhotos = self.$el.val(),
+				            dataVal = {
+				              deletedPhotos: deletedPhotos,
+				              latestPhoto: lastPhotoId,
+				              firstPhoto: firstPhotoId
+				            };
+
+								self.collection.putLastestId = true;
+		            self.deletePhotos(dataVal);
+								self.collection.remove(firstPage);
+
+								// alert when have no photos to loading
+								if (self.endOfPage === 2) {
+									$(window).scrollTop(30);
+									alert('Have no photo');
+								}
+
+							}
+						}
+
+						self.collection.add(data);
+						self.$el.imagepicker();
+						self.loadingNextPage();
+
 					}
 				};
 			this.infiniScroll = new Backbone.InfiniScroll(this.collection, options);
@@ -67,13 +112,25 @@ define([
 
 			// only loading next one pagination
     	if (self.collection.onLoadingProgress) {
-    		self.collection.onLoadingProgress = false;
-  			self.collection.page = self.collection.page + 1;
+    		this.collection.onLoadingProgress = false;
+				self.collection.page = self.collection.page+1;
 
   			// loading images of next pagination
-				api.get(['photos?token=', Session.get('user').token, '&page=', self.collection.page].join(''), {}, function(res) {
+				api.get(['photos?token=', Session.get('user').token, '&perPage=', conf.PHOTO_LIMIT, '&page=', self.collection.page].join(''), {}, function(res) {
+					console.log(res);
+					var nextTwoPageSize = self.collection.nextTwoPage.length,
+							nextOnePageSize = self.collection.nextOnePage.length,
+							loadedPage = self.collection.page;
+
 					// save next pagination data
-					self.collection.nextPage = res;
+					if (nextOnePageSize === 0 && nextTwoPageSize === 0) {
+						self.collection.nextOnePage = res;
+					} else if (self.collection.nextOnePage.currentPage === loadedPage - 1  ) {
+						self.collection.nextTwoPage = res;
+					} else {
+						self.collection.nextOnePage = self.collection.nextTwoPage;
+						self.collection.nextTwoPage = res;
+					}
 					if (res.photos.length > 0) {
 						var loader = new PxLoader();
 					
@@ -88,19 +145,40 @@ define([
 					    // the event provides stats on the number of completed items 
 					    // console.log(e.completedCount + ' / ' + e.totalCount);
 					    if (e.completedCount === e.totalCount) {
-					    	self.collection.onLoadingProgress = true;
 								self.collection.putLastestId = true;
-					    	console.log('Finished load page', self.collection.page);
+					    	console.log('Finished load page', res.currentPage);
+					    	self.collection.onLoadingProgress = true;
+
+					    	// load next two page if next one page was loaded
+					    	if (loadedPage !== self.collection.nextTwoPage.currentPage) {
+					    		self.loadingNextPage();
+					    	}
 					    }
 						});
 						 
 						loader.start();
+					} else {
+			    	self.collection.onLoadingProgress = true;
 					}
 				});
     	}
-				
+		},
 
-		}
+		deletePhotos: function(data) {
+      if (this.collection.putLastestId) {
+            
+        if (data.firstPhoto) {
+          console.log('Delete photos viewed:', data);
+          this.collection.putLastestId = false;
+          api.put(['photos?token=', Session.get('user').token, '&perPage=', conf.PHOTO_LIMIT].join(''), data, function(res) {
+           // imagePicker.removeAttr('value');
+           // console.log(res);
+          });
+        }
+      }
+
+    }
+
 	});
 
 	return PhotosLayout;
