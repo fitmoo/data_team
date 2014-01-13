@@ -7,7 +7,9 @@ var PhotoSchema = new mongoose.Schema({
 	markDelete: {type: Boolean, default: false},
 	//Image migrated from fitmoo facilities data set
 	isFitmooData: {type: Boolean, default: false},
-	createdDate: {type: Date, default: Date.now}
+	createdDate: {type: Date, default: Date.now},
+	debugData : {type: Boolean, default: false},
+	index: {type: Number}
 });
 
 PhotoSchema.set('toJSON', { getters: true });

@@ -3,13 +3,17 @@ var superagent = require('superagent'),
     _ = require('underscore'),
     path = require('path');
 
-var URI = 'http://localhost:3000/api/photos';
-
+var URI_PHOTO = 'http://localhost:3000/api/photos';
+var URI = 'http://localhost:3000/api';
+var user = {
+	username : 'tranhnb',
+	password: '12345'
+};
 
 
 describe('Test photos function', function(){
   	
-	var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRyYW5obmIiLCJyYW5kb20iOiJmM2JjIn0.Lk02KLNgK8HYrA_vv6akjY8h-E3lB0Siv-zmktyO_tc";//tranhnb
+	var token = "";
 	var MARKDELETE = 6;
 
 	var photos = {
@@ -19,8 +23,21 @@ describe('Test photos function', function(){
 	};
 	var latestCreatedDate = null;
 
+	it('Login', function(done){
+	    var request = superagent.post(URI + '/login');
+	    request
+	    .send(user)
+	    .end(function(e,res){
+	    	console.log(res.body);
+	        expect(e).to.eql(null);
+	        expect(res.body.token.length).to.above(0);
+	        token = res.body.token;
+	        done();
+	    });
+	})
+
   	it('Get photos', function(done){
-	    var request = superagent.get(URI + '?token=' + token + '&perPage=10&curentPage=0' );
+	    var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=100&page=1' );
 	    request
 	    .end(function(e,res){
 	    	expect(e).to.eql(null);
@@ -33,13 +50,14 @@ describe('Test photos function', function(){
 	    	photos.firstPhoto = res.body.photos[0]._id;
 	    	photos.latestPhoto = res.body.photos[res.body.photos.length - 1]._id;
 	    	latestCreatedDate = res.body.photos[res.body.photos.length - 1].createdDate;
+	    	console.log(res.body.photos[res.body.photos.length - 1]);
+	    	console.log(res.body.currentPage);
 	        done();
 	    });
 	});
 
-
-  	it('Mark delete photo', function(done){
-  		 var request = superagent.put(URI + '?token=' + token);
+	it('Mark delete photo', function(done){
+  		 var request = superagent.put(URI_PHOTO + '?token=' + token);
 		 if(photos.deletedPhotos.length > 0){
 			request
 			.send(photos)
@@ -53,33 +71,32 @@ describe('Test photos function', function(){
   		}
   	})
 
-  	it('Get photos after markdelete', function(done){
-  		var request = superagent.get(URI + '?token=' + token + '&perPage=10&curentPage=0' );
+	it('Get photos after markdelete', function(done){
+  		var request = superagent.get(URI_PHOTO + '?token=' + token + '&perPage=100&page=2' );
 	    request
 	    .end(function(e,res){
 	    	expect(e).to.eql(null);
 	    	var len = res.body.photos.length;
 
-	    	expect(len).to.equal(50);
-
-	    	
-	    	var count = 0;
-	    	var count_CreatedDate = 0;
-	    	for(var i = 0; i < len; i++){
-	    		//Expect the return images don't include any photos.deletedPhotos item
-	    		var temp = _.filter(photos.deletedPhotos, function(deletedPhoto){ return deletedPhoto._id === res.body.photos[i]._id});
-	    		count += temp && temp.length;
-
-	    		//Expect the return images createdDate always greater than latestCreatedDate
-	    		count_CreatedDate += res.body.photos[i].createdDate <= latestCreatedDate ? 1 : 0;
-	    	}
-	    	expect(count).to.eql(0);
-	    	expect(count_CreatedDate).to.eql(0);
-
-	    	
-
-
+	    	expect(len).to.equal(100);
+	    	console.log(res.body.currentPage);
+	    	console.log(res.body.photos[0]);
 	        done();
 	    });
   	})
+
+  	it('Logout', function(done){
+	    var request = superagent.post(URI + '/logout?token=' + token);
+	    request
+	    .send(user)
+	    .end(function(e,res){
+	        expect(e).to.eql(null);
+	        expect(res.body.msg).to.eql('logout');
+	        done();
+	    });
+	})
+
+
+
+  	
 });

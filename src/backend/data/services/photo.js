@@ -83,12 +83,168 @@ module.exports = BaseDBService.extend({
                                 if(err || !photo){
                                     fn && fn(err);
                                 } else{
+                                    var lastPage = Math.floor((photo.index + 1)/ 100);
+
+                                    if(photo.index % 100 == 0){
+                                        lastPage -= 1;
+                                    }
+                                    console.log('Last page: %s', lastPage);
+                                    self.photoViewLogModel.findOneAndUpdate({userName : userName}, {latestPhotoByDate: photo.createdDate, lastPage: lastPage}, {upsert: true}, function(err){
+                                        fn && fn(err, results);
+                                    });
+                                }
+                            });
+                        } else{
+                            fn && fn(err, results);
+                        }
+                    }
+                    else {
+                        fn && fn(err, results);
+                    }
+                });
+            }
+        })
+    },
+
+    /*
+    * Find Photo for current user
+    */
+    findPhotos: function(token, pageIndex, perPage, fn){
+        var self = this;
+        pageIndex = pageIndex && pageIndex > 1 ? pageIndex - 1 : 0;
+
+
+        //Get userName
+        this.getUserName(token, function(err, userName){
+
+            if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
+            else{
+                //Get latest Image 
+                self.photoViewLogModel.findOne({userName : userName}, function(err, photoviewLogItem){
+                    
+                    //console.log('userName: %s' ,userName);
+                    //console.log('photoviewLogItem: %j' ,photoviewLogItem);
+
+                    if(err) fn && fn(err);
+                    else{
+
+                        var search = {};
+                        console.log('Pageindex A : %s', pageIndex);
+                        if(photoviewLogItem 
+                            && photoviewLogItem.lastPage >= 0
+                            && (
+                                pageIndex <= photoviewLogItem.lastPage 
+                                // || 
+                                // (
+                                //     pageIndex == 0 && photoviewLogItem.lastPage == 0
+                                // )
+                            )
+                        ){
+                            pageIndex = photoviewLogItem.lastPage  + 1;
+                        }
+
+                        console.log('Pageindex B : %s', pageIndex);
+                        //Debug only
+                        search = {debugData : true};
+
+                        var opt = {
+                            paginate : { page : pageIndex, limit : perPage || 100 },
+                            sort : { createdDate : 1},
+                            search : search
+                        };
+
+
+                        self.find(opt, function(err, photos, count){
+                            fn(err, {photos: photos, currentPage : pageIndex + 1, count: count});
+                        });
+                    }
+                });
+            }
+        });
+    },
+    
+    /*
+    *   Migrate images in facilities collection 
+    */
+    migrateFacilitiesImage: function(fn){
+        var self = this;
+        
+        this.facilityModel.find({}, {_id: 1, images : 1},function(err, facilities){
+            var index = 0;
+
+            async.eachSeries(facilities, function(facility, done){
+
+                if(facility && _.isArray(facility.images)){
+                    async.eachSeries(
+                        facility.images,
+                        function(image, done){
+                            self.modelClass.findOne({sourceURL : image.url, facilityID : facility._id}, function(err, photo){
+                                if(!err && !photo){
+                                    //Copy image to photos collection
+                                    self.modelClass.create({
+                                        facilityID : facility._id,
+                                        markDelete : false,
+                                        s3URL : "",
+                                        isFitmooData: true,
+                                        sourceURL : image.url
+                                    }, function(err, savedPhoto){
+                                        setTimeout(function(){ done && done(err); }, 500);
+                                    })
+                                    
+                                    
+                                } else{
+                                    console.log('Exists');
+                                    done && done();
+                                }
+                            })
+                        },
+                        function(err){
+                            index++;
+                            console.log('Finish facility index: %s', index);
+                            done && done(err);
+                    }); 
+                    
+                } else{
+                    done && done();
+                }
+
+            }, function(err){
+                fn && fn(err);
+            });
+        })
+    },
+
+    /*
+    markDelete: function(token, photos, firstPhotoId, latestPhotoId, fn){
+        var self = this;
+
+        this.getUserName(token, function(err, userName){
+            if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
+            else{
+            
+                async.mapSeries(photos, function(id, done){
+                    self.modelClass.findOneAndUpdate({_id : id}, {markDelete : true}, done);
+                }, function(err, results){
+                    if(!err){
+                        console.log('firstPhotoId: %s',firstPhotoId);
+                        console.log('latestPhotoId: %s',latestPhotoId);
+                        
+                        //Update user latest viewed image
+                        if(latestPhotoId && latestPhotoId !== '' && firstPhotoId && firstPhotoId !== ''){
+                            
+                            //Get last photo
+                            self.modelClass.findOne({_id : latestPhotoId}, function(err, photo){
+                                if(err || !photo){
+                                    fn && fn(err);
+                                } else{
                                     //Get first photo
                                     self.modelClass.findOne({_id : firstPhotoId}, function(err, firstphoto){
                                         if(err || !firstphoto){
                                             fn && fn(err);
                                         } else{
                                             self.photoViewLogModel.findOneAndUpdate({userName : userName}, {latestPhotoByDate: photo.createdDate}, {upsert: true}, function(err){
+                                                fn && fn(err, results);
+                                                //Disable upload to S3 while user de-select photo
                                                 if(!err){
                                                     //Insert qualified image/photo to PhotoS3 collection for inserting process
                                                     self.modelClass.find({createdDate : {$gte : firstphoto.createdDate, $lte : photo.createdDate}, markDelete: false} , function(err, qualifiedPhotos){
@@ -166,96 +322,5 @@ module.exports = BaseDBService.extend({
             }
         })
     },
-
-    /*
-    * Find Photo for current user
     */
-    findPhotos: function(token, pageIndex, perPage, fn){
-        var self = this;
-
-        //Get userName
-        this.getUserName(token, function(err, userName){
-
-            if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
-            else{
-                //Get latest Image 
-                self.photoViewLogModel.findOne({userName : userName}, function(err, photoviewLogItem){
-                    
-                    //console.log('userName: %s' ,userName);
-                    //console.log('photoviewLogItem: %j' ,photoviewLogItem);
-
-                    if(err) fn && fn(err);
-                    else{
-                        var search = {};
-
-                        if(photoviewLogItem && photoviewLogItem.latestPhotoByDate){
-                            search = { createdDate : { $gt :photoviewLogItem.latestPhotoByDate },  markDelete : false};
-                        } else{
-                            search = { markDelete : false};
-                        }
-
-                        var opt = {
-                            paginate : { page : pageIndex && pageIndex > 1 ? 1 : 0, limit : perPage || 50 },
-                            sort : { createdDate : 1},
-                            search : search
-                        }
-
-                        self.find(opt, fn);
-                    }
-                });
-            }
-        });
-    },
-
-    /*
-    *   Migrate images in facilities collection 
-    */
-    migrateFacilitiesImage: function(fn){
-        var self = this;
-        
-        this.facilityModel.find({}, {_id: 1, images : 1},function(err, facilities){
-            var index = 0;
-
-            async.eachSeries(facilities, function(facility, done){
-
-                if(facility && _.isArray(facility.images)){
-                    async.eachSeries(
-                        facility.images,
-                        function(image, done){
-                            self.modelClass.findOne({sourceURL : image.url, facilityID : facility._id}, function(err, photo){
-                                if(!err && !photo){
-                                    //Copy image to photos collection
-                                    self.modelClass.create({
-                                        facilityID : facility._id,
-                                        markDelete : false,
-                                        s3URL : "",
-                                        isFitmooData: true,
-                                        sourceURL : image.url
-                                    }, function(err, savedPhoto){
-                                        setTimeout(function(){ done && done(err); }, 500);
-                                    })
-                                    
-                                    
-                                } else{
-                                    console.log('Exists');
-                                    done && done();
-                                }
-                            })
-                        },
-                        function(err){
-                            index++;
-                            console.log('Finish facility index: %s', index);
-                            done && done(err);
-                    }); 
-                    
-                } else{
-                    done && done();
-                }
-
-            }, function(err){
-                fn && fn(err);
-            });
-        })
-    }
-
 });

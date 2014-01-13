@@ -14,10 +14,10 @@ module.exports = {
 			perPage = req.query.perPage,
 			currentPage = req.query.page;
 
-		this.photoService.findPhotos(token, currentPage, perPage, function(err, photos, count){
+		this.photoService.findPhotos(token, currentPage, perPage, function(err, result){
 			if(err) res.send(errorObject);
 			else{
-				res.send({photos : photos, totalRecords: count});
+				res.send({photos : result.photos, totalRecords: result.count, currentPage: result.currentPage});
 			}
 		})
 	},
