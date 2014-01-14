@@ -22,7 +22,7 @@ require.config({
         'backbone.localStorage': '../bower_components/backbone.localStorage/backbone.localStorage',
 
         // Event broker
-        'backbone-eventbroker': '../bower_components/backbone-eventbroker/dist/backbone-eventbroker.amd',
+        'backbone-eventbroker': 'vendor/backbone-eventbroker.amd',
 
         // Backbone Paginator
         'backbone.paginator': '../bower_components/backbone.paginator/lib/backbone.paginator',
