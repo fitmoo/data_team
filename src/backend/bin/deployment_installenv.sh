@@ -4,6 +4,7 @@
 # DIR=${FILEPATH%/*}
 # DIR=${DIR%/*}
 DIR=$PWD
+RUBY_VERSION="2.0.0-p247"
 
 #Install environment for production server
 cd $HOME
@@ -15,7 +16,7 @@ echo "Install Node"
 
 sudo apt-get update
 sudo apt-get install build-essential openssl libssl-dev
-sudo apt-get install git
+sudo apt-get install git-core
 git clone git://github.com/joyent/node.git
 cd node
 git checkout v0.10.24
@@ -30,6 +31,9 @@ git clone https://github.com/isaacs/npm.git
 cd npm
 sudo make install
 
+#Install packages
+sudo npm install -g grunt-cli
+sudo npm install -g bower
 
 cd $HOME 
 #Install Express
@@ -50,8 +54,7 @@ sudo ln -s /usr/local/share/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/loca
 sudo ln -s /usr/local/share/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
 sudo ln -s /usr/local/share/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
 
-
-#install MongoDB
+#Install MongoDB
 cd $HOME
 echo "Install MongoDB"
 sudo mkdir -p /data/db
@@ -72,4 +75,18 @@ sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/fitmoo.com /etc/nginx/sites-enabled/default
 mkdir -p web/vanda.com/logs
 sudo service nginx start
+
+#Install Utils
+sudo apt-get install zip unzip
+
+
+#Install RUBY
+echo "--------------------------------------------------------------------------------"
+echo '### Install Ruby Version Manager ...'
+echo "--------------------------------------------------------------------------------"
+curl -sSL https://get.rvm.io | bash -s stable
+source /home/ubuntu/.rvm/scripts/rvm
+rvm install $RUBY_VERSION
+rvm use $RUBY_VERSION --default
+gem install compass
 

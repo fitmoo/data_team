@@ -20,6 +20,7 @@ src/backend/server/exports/
 src/backend/bin/conf
 src/backend/bin/dump
 src/backend/dump
+src/backend/databackup/*
 src/backend/temp*
 src/backend/server/routes/dump
 src/backend/bin/dump*

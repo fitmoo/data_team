@@ -4,6 +4,11 @@ FRONTENDBACKUPFOLDER="frontend_"$_NOW
 BACKENDBACKUPFOLDER="backend_"$_NOW
 
 echo "------------------------------------------------"
+echo "Pull source code from Github"
+echo "------------------------------------------------"
+git pull git@github.com:fitmoo/data_team.git
+
+echo "------------------------------------------------"
 echo "	Creating webserver directory and backup"
 echo "------------------------------------------------"
 mkdir -p ~/fitmoo/backup
@@ -13,36 +18,37 @@ mv ~/fitmoo/frontend ~/fitmoo/backup/$FRONTENDBACKUPFOLDER
 mv ~/fitmoo/backend ~/fitmoo/backup/$BACKENDBACKUPFOLDER
 mkdir -p ~/fitmoo/backend
 
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------"
 echo '### Install Front-end Packages & Modules ...'
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------"
 cd ../frontend
-npm cache clean
-npm install
-bower --allow-root install
+sudo npm cache clean
+sudo npm install
+bower install
 
 
 echo "------------------------------------------------"
 echo "	Build frontend"
 echo "------------------------------------------------"
 cd ../frontend
+rm -rf dist
 grunt build
 
-echo "----------------------------------------------------------------"
+echo "------------------------------------------------"
 echo "	Move distribution folder to webserver location"
-echo "----------------------------------------------------------------"
+echo "------------------------------------------------"
 mv dist ~/fitmoo/frontend
 
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------"
 echo '### Install Back-end Packages & Modules ...'
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------"
 cd ../backend
-npm install
+sudo npm install
 
 
-echo "----------------------------------------------------------------"
+echo "------------------------------------------------"
 echo "	Copy backend folder to webserver location"
-echo "----------------------------------------------------------------"
+echo "------------------------------------------------"
 cd ../backend
 cp -a * ~/fitmoo/backend
 

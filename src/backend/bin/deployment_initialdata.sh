@@ -1,21 +1,27 @@
 #Stop script if got exception
 set -o errexit
-mongod --repair
-mongod &
 
-	#Restore Database
+read -p "This script backup the following collection: facilities, classes, events, countries, states, users, photoviewlogs then replace the new collections. Y[Yes] or N[No]?   "  -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    # do dangerous stuff
+    #Restore Database
 	SOURCE="127.0.0.1:27017"
-	DATABASEFILE="/backend/bin/database.zip"
+	DATABASEFILE="bin/database.zip"
+
+	echo "Delete dump folder"
+	rm -rf dump/*
 
 	echo "Unzip database file"
-	unzip -o $DATABASEFILE -d /backend/bin
+	unzip $DATABASEFILE
 
 	echo "--------------------------------------------------------------------------------"
 	echo "Backup data on production server before restore"
 	echo "--------------------------------------------------------------------------------"
 	DBNAME="ScrapingData"
 	_NOW=$(date +"%m_%d_%Y")
-	BACKUPFOLDER="dump"$_NOW
+	BACKUPFOLDER="databackup/dump"$_NOW
 
 	echo "--------------------------------------------------------------------------------"
 	echo "Backup data on production server before restore. Folder Name: $BACKUPFOLDER"
@@ -30,11 +36,15 @@ mongod &
 	mongodump --host $SOURCE --db $DBNAME --collection photoviewlogs --out $BACKUPFOLDER
 
 	echo "Delete the following collections: facilities, classes, events, countries, states"	
-	mongo $DBNAME /backend/bin/mongoScripts/deleteCollection.js
+	mongo $DBNAME bin/mongoScripts/deleteCollection.js
 
 	echo "Restore collection facilities, classes, events, countries, states"
-	mongorestore /backend/bin/dump
+	mongorestore dump
+
+	rm -rf dump/*
+else
+	exit
+fi
 
 
-kill -9 `ps aux | grep mongod | grep -v grep | awk '{print $2}'`
 

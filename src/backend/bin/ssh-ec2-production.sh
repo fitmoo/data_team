@@ -1,7 +1,7 @@
 #/bin/bash
 
 echo "--------------------------------------------------------------------------------"
-echo "SSH to Fitmoo Web Server Production "
+echo "SSH to Fitmoo Production server"
 echo "--------------------------------------------------------------------------------"
 echo "Important:"
 echo "  This is an Amazon EC2 server. You need a .pem file to access it."
@@ -11,8 +11,8 @@ echo "    - Tomcat for the tool-admin java backend"
 echo "    - nginx for the tool-admin backbonejs frontend"
 echo "--------------------------------------------------------------------------------"
 
-HOST=54.197.240.226
-PEM_FILE=bin/conf/ec2-vanda-production.pem
+HOST=23.23.190.88
+PEM_FILE=bin/conf/scraper.pem
 if [ -f $PEM_FILE ];
 then
    ssh -i $PEM_FILE ubuntu@$HOST
