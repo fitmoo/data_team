@@ -60,15 +60,14 @@ define([
 								length = self.collection.length,
 								dataLength = data.length;
 
-						if (currentPage) {
-							self.endOfPage++;
-						}
+						// scroll to last child of the first page
+						$(window).scrollTop(self.scrollHeight);
 						// delete first page and add new page when current page > 2 (100 items)
 						if (length >= photoLimitSize*2 || dataLength === 0) {
 							var firstPage;
 
 							// check last photo page
-							if (self.endOfPage === 2) {
+							if (self.endOfPage) {
     						self.collection.onLoadingProgress = false;
 								firstPage = self.collection.models;
 							} else {
@@ -89,9 +88,13 @@ define([
 								self.collection.remove(firstPage);
 
 								// alert when have no photos to loading
-								if (self.endOfPage === 2) {
+								if (self.endOfPage) {
 									$(window).scrollTop(30);
 									alert('Have no photo');
+								}
+
+								if (currentPage) {
+									self.endOfPage = true;
 								}
 
 							}
@@ -105,6 +108,7 @@ define([
 				};
 			this.infiniScroll = new Backbone.InfiniScroll(this.collection, options);
 			this.$el.imagepicker();
+			this.scrollHeight = _.clone($('#photos').height() - 150);
 		},
 
 		loadingNextPage: function() {
