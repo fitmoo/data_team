@@ -17,7 +17,6 @@
     "backbone.babysitter": "~0.0.6",
     "backbone.marionette": "~1.1.0",
     "backbone.localStorage": "~1.1.6",
-    "backbone-eventbroker": "git://github.com/efeminella/backbone-eventbroker.git#master",
     "requirejs-hbs": "latest",
     "require-handlebars-plugin": "~0.5.0",
     "momentjs": "~2.1.0",
