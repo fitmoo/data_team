@@ -113,7 +113,7 @@
                 clearInterval(checking);
               }
             }, 1000);
-          } else if (photoSize === 0 && collection.nextTwoPage.photos.length === 0) {
+          } else if (photoSize === 0) {
             self.options.success(collection, collection.nextOnePage.photos, true);
           }
         }
