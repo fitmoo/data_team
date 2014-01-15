@@ -101,8 +101,6 @@ function (
         if (!Session.get('user') ) {
 
           // If user gets redirect to login because wanted to access
-          // to a route that requires login, save the path in session
-          // to redirect the user back to path after successful login
           Backbone.history.navigate('#login', { trigger : true });
           this.login();
           
@@ -117,6 +115,8 @@ function (
           if (Session.get('user')) {
             Backbone.history.navigate(path, { trigger : true });
           }
+
+          $(subPath + '-btn').addClass('active');
           // No problem, handle the route!!
 
 					// show search function

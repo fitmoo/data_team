@@ -42,13 +42,10 @@ function(
 		},
 
 		events: {
-			// 'click .sort-btn': 'sortBy',
 			'click .previous': 'previousPage',
 			'click .next': 'nextPage',
 			'click .goto-btn': 'goToPage',
-			'keyup :input': 'onPressKey',
-			// 'click .create-btn': 'createFacility',
-			// 'keyup .container-fluid': 'createFacility'
+			'keyup :input': 'onPressKey'
 		},
 
 		initialize: function() {
@@ -56,7 +53,6 @@ function(
 				'queueHeader:hide': 'hideHeader',
 				'queueHeader:show': 'showHeader',
 				'queue:load': 'loadqueueList',
-				// 'facilities:reset': 'reInitFacilitiesDefaultData',
 				'queue:show': 'show',
 				'queue:totalPages': 'totalPages',
 				'queue:reset': 'defaultPageOpts',
