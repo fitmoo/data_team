@@ -116,7 +116,10 @@ function (
             Backbone.history.navigate(path, { trigger : true });
           }
 
-          $(subPath + '-btn').addClass('active');
+          // Active sidebar menu
+          if (!$('#classes-btn').hasClass('active')) {
+          	$(subPath + '-btn').addClass('active');
+          }
           // No problem, handle the route!!
 
 					// show search function
