@@ -89,8 +89,6 @@ module.exports = {
 	},
 	
 	verifyToken : function(req, res, next) {
-		next();
-		/*
 		var token = req.query.token;
 		var expirePeriod = 60;
 		var lastLogin = dateUtils.addMins(0 - expirePeriod);
@@ -113,7 +111,7 @@ module.exports = {
 			});
 		} else{
 			res.send(errorObject);
-		}*/
+		}
 	},
 
 
