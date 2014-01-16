@@ -1,11 +1,10 @@
-This document guide how to deploy the latest source code, database to production environment
+####This document guide how to deploy the latest source code, database to production environment
 
 ## Production server information
 
 ```
 Amazon EC2
 	IP Address: 23.23.190.88
-	Database: MongoDB
 	Database Name: ScrapingData
 	
 ```
