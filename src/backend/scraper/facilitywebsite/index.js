@@ -167,7 +167,6 @@ module.exports = {
 			var processData = '';
 
 			crawler.stdout.on('data', function(data) {
-				console.log(data);
 				processData = processData.concat(data);
 			});
 
@@ -178,7 +177,6 @@ module.exports = {
 				try{
 					page = JSON.parse(processData);
 				} catch(err){
-					console.log(err);
 					return fn && fn(self.pageResource);
 				}
 
