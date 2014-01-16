@@ -157,12 +157,20 @@ module.exports = {
 
 	findById : function(req, res){
 		id = req.params['id'];
-		self = this;
+		var self = this;
 		this.eventService.findByID(req.params['id'], function(err, item, count){
 			if (err || !item) res.send(errorObject);
 			else 
 			{
 				async.map(item.activities, function(activity, fn){
+						if(activity){
+							if(activity.hostEmail == '' || !activity.hostEmail){
+								delete activity.hostEmail;
+							}
+							if(activity.registrationSiteURL == '' || !activity.registrationSiteURL){
+								delete activity.registrationSiteURL;
+							}
+						}
 						if(activity && !activity.price){
 							self.eventService.findPrice(activity._id, function(err, foundItem){
 								if (foundItem && foundItem.eventPrice.length > 0){

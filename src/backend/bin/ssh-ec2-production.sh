@@ -7,12 +7,11 @@ echo "Important:"
 echo "  This is an Amazon EC2 server. You need a .pem file to access it."
 echo "  The ec2-dev.pem file must be placed in the bin/conf directory."
 echo "  This server runs:"
-echo "    - Tomcat for the tool-admin java backend"
 echo "    - nginx for the tool-admin backbonejs frontend"
 echo "--------------------------------------------------------------------------------"
 
 HOST=23.23.190.88
-PEM_FILE=bin/conf/scraper.pem
+PEM_FILE=bin/conf/ec2-vanda-production.pem
 if [ -f $PEM_FILE ];
 then
    ssh -i $PEM_FILE ubuntu@$HOST

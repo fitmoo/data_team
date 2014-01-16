@@ -50,7 +50,7 @@ module.exports = {
 	uptoS3 : function(imageId, url, folderPath, fn){
 		var option = { url : url, method: 'GET'};
 		var self = this;
-		var bucketName = self.getBucketName();
+		var bucketName = this.getBucketName();
 
 		request.head(url, function(err, res, body){
     		var writeStream = fs.createWriteStream(path.resolve(folderPath, imageId));
@@ -131,15 +131,16 @@ module.exports = {
 	*/
 	uptoS3LocalFile : function(imageId, filePath, fn){
 		var data = fs.readFileSync(filePath);
-		
+		var bucketName = this.getBucketName();
+
 		if(!this.s3){
 			configFile = path.resolve(__dirname, '../config/aws3Config.json');
 			AWS.config.loadFromPath(configFile);
 			this.s3 = new AWS.S3();
 		}
 
-		var params = {Bucket: this.bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
-
+		var params = {Bucket: bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
+		console.log(params);
 		this.s3.putObject(params, function(err, body) {
 		    if (err)
 		      console.log(err);

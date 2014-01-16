@@ -351,6 +351,7 @@ module.exports = {
 				uploadFile.uptoS3(imageId.toString(), item, folderPath, function(err){
 					if (err) done(err);
 					else{
+						console.log(self.imageLink(imageId));
 						self.facilityService.addImage(facilityId, {_id : imageId, url : self.imageLink(imageId) }, function(err, count){
 							if(err) done(err);
 							else{
