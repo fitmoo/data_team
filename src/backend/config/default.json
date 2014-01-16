@@ -37,6 +37,14 @@
     {
         "totalImages": 50,
         "spendMins": 2
+    },
+
+    "S3Host":
+    {
+        "bucketName_staging": "scraper-development.fitmoo.com",
+        "url_staging": "http://scraper-development.fitmoo.com.s3-website-us-east-1.amazonaws.com",
+        "bucketName_production": "scraper-development.fitmoo.com",
+        "url_production": "http://scraper-development.fitmoo.com.s3-website-us-east-1.amazonaws.com"
     }
 }
 

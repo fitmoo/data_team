@@ -47,7 +47,7 @@ sudo npm install
 
 
 echo "------------------------------------------------"
-echo "	Copy backend folder to webserver location"
+echo "Copy backend folder to webserver location       "
 echo "------------------------------------------------"
 cd ../backend
 cp -a * ~/fitmoo/backend

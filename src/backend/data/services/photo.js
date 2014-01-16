@@ -8,7 +8,8 @@ var mongoose = require('mongoose'),
     PhotoS3 = require('../models/photoS3Model'),
     uploadFile = require('../../utils/uploadFiles'),
     facilityModel = require('../models/facilityModel'),
-    photoViewLog = require('../models/photoViewLogModel');
+    photoViewLog = require('../models/photoViewLogModel'),
+    configs = require('../../utils/configs');
 
 module.exports = BaseDBService.extend({
 	modelClass : Photo,
@@ -245,18 +246,23 @@ module.exports = BaseDBService.extend({
         })
     },
 
+    imageLink: function(imageId){
+        return uploadFile.getS3HostName() + '/' + imageId;
+    },
     /*
     *   Upload qualified photos to S3
     */
     upLoadToS3: function(fn){
+        var self = this;
+
         this.photoS3.find({sourceURL : {$exists : true}, s3UploadStatus : false}, function(err, photos){
             if(err) fn && fn(err);
             else{
                 var length = photos.length;
                 var index = 0;
-
-                console.log('Total images: %s', length);
                 var folderPath = path.resolve(__dirname, '../../temp');
+                
+                console.log('Total images: %s', length);
                 async.eachSeries(photos, function(photo, done){
                     index ++;
                     if(photo.sourceURL != ''){
@@ -264,8 +270,16 @@ module.exports = BaseDBService.extend({
                             photo.s3UploadStatus = !err;
                             photo.errMessage = err;
                             photo.save(function(err){
-                                console.log('Uploaded image: %s/%s', index, length);
-                                done && done(err);
+                                if(!err){
+                                    console.log('Uploaded image: %s/%s', index, length);
+                                    //Insert image s3 to facility
+                                    self.facilityModel.update({_id: photo.facilityID}, { $push: { 'images' : {_id : photo._id, url : self.imageLink(photo._id) } }, $inc : { imagesCount : 1}}, {}, function(err){
+                                        done && done(err); 
+                                    });
+                                } else{
+                                    done && done(err);
+                                }
+                                
                             });
                         })
                     }
@@ -273,6 +287,87 @@ module.exports = BaseDBService.extend({
                     fn && fn(err);
                 })
             }
+        })
+    },
+
+    /*
+    *   Check is there any photo not link to facility
+    */
+    checkPhotoFacilityLink: function(fn){
+        var self = this;
+        var index = 0;
+        var facilities = [];
+
+        this.modelClass.find({}, {_id : 1, facilityID: 1}, function(err, photos){
+            async.eachSeries(photos,
+                function(photo, done){
+                    self.facilityModel.findOne({_id : photo.facilityID}, function(err, facility){
+                        if(err || !facility){
+                            index ++;
+                            console.log('Unlink photo: _id: %s', photo._id);
+                            facilities.push(photo.facilityID);
+                        }
+                        done && done(err);
+                    });
+                },
+                function(err){
+                    var filter = _.uniq(facilities);
+                    var fs = require('fs');
+                    var fd = fs.openSync('array.txt', 'a+', 0666);
+
+                    console.log('Unlink: %s photos', index);
+                    console.log('Unlink: %s facilities', filter);
+                    filter.forEach(function(v) { 
+                        fs.writeSync(fd, v + '\n');
+                    });
+                    fs.closeSync(fd);
+                    fn && fn(err);
+                }
+            );
+        })
+    },
+
+    facilityMissPhoto: function(fn){
+        var self = this;
+        var errorFacilities = [];
+        var index = 0;
+
+        this.facilityModel.find({}, function(err, facilities){
+            console.log(facilities.length);
+            async.eachSeries(facilities, function(item, done){
+
+                var facility = item.toJSON();
+                index += 1;
+
+                self.modelClass.find({facilityID : facility._id}, {_id : 1}, function(err, photos){
+                    console.log(err);
+                    console.log(photos);
+                    if(err || !photos || photos.length === 0){
+                        console.log('Index : %s, facilityID : %s', index, facility._id);
+                        errorFacilities.push(facility._id) 
+                    }
+                    done && done(err);
+                })
+            }, function(err){
+                console.log('Facilities miss photo: %s', errorFacilities.length);
+                fn && fn(err);
+            })
+        })
+    },
+
+    updateFacility: function(fn){
+        var index = 0;
+
+        this.facilityModel.find({isCrawl: false}, function(err, facilities){
+            async.eachSeries(facilities, function(facility, done){
+                index = index + 1;
+                facility.crawlIndex = index;
+                facility.save(function(err){
+                    done && done(err);
+                })
+            }, function(err){
+                fn && fn(err);
+            });
         })
     }
 });

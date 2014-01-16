@@ -28,11 +28,12 @@ mongod &
 	mongodump --host $SOURCE --db $DBNAME --collection states --out $BACKUPFOLDER
 	mongodump --host $SOURCE --db $DBNAME --collection users --out $BACKUPFOLDER
 	mongodump --host $SOURCE --db $DBNAME --collection photoviewlogs --out $BACKUPFOLDER
+	mongodump --host $SOURCE --db $DBNAME --collection photos --out $BACKUPFOLDER
 
 	echo "Delete the following collections: facilities, classes, events, countries, states"	
 	mongo $DBNAME /backend/bin/mongoScripts/deleteCollection.js
 
-	echo "Restore collection facilities, classes, events, countries, states"
+	echo "Restore collection facilities, classes, events, countries, states, photos"
 	mongorestore /backend/bin/dump
 
 

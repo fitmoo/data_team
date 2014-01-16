@@ -56,7 +56,9 @@ var FacilitySchema = new mongoose.Schema({
 	//Number of video crawl
 	crawlVideos: {type: Number, default: 0},
 	//Crawling time in mins
-	spendTime:  {type: Number, default: 0}
+	spendTime:  {type: Number, default: 0},
+
+	crawlIndex : {type: Number, default: 0}
 
 });
 

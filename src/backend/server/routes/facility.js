@@ -19,8 +19,6 @@ module.exports = {
 	DONESTATUS: 2,
 	FINISHLATER: 1,
 
-	s3Host: 'http://scraper-development.fitmoo.com.s3-website-us-east-1.amazonaws.com',
-
 	init : function(facilityService, classService, tagService){
 		this.facilityService = facilityService;
 		this.classService = classService;
@@ -29,7 +27,7 @@ module.exports = {
 	},
 
 	imageLink : function(url){
-		return this.s3Host + '/' + url;
+		return uploadFile.getS3HostName() + '/' + url;
 	},
 
 

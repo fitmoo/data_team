@@ -15,8 +15,7 @@ cd $HOME
 echo "Install Node"
 
 sudo apt-get update
-sudo apt-get install build-essential openssl libssl-dev
-sudo apt-get install git-core
+sudo apt-get install build-essential openssl libssl-dev git-core zip unzip
 git clone git://github.com/joyent/node.git
 cd node
 git checkout v0.10.24
@@ -32,6 +31,7 @@ cd npm
 sudo make install
 
 #Install packages
+npm update -g
 sudo npm install -g grunt-cli
 sudo npm install -g bower
 
@@ -76,9 +76,6 @@ sudo ln -s /etc/nginx/sites-available/fitmoo.com /etc/nginx/sites-enabled/defaul
 mkdir -p web/vanda.com/logs
 sudo service nginx start
 
-#Install Utils
-sudo apt-get install zip unzip
-
 
 #Install RUBY
 echo "--------------------------------------------------------------------------------"
@@ -88,5 +85,6 @@ curl -sSL https://get.rvm.io | bash -s stable
 source /home/ubuntu/.rvm/scripts/rvm
 rvm install $RUBY_VERSION
 rvm use $RUBY_VERSION --default
-gem install compass
+sudo gem install sass
+sudo gem install compass
 
