@@ -6,7 +6,7 @@ BACKENDBACKUPFOLDER="backend_"$_NOW
 echo "------------------------------------------------"
 echo "Pull source code from Github"
 echo "------------------------------------------------"
-git pull git@github.com:fitmoo/data_team.git
+git pull
 
 echo "------------------------------------------------"
 echo "	Creating webserver directory and backup"
