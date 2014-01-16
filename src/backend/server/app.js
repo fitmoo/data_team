@@ -184,7 +184,7 @@ app.namespace('/api/tags', function(req, res, next){ user.verifyToken(req, res, 
 
 });
 
-app.namespace('/api/exports', function(){
+app.namespace('/api/exports', function(req, res, next){ user.verifyToken(req, res, next); }, function(){
   app.get('/', function(req, res) { exportRouter.exportData(req, res); });
 })
  
@@ -205,7 +205,7 @@ app.namespace('/api/lookup', function(){
 })
 
 //Crawl event
-app.namespace('/api/crawl', function(){
+app.namespace('/api/crawl', function(req, res, next){ user.verifyToken(req, res, next); }, function(){
 
   app.get('/active.com', function(req, res) { crawl.startCrawlActive(req, res); });
   app.get('/active.com/checkStatus', function(req, res) { crawl.checkStatus(req, res); });
@@ -213,7 +213,7 @@ app.namespace('/api/crawl', function(){
 });
 
 //Photos selector
-app.namespace('/api/photos', function(){
+app.namespace('/api/photos', function(req, res, next){ user.verifyToken(req, res, next); }, function(){
 
   app.get('/', function(req, res) { photo.search(req, res); });
   app.put('/', function(req, res) { photo.markDelete(req, res); });
