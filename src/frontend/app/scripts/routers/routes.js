@@ -321,6 +321,13 @@ function (
 			} else {
 
 				api.get(['events/', id, '?token=', Session.get('user').token].join(''), function(res) {
+					// remove attribute if it is '' 
+					if (res.hostEmail === ''){
+						delete res.hostEmail;
+					}
+					if (res.registrationSiteURL === ''){
+						delete res.registrationSiteURL;
+					}
 
 					// redirect to login page when Token invalid
 					Backbone.EventBroker.trigger('token:invalid', res);

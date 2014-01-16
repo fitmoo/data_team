@@ -750,7 +750,7 @@ th.sorting .caret {
 	display: block;
 }
 #photo-upload {
-	height: 17px;
+	height: 22px;
 	line-height: 17px;
 	outline: none;
 	border: none;
@@ -911,4 +911,12 @@ th.sorting .caret {
 
 .calendar {
 	min-width: 200px;
+}
+
+.success-notification {
+	position: fixed;
+	left: 48%;
+	top: 10px;
+	display: none;
+	z-index: 10000;
 }

@@ -79,16 +79,6 @@ define([
 			'#ev-endMeridiem': 'endMeridiem'
 	  },
 
-		initialize: function() {
-			this.listenTo(this.model, 'change', this.onChange);
-		},
-
-		onChange: function() {
-			// if (this.ui.saveBtn.is(':disabled'))
-			// 	// enabled Save button when have any model data changes
-			// 	this.ui.saveBtn.removeAttr('disabled');
-		},
-
 		show: function() {
 			this.$el.show();
 		},

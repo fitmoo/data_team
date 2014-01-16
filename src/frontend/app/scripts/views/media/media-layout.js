@@ -117,6 +117,7 @@ define([
 		},
 
 		onEnterFindPhotoTextbox: function(e) {
+			e.preventDefault();
 			// press enter to find photo textbox
 			if (e.which === 13)
 				this.findImages();
@@ -156,6 +157,7 @@ define([
 		},
 
 		onEnterFindVideoTextbox: function(e) {
+			e.preventDefault();
 			// press enter to find video textbox
 			if (e.which === 13)
 				this.findVideos();

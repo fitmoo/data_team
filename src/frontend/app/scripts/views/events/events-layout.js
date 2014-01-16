@@ -151,6 +151,7 @@ define([
 		},
 
 		onPressKey: function(e) {
+			e.preventDefault();
 			var val = $(e.target).val();
 			this.$el.find('input').val(val);
 			// press enter to go to page
