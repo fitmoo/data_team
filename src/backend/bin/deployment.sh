@@ -60,3 +60,9 @@ echo "------------------------------------------------"
 cd ../backend
 chmod +x bin/start_productionserver
 chmod +x bin/stop_server
+
+echo "------------------------------------------------"
+echo "Restart backend server       "
+echo "------------------------------------------------"
+forever stopall
+bin/start_productionserver
