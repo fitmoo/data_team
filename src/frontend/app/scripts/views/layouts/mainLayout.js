@@ -34,6 +34,7 @@ define([
 			},this);
 
 			$(document).bind('keyup', function(e) {
+				e.preventDefault();
 				var keycode = e.keyCode,
 						location = Backbone.history.location.hash.split('/'),
 						path = location[0],

@@ -25,6 +25,7 @@ program
   .option('    --migration [resource]', 'Migrate resource: [facility, classes, facilityimage, fixCrawlImage]')
   .option('    --findDuplicateFacility', 'Find duplicate facilityName')
   .option('    --uploadtos3', 'Upload image to S3')
+  .option('    --verifydatabase', '[photofacilitylink]')
   .parse(process.argv);
 
 
@@ -263,6 +264,7 @@ function countTotalImages(callback){
 function uploadToS3(callback){
 	if (!program.uploadtos3) return callback();
 	else{
+		process.env.NODE_ENV = 'production';
 		var db = new DatabaseManager(configs);
 		db.init(["Photo"], function(){
 			var photoService = db.getInstance("Photo");
@@ -273,12 +275,29 @@ function uploadToS3(callback){
 				} else{
 					console.log('Upload qualified images to S3 finish.');
 				}
+				process.env.NODE_ENV = '';
 				callback && callback();
 			});
 		});
 	}
 }
 
+function verifyDatabase(callback){
+	if (!program.verifydatabase) return callback();
+
+	var db = new DatabaseManager(configs);
+	db.init(["Photo"], function(){
+		var photoService = db.getInstance("Photo");
+		photoService.facilityMissPhoto(function(err){
+			if(err){
+				console.log('Finish with error: %s', err);
+			} else{
+				console.log('verifyDatabase: photofacilitylink Finish');
+			}
+			callback && callback();
+		});
+	});
+}
 
 async.series([
     scrapeCrossfit,
@@ -292,7 +311,8 @@ async.series([
     fixCrawlImage,
     findDuplicateFacility,
     countTotalImages,
-    uploadToS3
+    uploadToS3,
+    verifyDatabase
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
 

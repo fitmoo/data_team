@@ -79,16 +79,6 @@ define([
 			'#ev-endMeridiem': 'endMeridiem'
 	  },
 
-		initialize: function() {
-			this.listenTo(this.model, 'change', this.onChange);
-		},
-
-		onChange: function() {
-			// if (this.ui.saveBtn.is(':disabled'))
-			// 	// enabled Save button when have any model data changes
-			// 	this.ui.saveBtn.removeAttr('disabled');
-		},
-
 		show: function() {
 			this.$el.show();
 		},
@@ -113,26 +103,26 @@ define([
 					if (validation) {
 						// get activities data from DOM
 						activityItem.each(function(index, element) {
-								var activityName = $(element).find('.activity-name'),
-										activityPrice = $(element).find('.activity-price'),
-										activityPriceVal = activityPrice.val();
+							var activityName = $(element).find('.activity-name'),
+									activityPrice = $(element).find('.activity-price'),
+									activityPriceVal = activityPrice.val();
 
-								if ( activityPriceVal != activityPriceVal.replace(/[^0-9\.]/g,'' && !validation)) {
-									activityPrice.parent().addClass('error');
-									return false;
-								} else {
-									activityPrice.parent().removeClass('error');
-									data.push({
-										name: activityName.val(),
-										price: activityPriceVal
-									});
-								}
+							if ( activityPriceVal != activityPriceVal.replace(/[^0-9\.]/g,'' && !validation)) {
+								activityPrice.parent().addClass('error');
+								return false;
+							} else {
+								activityPrice.parent().removeClass('error');
+								data.push({
+									name: activityName.val(),
+									price: activityPriceVal
+								});
+							}
 
-								if (index === length - 1) {
-									// update activities data
-									self.model.set('activities', data);
-									self.saveEventModel();
-								}
+							if (index === length - 1) {
+								// update activities data
+								self.model.set('activities', data);
+								self.saveEventModel();
+							}
 						});
 					}
 				}
@@ -167,7 +157,7 @@ define([
 		},
 
 		onCancel: function() {
-			this.ui.editForm.removeClass('editing');
+			Backbone.history.navigate('#events', {trigger: true});
 		},
 
 		initAutocompleteSearch: function(answers, remove) {

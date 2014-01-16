@@ -75,6 +75,7 @@ function (
 		},
 
 		onPressKey: function(e) {
+			e.preventDefault();
 			var keycode = e.which;
 			if(keycode === 65 || keycode === 97 || keycode === 67 || keycode === 99 || keycode === 86 || keycode === 118) {
 				e.stopPropagation();

@@ -34,6 +34,7 @@ define([
 		},
 
 		onEnter: function(e) {
+			e.preventDefault();
 			// press enter to login
 			if (e.which === 13)
 				this.login();

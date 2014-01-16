@@ -1,8 +1,0 @@
-#!/bin/bash
-
-FILEPATH=${BASH_SOURCE}
-DIR=${FILEPATH%/*}
-DIR=${DIR%/*}
-
-# Stop webserver
-forever stop $DIR/server/app.js

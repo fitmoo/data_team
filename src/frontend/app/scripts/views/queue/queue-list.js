@@ -30,7 +30,7 @@ define([
 
 		onRender: function() {
 			_.defer( function( view ){
-				Backbone.EventBroker.trigger('facilities:hideIndicator');
+				Backbone.EventBroker.trigger('queue:hideIndicator');
 			});
 		}
 	});

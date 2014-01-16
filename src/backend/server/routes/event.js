@@ -157,7 +157,7 @@ module.exports = {
 
 	findById : function(req, res){
 		id = req.params['id'];
-		self = this;
+		var self = this;
 		this.eventService.findByID(req.params['id'], function(err, item, count){
 			if (err || !item) res.send(errorObject);
 			else 

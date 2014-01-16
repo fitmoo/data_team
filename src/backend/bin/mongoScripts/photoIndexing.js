@@ -1,8 +1,8 @@
 var count = 1;
-db.photos.find({debugData:true}, {}, {createdDate : 1}).forEach(
+db.photos.find({}, {}, {createdDate : 1}).forEach(
 	function(photo){
 		photo.index = count;
-		count ++;
+		count += 1;
 		print(photo._id + ':' + photo.index);
 		db.photos.save(photo);
 	}

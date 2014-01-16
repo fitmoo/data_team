@@ -80,6 +80,7 @@ define([
 
 		disableQuickKeyCode: function(e) {
 			var keycode = e.keyCode;
+			e.preventDefault();
 
 			if(keycode === 65 || keycode === 97)
 				e.stopPropagation();
@@ -87,6 +88,7 @@ define([
 
 		enterToSave: function(e) {
 			var keycode = e.keyCode;
+			e.preventDefault();
 
 			if(keycode === 13)
 				this.addNewTags();

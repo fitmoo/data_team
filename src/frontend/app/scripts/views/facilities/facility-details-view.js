@@ -40,7 +40,8 @@ define([
 			tags: '#facility-tags',
 			tagsinput: '#tags-wrapper',
 			country: '#country',
-			states: '#select-state'
+			states: '#select-state',
+			cancelBtn: '.cancel-btn'
 		},
 
 		events: {
@@ -130,13 +131,10 @@ define([
 					Backbone.EventBroker.trigger('facility:editOff');
 					Backbone.EventBroker.trigger('facilities:add', res);
 
-					// render media and class view after created new facility
-					// if (currentView === 'create-facility') {
-					// 	Backbone.EventBroker.trigger('mediaClass:render', res);
-					// 	Backbone.history.navigate('#facilities/' + res.get('id'));
-					// } else {
-					// 	Backbone.history.navigate('#facilities', {trigger: true});
-					// }
+					// show created successfully facility notification
+					if (self.currentView === '#create-facility') {
+						Backbone.EventBroker.trigger('notification:show');
+					}
 
 					if (callback && !callback.target)
 						callback();
@@ -214,6 +212,11 @@ define([
 
 		onRender: function() {
 			var self = this;
+
+			// change Undo button text to Clear
+			if (this.currentView  === '#create-facility')
+				this.ui.cancelBtn.text('Clear');
+
 			this.stickit();
 			this.ui.tags.tagsinput('items');
 

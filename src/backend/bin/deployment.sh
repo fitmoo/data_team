@@ -22,6 +22,7 @@ echo "------------------------------------------------"
 echo '### Install Front-end Packages & Modules ...'
 echo "------------------------------------------------"
 cd ../frontend
+source $HOME/.rvm/scripts/rvm
 sudo npm cache clean
 sudo npm install
 bower install
@@ -47,9 +48,15 @@ sudo npm install
 
 
 echo "------------------------------------------------"
-echo "	Copy backend folder to webserver location"
+echo "Copy backend folder to webserver location       "
 echo "------------------------------------------------"
 cd ../backend
 cp -a * ~/fitmoo/backend
 
 
+echo "------------------------------------------------"
+echo "Set permission for script       "
+echo "------------------------------------------------"
+cd ../backend
+chmod +x bin/start_productionserver
+chmod +x bin/stop_server

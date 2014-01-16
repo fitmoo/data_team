@@ -2,6 +2,7 @@ var path = require('path'),
 	request = require('request'),
 	mime = require('mime'),
 	fs = require('fs'),
+	configs = require('./configs'),
 	knox = require('knox');
 
 var AWS = require('aws-sdk');
@@ -9,7 +10,24 @@ var AWS = require('aws-sdk');
 module.exports = {
 
 	s3: null,
-	bucketName: 'scraper-development.fitmoo.com',
+
+	getBucketName: function(){
+		if(process.env.NODE_ENV == 'production'){
+			return configs.get('S3Host:bucketName_production');
+		} else{
+			return configs.get('S3Host:bucketName_staging');
+		}
+		
+	},
+
+	getS3HostName: function(){
+		if(process.env.NODE_ENV == 'production'){
+			return configs.get('S3Host:url_production');
+		} else{
+			return configs.get('S3Host:url_staging');
+		}
+		
+	},
 
 	saveFile : function(fileName, tempPath, targetFolder, fn){
         targetPath = path.resolve(targetFolder, fileName);
@@ -32,6 +50,7 @@ module.exports = {
 	uptoS3 : function(imageId, url, folderPath, fn){
 		var option = { url : url, method: 'GET'};
 		var self = this;
+		var bucketName = this.getBucketName();
 
 		request.head(url, function(err, res, body){
     		var writeStream = fs.createWriteStream(path.resolve(folderPath, imageId));
@@ -51,7 +70,7 @@ module.exports = {
 							self.s3 = new AWS.S3();
 						}
 
-						var params = {Bucket: self.bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
+						var params = {Bucket: bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
 
 						self.s3.putObject(params, function(err, body) {
 						    if (!err){
@@ -103,19 +122,7 @@ module.exports = {
 
 					client.putStream(res, '/' + imageId, headers, function(err, res){
 						console.log(err);
-						//console.log(res);
 					});
-					// console.log(client);
-					// var buff = new Buffer(body, 'hex'),
-					// len = buff.length;
-
-					// var params = {Bucket: self.bucketName, Key: imageId, Body: body, ACL: 'public-read', ContentType: 'image/jpeg'};
-					// self.s3.putObject(params, function(err, body) {
-					//     if (err)
-					//       console.log(err);
-					//     else
-					//     	console.log('Finish');
-					// });
 		});
 	},
 
@@ -124,15 +131,16 @@ module.exports = {
 	*/
 	uptoS3LocalFile : function(imageId, filePath, fn){
 		var data = fs.readFileSync(filePath);
-		
+		var bucketName = this.getBucketName();
+
 		if(!this.s3){
 			configFile = path.resolve(__dirname, '../config/aws3Config.json');
 			AWS.config.loadFromPath(configFile);
 			this.s3 = new AWS.S3();
 		}
 
-		var params = {Bucket: this.bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
-
+		var params = {Bucket: bucketName, Key: imageId, Body: data, ACL: 'public-read', ContentType: 'image/png'};
+		console.log(params);
 		this.s3.putObject(params, function(err, body) {
 		    if (err)
 		      console.log(err);

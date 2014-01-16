@@ -63,9 +63,11 @@ module.exports = {
 			self.facilityService = db.getInstance("Facility");
 			self.photoService = db.getInstance("Photo");
 			self.facilityService.getCrawlingFacilities(websiteURL, function(err, facilities){
+				console.log('Total facilities :%s', facilities.length);
 				if(err || !facilities) fn && fn(err, null);
 				else{
 					async.eachSeries(facilities, function(facility, done){
+
 						if(facility.websiteURL && facility.websiteURL.length > 0){
 							console.log('URL:%s', facility.websiteURL);
 							self.crawlPhotoVideo(facility.websiteURL, function(pageResource){

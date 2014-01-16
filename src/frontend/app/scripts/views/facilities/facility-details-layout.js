@@ -36,7 +36,8 @@ define([
 		ui: {
 			delBtn: '#delete-facility',
 			verifyFacility: '#vefify-facility',
-			editForm: '#editing-facility'
+			editForm: '#editing-facility',
+			nofifacation: '.success-notification'
 		},
 
 		events: {
@@ -63,7 +64,8 @@ define([
 			EventBroker.register({
 				'facility:editOff': 'disabledEditMode',
 				'facility:verify': 'onVerifyFacility',
-				'mediaClass:render': 'renderMediaAndClassView'
+				'mediaClass:render': 'renderMediaAndClassView',
+				'notification:show': 'showCreateFacilityNotification'
 			},this);
 		},
 
@@ -160,6 +162,15 @@ define([
 				Backbone.history.navigate('#queue', {trigger: true});
 			}
 
+		},
+
+		showCreateFacilityNotification: function() {
+			var self = this;
+
+			self.ui.nofifacation.fadeIn(200);
+			setTimeout(function() {
+				self.ui.nofifacation.fadeOut(400);
+			},600);
 		},
 
 		onRender: function() {
