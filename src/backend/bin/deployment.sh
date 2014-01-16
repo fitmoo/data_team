@@ -65,4 +65,4 @@ echo "------------------------------------------------"
 echo "Restart backend server       "
 echo "------------------------------------------------"
 forever stopall
-bin/start_productionserver
+./bin/start_productionserver
