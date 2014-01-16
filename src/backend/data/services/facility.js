@@ -47,9 +47,10 @@ module.exports = BaseDBService.extend({
     */
     getCrawlingFacilities: function(websiteURL, fn){
         if(!websiteURL){
+            this.modelClass.find({isCrawl : false}, {_id : 1, websiteURL:1}, fn);
             //4704
             //Local version 0 -500, 500-1000
-            this.modelClass.find({isCrawl : false, crawlIndex : {$lte : 500}}, {_id : 1, websiteURL:1}, {crawlIndex : 1}, fn);
+            //this.modelClass.find({isCrawl : false, crawlIndex : {$lte : 500}}, {_id : 1, websiteURL:1}, {crawlIndex : 1}, fn);
             //TrungPD 2000-2500
             //this.modelClass.find({isCrawl : false, crawlIndex : {$gte : 2000, $lte: 2500}}, {_id : 1, websiteURL:1}, {crawlIndex : 1}, fn);
             //Staging 
