@@ -2,7 +2,7 @@ var async = require('async');
 var jwt = require('jwt-simple');
 
 var guid = require('../../utils/guid.js'),
-	dateUtils = require('../../utils/dateUtils');
+	dateUtils = require('../../utils/dateUtils'),
 	errorObject = require('./errorResponse');
 
 //Authentication lib
@@ -92,25 +92,26 @@ module.exports = {
 		var token = req.query.token;
 		var expirePeriod = 60;
 		var lastLogin = dateUtils.addMins(0 - expirePeriod);
-
-		errorObject.authenticated = false;
-		errorObject.status = 404;
-		errorObject.msg = "token is invalid or expired";
+		var loginFailedObject = {
+			authenticated : false,
+			status : 404,
+			msg : 'token is invalid or expired',
+		}
 
 		if (token && token.length > 0){
 			this.authenticationService.getOne({token : token, lastLogin : { $gte : lastLogin }}, function(err, foundToken){
 				if(err || !foundToken) { 
-					res.send(errorObject);
+					res.send(loginFailedObject);
 				} else{
 					foundToken.lastLogin = new Date();
 					foundToken.save(function(err, updated){
-						if(err) res.send(errorObject);
+						if(err) res.send(loginFailedObject);
 						else next();
 					})
 				}
 			});
 		} else{
-			res.send(errorObject);
+			res.send(loginFailedObject);
 		}
 	},
 

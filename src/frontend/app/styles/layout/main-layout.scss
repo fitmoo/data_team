@@ -920,3 +920,12 @@ th.sorting .caret {
 	display: none;
 	z-index: 10000;
 }
+.classes-content,
+.list-content,
+.events-content,
+.queue-content {
+	a:visited {
+		color: #2A2AA4;
+	}
+
+}

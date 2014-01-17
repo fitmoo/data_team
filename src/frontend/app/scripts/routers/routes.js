@@ -98,6 +98,9 @@ function (
           subPath = path.split('/')[0],
           cancelAccess = _.contains(self.preventAccessWhenAuths, subPath);
 
+				// hide current layout
+				Backbone.EventBroker.trigger('views:hide');
+
         if (!Session.get('user') ) {
 
           // If user gets redirect to login because wanted to access
@@ -108,9 +111,9 @@ function (
 
         } else if (cancelAccess) {
           // redirect the user to home page
-
           Backbone.history.navigate('#home', { trigger : true });
           return false;
+
         } else {
           if (Session.get('user')) {
             Backbone.history.navigate(path, { trigger : true });
@@ -120,7 +123,6 @@ function (
           if (!$('#classes-btn').hasClass('active')) {
           	$(subPath + '-btn').addClass('active');
           }
-          // No problem, handle the route!!
 
 					// show search function
 					Backbone.EventBroker.trigger('search:show');
@@ -155,18 +157,13 @@ function (
 
 		home: function() {
 			console.log('Show home view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:hide');
 
-			if (Views.Home)
-				Views.Home.show();
-			else {
+			if (!Views.Home) {
 				Views.Home = new homeView();
-				
 				Views.Home.render();
-				Views.Home.show();
 			}
+			Views.Home.show();
 		},
 
 		login: function() {
@@ -176,17 +173,13 @@ function (
 			
 			if (!Views.Login) {
 				Views.Login = new login();
-				Views.Login.render();
-			} else {
-				Views.Login.render();
 			}
+			Views.Login.render();
 			$('#login').show();
 		},
 
 		showNotification: function() {
 			console.log('Show notification view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:hide');
 
 			if (!Views.Facilities) {
@@ -194,41 +187,30 @@ function (
 				Views.Facilities.render();
 			}
 
-			if (Views.Notification) {
-				Views.Notification.render();
-				Views.Notification.show();
-			}
-			else {
+			if (!Views.Notification) {
 				Views.Notification = new notificationView();
-
-				Views.Notification.render();
-				Views.Notification.show();
 			}
+
+			Views.Notification.render();
+			Views.Notification.show();
 		},
 
 		showFacilities: function() {
 			console.log('Show facilities view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:hide');
 
+			Views.Facilities.show();
 			if (Views.Facilities) {
-				Views.Facilities.show();
 				Views.Facilities.facilitiesList.render();
 			}
 			else {
 				Views.Facilities = new facilitiesView();
-
 				Views.Facilities.render();
-				Views.Facilities.show();
 			}
 		},
 
 		showFacility: function(id) {
 			var self = this;
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
-			Backbone.EventBroker.trigger('views:other');
 			Backbone.EventBroker.trigger('advSearch:hide');
 			self.getAllTagName();
 
@@ -249,6 +231,11 @@ function (
 			} else {
 
 				api.get(['facilities/', id, '?token=', Session.get('user').token].join(''), function(res) {
+					if (res.msg && res.msg === 'error') {
+						window.history.back();
+						alert('This facility does not exist in the system');
+						return false;
+					}
 					console.log('Show Facility had id:',id,res);
 
 					// redirect to login page when Token invalid
@@ -267,19 +254,13 @@ function (
 
 		showClasses: function() {
 			console.log('Show classes view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:show');
 
-			if (Views.Classes)
-				Views.Classes.show();
-			else {
+			if (!Views.Classes) {
 				Views.Classes = new classLayout();
-
 				Views.Classes.render();
-				Views.Classes.show();
 			}
-
+			Views.Classes.show();
 		},
 
 		showClass: function(id) {
@@ -288,27 +269,20 @@ function (
 
 		showEvents: function() {
 			console.log('Show events view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:show');
 
-			if (Views.Events) 
-				Views.Events.show();
-			else {
+			if (!Views.Events) {
 				Views.Events = new eventsLayout();
-
 				Views.Events.render();
-				Views.Events.show();
 			}
+			Views.Events.show();
 
 		},
 
 		showEvent: function(id) {
 			var self = this;
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
-			Backbone.EventBroker.trigger('views:other');
 			self.getAllTagName();
+			Backbone.EventBroker.trigger('advSearch:show');
 
 			if (!id) {
 					// show info of event
@@ -322,10 +296,10 @@ function (
 
 				api.get(['events/', id, '?token=', Session.get('user').token].join(''), function(res) {
 					// remove attribute if it is '' 
-					if (res.hostEmail === ''){
+					if (res.hostEmail === '') {
 						delete res.hostEmail;
 					}
-					if (res.registrationSiteURL === ''){
+					if (res.registrationSiteURL === '') {
 						delete res.registrationSiteURL;
 					}
 
@@ -345,12 +319,10 @@ function (
 		},
 
 		showTags: function() {
-			console.log('Show Tags view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:hide');
+			console.log('Show Tags view');
 
-			if (Views.Tags) 
+			if (Views.Tags)
 				Views.Tags.show();
 			else
 				requirejs(['views/tags/tags-layout'], function(tagsLayout) {
@@ -363,12 +335,10 @@ function (
 		},
 
 		export: function() {
-			console.log('Show Export data view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:hide');
+			console.log('Show Export data view');
 
-			if (Views.Export) 
+			if (Views.Export)
 				Views.Export.show();
 			else
 				requirejs(['views/data/data-layout'], function(exportLayout) {
@@ -381,10 +351,8 @@ function (
 		},
 
 		photos: function() {
-			console.log('Show Photos de-selection view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
 			Backbone.EventBroker.trigger('advSearch:hide');
+			console.log('Show Photos de-selection view');
 
 			if (Views.Photos) 
 				Views.Photos.show();
@@ -400,30 +368,23 @@ function (
 
 		showQueue: function() {
 			console.log('Show Queue view');
-			// hide current layout
-			Backbone.EventBroker.trigger('views:hide');
-			Backbone.EventBroker.trigger('advSearch:hide');
-
 			// hide search function
+			Backbone.EventBroker.trigger('advSearch:hide');
 			Backbone.EventBroker.trigger('search:hide');
 
-			// if (Views.Queue) {
-			// 	Views.Queue.show();
-			// 	Views.Queue.facilitiesList.render();
-			// }
-			// else {
 			if (Views.Queue)
 				Views.Queue.remove();
+
 			$('#main-container').append('<div class="layout-fluid" id="queue"></div>');
 			Views.Queue = new queueLayout();
 
 			Views.Queue.render();
 			Views.Queue.show();
-			// }
 		},
 
 		showQueueItem: function(id) {
 			console.log('Show Queue Item have id:', id);
+			Backbone.EventBroker.trigger('advSearch:hide');
 			var self = this;
 
 			// hide search function
@@ -433,25 +394,24 @@ function (
 
 			if (Views.QueueDetails)
 				Views.QueueDetails.remove();
+
 			$('#main-container').append('<div class="layout-fluid" id="details"></div>');
-				if (res.status !== false && res.status !== 'Finish') {
-					console.log('Show Facility had id:', id, res);
-					// hide current layout
-					Backbone.EventBroker.trigger('views:hide');
-					Backbone.EventBroker.trigger('views:other');
-					Backbone.EventBroker.trigger('advSearch:hide');
 
-					var queueItem = new queueModel(res);
+			if (res.status !== false && res.status !== 'Finish') {
+				console.log('Show Facility had id:', id, res);
+				Backbone.EventBroker.trigger('views:other');
 
-					Views.QueueDetails = new facilitiesLayout({model: queueItem});
+				var queueItem = new queueModel(res);
 
-					// show info of facility
-					Views.QueueDetails.render();
-					Views.QueueDetails.show();
-				} else {
-					Backbone.history.navigate('#queue', {trigger: true});
-					alert(res.msg);
-				}
+				Views.QueueDetails = new facilitiesLayout({model: queueItem});
+
+				// show info of facility
+				Views.QueueDetails.render();
+				Views.QueueDetails.show();
+			} else {
+				Backbone.history.navigate('#queue', {trigger: true});
+				alert(res.msg);
+			}
 				
 			});
 		},
@@ -463,7 +423,6 @@ function (
 		},
 
 		redirect: function() {
-			// console.log('redirect to home page');
 		}
 
 	});
