@@ -60,3 +60,20 @@
 [Open http://localhost:8003/](http://localhost:8003/)
 
 
+## Backup and restore production database
+
+### 1. Backup
+
+```
+$ cd ~/fitmooSourceCode/data_team/src/backend/
+$ ./bin/deployment_bkdatabase.sh
+```
+The scripts backup and save database as zip file at: ~/fitmooSourceCode/data_team/src/backend/bin/database.zip
+
+### 2. Restore
+Before running restore script, please make sure the database.zip and deployment_initialdata.sh are in the same folder
+
+```
+$ cd ~/fitmooSourceCode/data_team/src/backend/
+$ $ ./bin/deployment_initialdata.sh
+```
