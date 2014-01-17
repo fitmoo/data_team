@@ -353,6 +353,12 @@ module.exports = function (grunt) {
             all: {
                 rjsConfig: '<%= yeoman.app %>/scripts/main.js'
             }
+        },
+        
+        removelogging: {
+            dist: {
+                src: "<%= yeoman.dist %>/scripts/*.js"
+            }
         }
     });
 
@@ -385,6 +391,7 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer',
         'requirejs',
+        'removelogging',
         'concat',
         'cssmin',
         'uglify',
