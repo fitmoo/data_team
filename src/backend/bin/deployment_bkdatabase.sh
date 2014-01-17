@@ -21,6 +21,7 @@ mongodump --host $SOURCE --db ScrapingData --collection countries --out $DIR/dum
 mongodump --host $SOURCE --db ScrapingData --collection states --out $DIR/dump
 mongodump --host $SOURCE --db ScrapingData --collection users --out $DIR/dump
 mongodump --host $SOURCE --db ScrapingData --collection photos --out $DIR/dump
+mongodump --host $SOURCE --db ScrapingData --collection photos3s --out $DIR/dump
 
 ZIPFILE="database.zip"
 echo "--------------------------------------------------------------------------------"

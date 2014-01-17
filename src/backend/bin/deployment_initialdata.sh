@@ -42,6 +42,7 @@ then
 	mongodump --host $SOURCE --db $DBNAME --collection users --out $BACKUPFOLDER
 	mongodump --host $SOURCE --db $DBNAME --collection photoviewlogs --out $BACKUPFOLDER
 	mongodump --host $SOURCE --db $DBNAME --collection photos --out $BACKUPFOLDER
+	mongodump --host $SOURCE --db $DBNAME --collection photos3s --out $BACKUPFOLDER
 
 	echo "Delete the following collections: facilities, classes, events, countries, states, photos"	
 	mongo $DBNAME $DIR/mongoScripts/deleteCollection.js
