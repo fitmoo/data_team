@@ -28,7 +28,8 @@
     "load-grunt-tasks": "~0.1.0",
     "time-grunt": "~0.1.1",
     "connect-livereload": "~0.2.0",
-    "grunt-connect-proxy": "~0.1.5"
+    "grunt-connect-proxy": "~0.1.5",
+    "grunt-remove-logging": "~0.2.0"
   },
   "engines": {
     "node": ">=0.8.0"
