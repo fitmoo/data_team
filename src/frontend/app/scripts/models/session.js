@@ -78,6 +78,7 @@ define([
             Backbone.history.navigate('#home', {trigger: true});
 
           SidebarView.render();
+          $('#home-btn').addClass('active');
         }
       });
     },
@@ -94,8 +95,13 @@ define([
 
     invalidToken: function(res) {
       // redirect to login page when Token invalid
-      if (res.status === 404) {
+      if (res.status === 404 || res.status === 500) {
         console.log("Invalid Token");
+        if (res.status === 500)
+          alert('Internal Server Error');
+        else
+          alert('Invalid Token');
+
         this.clear();
         Backbone.history.navigate('#login', {trigger: true});
         return false;
