@@ -161,7 +161,7 @@ module.exports = {
 				res.send({status: false, msg: "Checked out by: " + checkoutInfo.checkOutBy});
 			}
 			else{
-				console.log(checkoutInfo);
+				//console.log(checkoutInfo);
 				self.findById(req, res);
 			}
 		})
@@ -190,7 +190,7 @@ module.exports = {
 	findById : function(req, res){
 		var id = req.params['id'];
 		var self = this;
-		
+
 		this.facilityService.findByID(req.params['id'], function(err, facility, count){
 			if (err) res.send(errorObject);
 			else if (facility){
