@@ -231,6 +231,11 @@ function (
 			} else {
 
 				api.get(['facilities/', id, '?token=', Session.get('user').token].join(''), function(res) {
+					if (res.msg && res.msg === 'error') {
+						window.history.back();
+						alert('This facility does not exist in the system');
+						return false;
+					}
 					console.log('Show Facility had id:',id,res);
 
 					// redirect to login page when Token invalid
