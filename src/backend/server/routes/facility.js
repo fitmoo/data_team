@@ -188,8 +188,9 @@ module.exports = {
 	},
 
 	findById : function(req, res){
-		id = req.params['id'];
-		self = this;
+		var id = req.params['id'];
+		var self = this;
+		
 		this.facilityService.findByID(req.params['id'], function(err, facility, count){
 			if (err) res.send(errorObject);
 			else if (facility){
