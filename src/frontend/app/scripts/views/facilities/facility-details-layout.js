@@ -104,7 +104,7 @@ define([
 			if (confirmPopup === true) {
 				console.log('Save and Done facility on queue', this.model);
 				this.model.set('status', 2);
-				Backbone.EventBroker.trigger('facility:save', function() {});
+				Backbone.EventBroker.trigger('facility:save');
 			}
 		},
 
