@@ -126,8 +126,8 @@ define([
 			}
 
 			this.model.save(this.model.toJSON(), {
-				success: function(res) {
-					console.log('Save facilities data:', self.model.toJSON());
+				success: function(model, res) {
+					console.log('Save facilities data:', self.model);
 					Backbone.EventBroker.trigger('facilities:add', res);
 
 					// show created successfully facility notification
