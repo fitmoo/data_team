@@ -86,7 +86,10 @@ define([
 		},
 
 		saveAndFinishLater: function() {
-			var model = this.model;
+			var model = this.model,
+					self = this;
+			// set status = 1 for save and finished later case
+			// default is 0 or null
 			model.set('status', 1);
 			model.set('queue', true);
 
@@ -94,7 +97,9 @@ define([
 			api.put(['facilities/', model.get('id'), '?token=', Session.get('user').token].join(''), model.toJSON(), function(res) {
 				console.log(res);
 				// redirect to next item
-				Backbone.history.navigate('#queue/' + res.id, {trigger: true});
+				Backbone.history.navigate('#queue/' + res.id);
+				self.model.attributes = res;
+				self.facilityDetailsView.render({model: self.model});
 			});
 		},
 
@@ -103,6 +108,8 @@ define([
 
 			if (confirmPopup === true) {
 				console.log('Save and Done facility on queue', this.model);
+				// set status = 2 for DONE case
+				// default is 0 or null
 				this.model.set('status', 2);
 				Backbone.EventBroker.trigger('facility:save');
 			}
@@ -176,10 +183,10 @@ define([
 		onRender: function() {
 			var self = this,
 					model = this.model,
-					currentView = Backbone.history.fragment,
-					FacilityDetailsView = new facilityDetailsView({model: model});
+					currentView = Backbone.history.fragment;
+			this.facilityDetailsView = new facilityDetailsView({model: model});
 
-			FacilityDetailsView.render();
+			this.facilityDetailsView.render();
 
 			if (currentView !== 'create-facility')
 				this.renderMediaAndClassView(model);
