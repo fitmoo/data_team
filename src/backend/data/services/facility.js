@@ -15,7 +15,7 @@ module.exports = BaseDBService.extend({
     * Get Queue
     */
     getQueue: function(perPage, pageIndex, fn){
-        var sortOpts = { sortIndex: -1, facilityName : 1},
+        var sortOpts = { index: 1, facilityName : 1},
             searchOpts = { status : { $ne : 2 }},
             responseFields = { _id: 1, facilityName : 1, address  : 1, country : 1, city  : 1, state : 1, zip : 1, phoneNumber : 1,  email  : 1, websiteURL  : 1, ownersName : 1, aboutus  : 1};
 
@@ -48,13 +48,6 @@ module.exports = BaseDBService.extend({
     getCrawlingFacilities: function(websiteURL, fn){
         if(!websiteURL){
             this.modelClass.find({isCrawl : false}, {_id : 1, websiteURL:1}, fn);
-            //4704
-            //Local version 0 -500, 500-1000
-            //this.modelClass.find({isCrawl : false, crawlIndex : {$lte : 500}}, {_id : 1, websiteURL:1}, {crawlIndex : 1}, fn);
-            //TrungPD 2000-2500
-            //this.modelClass.find({isCrawl : false, crawlIndex : {$gte : 2000, $lte: 2500}}, {_id : 1, websiteURL:1}, {crawlIndex : 1}, fn);
-            //Staging 
-            //this.modelClass.find({isCrawl : false, crawlIndex : {$gte : 4000}}, {_id : 1, websiteURL:1}, {crawlIndex : 1}, fn);
         } else{
             this.modelClass.find({websiteURL  : websiteURL}, {_id : 1, websiteURL : 1}, fn);
         }

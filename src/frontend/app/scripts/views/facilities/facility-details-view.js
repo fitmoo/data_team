@@ -113,7 +113,7 @@ define([
 		onSave: function(callback) {
 			var self = this,
 					currentView = Backbone.history.fragment;
-					
+
 			if (this.currentView !== '#queue') {
 				var tagsVal = this.ui.tags.val().split(',');
 				this.model.set('tags', tagsVal);
@@ -126,8 +126,8 @@ define([
 			}
 
 			this.model.save(this.model.toJSON(), {
-				success: function(res) {
-					console.log('Save facilities data:', self.model.toJSON());
+				success: function(model, res) {
+					console.log('Save facilities data:', self.model);
 					Backbone.EventBroker.trigger('facilities:add', res);
 
 					// show created successfully facility notification
@@ -141,7 +141,9 @@ define([
 					// redirect to next facility queue
 					if (self.currentView === '#queue') {
 						Backbone.history.navigate('#queue/' + res.id);
-						self.render({model: res});
+						// update model attributes
+						self.model.attributes = res;
+						self.render({model: self.model});
 					}
 				},
 				error: function(err) {
@@ -204,7 +206,7 @@ define([
 			});
 		},
 
-		onRender: function() {
+		onRender: function(opts) {
 			var self = this;
 
 			// change Undo button text to Clear

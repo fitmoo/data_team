@@ -1,5 +1,5 @@
 var count = 1;
-db.photos.find({}, {}, {createdDate : 1}).forEach(
+db.photos.find( { $query: {}, $orderby: { createdDate : 1 } } ).forEach(
 	function(photo){
 		photo.index = count;
 		count += 1;
@@ -7,3 +7,4 @@ db.photos.find({}, {}, {createdDate : 1}).forEach(
 		db.photos.save(photo);
 	}
 )
+
