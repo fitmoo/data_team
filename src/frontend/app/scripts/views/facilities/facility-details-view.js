@@ -81,7 +81,6 @@ define([
       if (this.currentView === '#queue') {
       	this.template = queueFacilityDetailsTpl;
       }
-			this.listenTo(this.model, 'change', this.onChange);
 			EventBroker.register({
 				'facility:save': 'onSave'
 			},this);
@@ -114,6 +113,7 @@ define([
 		onSave: function(callback) {
 			var self = this,
 					currentView = Backbone.history.fragment;
+					
 			if (this.currentView !== '#queue') {
 				var tagsVal = this.ui.tags.val().split(',');
 				this.model.set('tags', tagsVal);
@@ -128,7 +128,6 @@ define([
 			this.model.save(this.model.toJSON(), {
 				success: function(res) {
 					console.log('Save facilities data:', self.model.toJSON());
-					Backbone.EventBroker.trigger('facility:editOff');
 					Backbone.EventBroker.trigger('facilities:add', res);
 
 					// show created successfully facility notification
@@ -141,19 +140,14 @@ define([
 
 					// redirect to next facility queue
 					if (self.currentView === '#queue') {
-						Backbone.history.navigate('#queue/' + res.id, {trigger: true});
+						Backbone.history.navigate('#queue/' + res.id);
+						self.render({model: res});
 					}
 				},
 				error: function(err) {
 					console.log(err);
 				}
 			});
-		},
-
-		onChange: function() {
-			if (this.ui.saveBtn.is(':disabled'))
-				// enabled Save button when have any model data changes
-				this.ui.saveBtn.removeAttr('disabled');
 		},
 
 		onUndo: function() {

@@ -48,7 +48,9 @@ define([
 			// redirect to login page when Token invalid
 			Backbone.EventBroker.trigger('token:invalid', res);
 
-			if (res.photos.length === 0 || res.totalRecords === 0) {
+			if (res.msg) {
+				alert('Server returned error');
+			} else if (res.photos.length === 0 || res.totalRecords === 0) {
 				Backbone.EventBroker.trigger('photosIndicator:hide');
 				alert('Have no photo');
 			} else {
