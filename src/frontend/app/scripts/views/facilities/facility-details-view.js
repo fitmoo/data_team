@@ -131,9 +131,7 @@ define([
 					Backbone.EventBroker.trigger('facilities:add', res);
 
 					// show created successfully facility notification
-					if (self.currentView === '#create-facility') {
-						Backbone.EventBroker.trigger('notification:show');
-					}
+					Backbone.EventBroker.trigger('notification:show');
 
 					if (callback && !callback.target)
 						callback();
