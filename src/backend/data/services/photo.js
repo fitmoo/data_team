@@ -179,7 +179,7 @@ module.exports = BaseDBService.extend({
 
                         var opt = {
                             paginate : { page : pageIndex, limit : perPage || 100 },
-                            sort : { createdDate : 1},
+                            sort : { index : 1},
                             search : search
                         };
 
