@@ -141,6 +141,8 @@ define([
 						Backbone.history.navigate('#queue/' + res.id);
 						// update model attributes
 						self.model.attributes = res;
+
+						self.model = self.model.clone();
 						self.render({model: self.model});
 					}
 				},

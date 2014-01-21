@@ -28,7 +28,7 @@ module.exports = {
 			photos = req.body.deletedPhotos,
 			latestPhotoId = req.body.latestPhoto;
 			firstPhotoId = req.body.firstPhoto;
-			
+
 		if(token && token !== ''){
 			if(!photos) photos = [];
 			this.photoService.markDelete(token, photos, firstPhotoId, latestPhotoId, perpage, function(err, updatedPhotos){

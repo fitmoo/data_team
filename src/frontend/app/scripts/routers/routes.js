@@ -214,8 +214,13 @@ function (
 			Backbone.EventBroker.trigger('advSearch:hide');
 			self.getAllTagName();
 
+
+			if (Views.QueueDetails)
+				Views.QueueDetails.remove();
+
 			if (Views.FacilityDetails)
 				Views.FacilityDetails.remove();
+
 			$('#main-container').append('<div class="layout-fluid" id="details"></div>');
 
 			if (!id) {
@@ -391,6 +396,11 @@ function (
 			Backbone.EventBroker.trigger('search:hide');
 			api.get(['facilities/checkout/', id, '?token=', Session.get('user').token].join(''), function(res) {
 				console.log(res);
+
+			if (Views.FacilityDetails) {
+				Views.FacilityDetails.close();
+				Views.FacilityDetails.remove();
+			}
 
 			if (Views.QueueDetails)
 				Views.QueueDetails.remove();
