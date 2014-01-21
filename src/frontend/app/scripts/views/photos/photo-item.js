@@ -3,7 +3,7 @@ define([
 	'handlebars',
 
 	// facility item template
-	'hbs!templates/media/find-photo-item',
+	'hbs!templates/photos/photo-item',
 
 	'backbone.marionette'
 ], function(
@@ -12,13 +12,15 @@ define([
 ) {
 	'use strict';
 
-	var PhotoItemView = Backbone.View.extend({
-		tagName: 'option',
+	var PhotoItemView = Backbone.Marionette.ItemView.extend({
+		tagName: 'li',
+
+		template: photoItemTpl,
 
 		i: 0,
 
 		events: {
-			// 'click .btn': 'onRemove'
+			'click .thumbnail': 'onSelectionPhoto'
 		},
 		
 		onRemove: function() {
@@ -30,10 +32,19 @@ define([
 			}
 		},
 
-		render: function() {
-			var id = this.model.get('id');
-			this.$el.attr('data-img-src', this.model.get('sourceURL'));
-			this.$el.attr('value', id);
+		onSelectionPhoto: function(e) {
+			e.preventDefault();
+			var target = $(e.target),
+					id = target.attr('id');
+
+			if (target.hasClass('selected'))
+				// remove selected photo in photo selected array
+				Backbone.EventBroker.trigger('photo:removed', id);
+			else
+				// add selected photo to photo selected array
+				Backbone.EventBroker.trigger('photo:selected', id);
+			
+			target.toggleClass('selected');
 		}
 	});
 
