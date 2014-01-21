@@ -36,8 +36,7 @@ define([
 		ui: {
 			delBtn: '#delete-facility',
 			verifyFacility: '#vefify-facility',
-			editForm: '#editing-facility',
-			nofifacation: '.success-notification'
+			editForm: '#editing-facility'
 		},
 
 		events: {
@@ -103,15 +102,16 @@ define([
 			});
 		},
 
-		saveAndDone: function() {
+		saveAndDone: function(e) {
 			var confirmPopup = confirm('This item will not be accessible again. Have you filled in as much information as possible?');
 
+			e.preventDefault();
 			if (confirmPopup === true) {
 				console.log('Save and Done facility on queue', this.model);
 				// set status = 2 for DONE case
 				// default is 0 or null
 				this.model.set('status', 2);
-				Backbone.EventBroker.trigger('facility:save');
+				this.facilityDetailsView.onSave();
 			}
 		},
 
@@ -172,11 +172,12 @@ define([
 		},
 
 		showCreateFacilityNotification: function() {
-			var self = this;
+			var self = this,
+					notification = self.$el.find('.success-notification');
 
-			self.ui.nofifacation.fadeIn(200);
+			notification.fadeIn(200);
 			setTimeout(function() {
-				self.ui.nofifacation.fadeOut(400);
+				notification.fadeOut(400);
 			},600);
 		},
 
