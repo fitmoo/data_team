@@ -10,8 +10,6 @@ define([
 	// views
 	'views/photos/photo-item',
 	'infiniScroll',
-	
-	'image.picker',
 
 	'backbone.marionette'
 ], function(
@@ -30,11 +28,16 @@ define([
 
 		el: '#photo-selection',
 
+		// array photo selected
+		photoSelectedList: [],
+
 		initialize: function(opts) {
 			var self = this;
 
 			EventBroker.register({
-				'photo:nextPage': 'loadingNextPage'
+				'photo:nextPage': 'loadingNextPage',
+				'photo:selected': 'onSelectedPhoto',
+				'photo:removed': 'onRemovedPhoto'
 			}, this);
 			this.collection = new photos();
 			this.endOfPage = 0;
@@ -76,7 +79,7 @@ define([
 							if (firstPage.length > 0) {
 								var firstPhotoId = firstPage[0].id,
 		            		lastPhotoId = firstPage[firstPage.length - 1].id,
-		            		deletedPhotos = self.$el.val(),
+		            		deletedPhotos = self.photoSelectedList,
 				            dataVal = {
 				              deletedPhotos: deletedPhotos,
 				              latestPhoto: lastPhotoId,
@@ -101,13 +104,11 @@ define([
 						}
 
 						self.collection.add(data);
-						self.$el.imagepicker();
 						self.loadingNextPage();
 
 					}
 				};
 			this.infiniScroll = new Backbone.InfiniScroll(this.collection, options);
-			this.$el.imagepicker();
 			this.scrollHeight = _.clone($('#photos').height() - 150);
 		},
 
@@ -146,8 +147,7 @@ define([
 
 						// checking loading images progress
 						loader.addProgressListener(function(e) {
-					    // the event provides stats on the number of completed items 
-					    // console.log(e.completedCount + ' / ' + e.totalCount);
+					    // the event provides stats on the number of completed items
 					    if (e.completedCount === e.totalCount) {
 								self.collection.putLastestId = true;
 					    	console.log('Finished load page', res.currentPage);
@@ -169,18 +169,38 @@ define([
 		},
 
 		deletePhotos: function(data) {
+			var self = this,
+					responseIds = [];
+
       if (this.collection.putLastestId) {
             
         if (data.firstPhoto) {
           console.log('Delete photos viewed:', data);
           this.collection.putLastestId = false;
           api.put(['photos?token=', Session.get('user').token, '&perPage=', conf.PHOTO_LIMIT].join(''), data, function(res) {
-           // imagePicker.removeAttr('value');
-           // console.log(res);
+						console.log(self.photoSelectedList, res);
+	      		// remove null item in array
+						res = _.difference(res, [null]);
+						_.each(res, function(photo, idx) {
+							responseIds.push(photo.id);
+							if (idx === res.length - 1 || photo === null) {
+								// remove item deleted on server
+								self.photoSelectedList = _.difference(self.photoSelectedList, responseIds);
+								console.log(self.photoSelectedList);
+							}
+						});
           });
         }
       }
 
+    },
+
+    onSelectedPhoto: function(id) {
+    	this.photoSelectedList.push(id);
+    },
+
+    onRemovedPhoto: function(id) {
+    	this.photoSelectedList = _.without(this.photoSelectedList, id);
     }
 
 	});
