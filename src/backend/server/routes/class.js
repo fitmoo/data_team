@@ -5,7 +5,8 @@
 
 var async = require('async');
 var DatabaseManager = require('../../data/'),
-	configs = require('../../utils/configs');
+	configs = require('../../utils/configs'),
+	errorObject = require('./errorResponse');
 
 module.exports = {
 	
