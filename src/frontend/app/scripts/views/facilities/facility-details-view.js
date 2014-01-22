@@ -91,6 +91,12 @@ define([
 	  	var $attr = view.$('#' + attr).parent(),
 	  		$msgHtml = $attr.find('span');
 
+			// set status = 2 for DONE case
+			// default is 0 or null
+			if (this.currentView === '#queue') {
+				this.model.set('status', this.statusBeforeSave);
+			}
+
 	  	if ( $msgHtml.hasClass('error-message') ) {
 
 	  		$msgHtml.text(error);
@@ -119,6 +125,7 @@ define([
 				this.model.set('tags', tagsVal);
 			} else {
 				this.model.set('queue', true);
+				this.model.set('status', 2);
 			}
 
 			if (callback && !callback.target ) {
@@ -127,7 +134,7 @@ define([
 
 			this.model.save(this.model.toJSON(), {
 				success: function(model, res) {
-					console.log('Save facilities data:', self.model);
+					console.log('Save facilities data:', res);
 					Backbone.EventBroker.trigger('facilities:add', res);
 
 					// show created successfully facility notification
@@ -144,6 +151,8 @@ define([
 
 						self.model = self.model.clone();
 						self.render({model: self.model});
+						Backbone.EventBroker.trigger('classView:render', self.model);
+						$('html, body').animate({scrollTop : 30}, 200);
 					}
 				},
 				error: function(err) {
@@ -206,6 +215,14 @@ define([
 			});
 		},
 
+		enableValidation: function() {
+			Backbone.Validation.bind(this, {
+				model: this.model,
+				valid: this.valid,
+				invalid: this.invalid
+			});
+		},
+
 		onRender: function(opts) {
 			var self = this;
 
@@ -222,11 +239,7 @@ define([
         items: 5
 			});
 
-			Backbone.Validation.bind(this, {
-				model: this.model,
-				valid: this.valid,
-				invalid: this.invalid
-			});
+			this.enableValidation();
 
 			self.modelAttr = self.model.clone();
 			setTimeout(function() {

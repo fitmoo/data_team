@@ -64,6 +64,7 @@ define([
 				'facility:editOff': 'disabledEditMode',
 				'facility:verify': 'onVerifyFacility',
 				'mediaClass:render': 'renderMediaAndClassView',
+				'classView:render': 'renderClassView',
 				'notification:show': 'showCreateFacilityNotification'
 			},this);
 		},
@@ -99,6 +100,8 @@ define([
 				Backbone.history.navigate('#queue/' + res.id);
 				self.model.attributes = res;
 				self.facilityDetailsView.render({model: self.model});
+				self.renderClassView(self.model);
+				$('html, body').animate({scrollTop : 30}, 200);
 			});
 		},
 
@@ -108,9 +111,8 @@ define([
 			e.preventDefault();
 			if (confirmPopup === true) {
 				console.log('Save and Done facility on queue', this.model);
-				// set status = 2 for DONE case
-				// default is 0 or null
-				this.model.set('status', 2);
+				this.facilityDetailsView.statusBeforeSave = _.clone(this.model.get('status'));
+				
 				this.facilityDetailsView.onSave();
 			}
 		},
@@ -152,15 +154,19 @@ define([
 		},
 
 		renderMediaAndClassView: function(model) {
-			var ClassDetailsView = new classDetailsView({model: model});
+			this.classDetailsView = new classDetailsView({model: model});
 
-			ClassDetailsView.render();
+			this.renderClassView();
 			if (this.currentView !== '#queue') {
 				var MediaLayout = new mediaLayout({model: model});
 					MediaLayout.render();
 				this.ui.verifyFacility.show();
 				this.ui.delBtn.show();
 			}
+		},
+
+		renderClassView: function(model) {
+			this.classDetailsView.render({model: model});
 		},
 
 		onCancel: function() {

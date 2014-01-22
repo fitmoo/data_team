@@ -50,7 +50,7 @@ define([
 
 			if (res.msg) {
 				alert('Server returned error');
-			} else if (res.photos.length === 0 || res.totalRecords === 0) {
+			} else if ((res.photos && res.photos.length === 0) || res.totalRecords === 0) {
 				Backbone.EventBroker.trigger('photosIndicator:hide');
 				alert('Have no photo');
 			} else {

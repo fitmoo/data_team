@@ -396,32 +396,37 @@ function (
 			Backbone.EventBroker.trigger('search:hide');
 			api.get(['facilities/checkout/', id, '?token=', Session.get('user').token].join(''), function(res) {
 				console.log(res);
+				if (res.status === 2) {
+					Backbone.history.navigate('#queue', {trigger: true});
+					alert('This facility has been removed from the queue');
+					return false;
+				}
 
-			if (Views.FacilityDetails) {
-				Views.FacilityDetails.close();
-				Views.FacilityDetails.remove();
-			}
+				if (Views.FacilityDetails) {
+					Views.FacilityDetails.close();
+					Views.FacilityDetails.remove();
+				}
 
-			if (Views.QueueDetails)
-				Views.QueueDetails.remove();
+				if (Views.QueueDetails)
+					Views.QueueDetails.remove();
 
-			$('#main-container').append('<div class="layout-fluid" id="details"></div>');
+				$('#main-container').append('<div class="layout-fluid" id="details"></div>');
 
-			if (res.status !== false && res.status !== 'Finish') {
-				console.log('Show Facility had id:', id, res);
-				Backbone.EventBroker.trigger('views:other');
+				if (res.status !== false && res.status !== 'Finish') {
+					console.log('Show Facility had id:', id, res);
+					Backbone.EventBroker.trigger('views:other');
 
-				var queueItem = new queueModel(res);
+					var queueItem = new queueModel(res);
 
-				Views.QueueDetails = new facilitiesLayout({model: queueItem});
+					Views.QueueDetails = new facilitiesLayout({model: queueItem});
 
-				// show info of facility
-				Views.QueueDetails.render();
-				Views.QueueDetails.show();
-			} else {
-				Backbone.history.navigate('#queue', {trigger: true});
-				alert(res.msg);
-			}
+					// show info of facility
+					Views.QueueDetails.render();
+					Views.QueueDetails.show();
+				} else {
+					Backbone.history.navigate('#queue', {trigger: true});
+					alert(res.msg);
+				}
 				
 			});
 		},
