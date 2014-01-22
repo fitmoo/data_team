@@ -217,7 +217,6 @@ module.exports = {
 								item.facilityId = returnFacility.id;
 								i++;
 							})
-
 							res.send(returnFacility);
 						}
 					});	
