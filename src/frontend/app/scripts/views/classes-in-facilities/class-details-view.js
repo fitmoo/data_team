@@ -125,9 +125,10 @@ define([
 				this.initAutocompleteSearch(conf.allTagName);
 
 			if (attr) {
-				this.otherModel = new classModel(attr);
-			} else
+				this.otherModel = attr;
+			} else {
 				this.otherModel = new classModel();
+			}
 
 			// this.schedule = this.otherModel.get('schedule');
 			console.log(this.otherModel);
@@ -226,19 +227,20 @@ define([
 				var tagsVal = $('#cl-tags').val().split(',');
 				this.otherModel.set('tags', tagsVal);
 
-				var otherModel = this.otherModel.clone();
+				var otherModel = _.clone(this.otherModel);
 
-				otherModel.save(otherModel.toJSON(), {
-					success: function(res) {
+				this.otherModel.save(otherModel.toJSON(), {
+					success: function(model, res) {
 						console.log(res);
 						self.schedule = [];
-						self.classesDetailsList.collection.create(res);
+						self.classesDetailsList.collection.add(res);
 						self.classListStatusChecking(true);
 
 						if (self.ui.calendarForm.hasClass('editing')) {
 							self.classesDetailsList.render();
 						}
 
+						self.unstickit(self.otherModel);
 						// clear form data
 						self.clearFormData(res);
 						self.cancelEntry(true);
@@ -311,13 +313,6 @@ define([
 			this.newModelForCreateClass();
 			if (!showAddClassForm)
 				this.ui.addClassForm.hide();
-			// console.log('Undo input class value');
-			// console.log(this.lastModelAttr);
-			// if (!this.otherModel.get('id')) {
-			// 	this.showAddNewClass();
-			// } else {
-			// 	this.ui.calendarForm.html(editClassTpl(this.lastModelAttr.toJSON()));
-			// }
 		},
 
 		addDay: function() {

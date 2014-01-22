@@ -32,7 +32,7 @@ define([
 
 			className: {
 				required: true
-			},
+			}
 
 			// instructor: {
 			// 	required: true

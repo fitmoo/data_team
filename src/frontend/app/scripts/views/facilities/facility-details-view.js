@@ -151,7 +151,7 @@ define([
 
 						self.model = self.model.clone();
 						self.render({model: self.model});
-						Backbone.EventBroker.trigger('mediaClass:render', self.model);
+						Backbone.EventBroker.trigger('classView:render', self.model);
 						$('html, body').animate({scrollTop : 30}, 200);
 					}
 				},
