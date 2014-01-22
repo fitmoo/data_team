@@ -99,6 +99,8 @@ define([
 				Backbone.history.navigate('#queue/' + res.id);
 				self.model.attributes = res;
 				self.facilityDetailsView.render({model: self.model});
+				self.renderMediaAndClassView(self.model);
+				$('html, body').animate({scrollTop : 30}, 200);
 			});
 		},
 
@@ -108,9 +110,8 @@ define([
 			e.preventDefault();
 			if (confirmPopup === true) {
 				console.log('Save and Done facility on queue', this.model);
-				// set status = 2 for DONE case
-				// default is 0 or null
-				this.model.set('status', 2);
+				this.facilityDetailsView.statusBeforeSave = _.clone(this.model.get('status'));
+				
 				this.facilityDetailsView.onSave();
 			}
 		},

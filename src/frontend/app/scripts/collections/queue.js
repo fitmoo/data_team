@@ -43,7 +43,7 @@ define([
 			// redirect to login page when Token invalid
 			Backbone.EventBroker.trigger('token:invalid', res);
 
-			if (res.totalRecords === 0 || res.facilities.length === 0) {
+			if (res.totalRecords === 0 || (res.facilities && res.facilities.length === 0)) {
 				Backbone.EventBroker.trigger('queue:hideIndicator');
 				alert('Have no facility in queue');
 			} else {
