@@ -12,7 +12,6 @@ module.exports = {
             if(re2.test(strPhone)) return strPhone;
             else
             {
-                console.log('message');
                 var strFormatPhone = strPhone.replace(/[^0-9]/g, '');
                 strFormatPhone = strFormatPhone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
                 return strFormatPhone;
