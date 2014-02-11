@@ -6,3 +6,4 @@ DIR=${DIR%/*}
 
 # Start webserver
 NODE_ENV=production forever start -a -l forever.log -o out.log -e err.log $DIR/server/app.js
+sudo service nginx restart
