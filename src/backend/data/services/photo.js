@@ -93,38 +93,44 @@ module.exports = BaseDBService.extend({
                                             lastPage -= 1;
                                         }
                                         
-                                        console.log('firstPhotoId: %s',firstPhotoId);
-                                        console.log('latestPhotoId: %s',latestPhotoId);
-                                        console.log('Last page: %s', lastPage);
-                                        console.log('firstphoto.index : %s, lastphoto.index : %s' , firstphoto.index, lastphoto.index);
+                                        // console.log('firstPhotoId: %s',firstPhotoId);
+                                        // console.log('latestPhotoId: %s',latestPhotoId);
+                                        // console.log('Last page: %s', lastPage);
+                                        // console.log('firstphoto.index : %s, lastphoto.index : %s' , firstphoto.index, lastphoto.index);
 
-                                        self.photoViewLogModel.findOneAndUpdate({userName : userName}, {latestPhotoByDate: lastphoto.createdDate, lastPage: lastPage}, {upsert: true}, function(err){
-                                            
-                                            //Move selected Photo to photoS3 collection
-                                            
-                                            self.modelClass.find({index : {$gte : firstphoto.index, $lte : lastphoto.index}, markDelete: false} , function(err, qualifiedPhotos){
-                                                if(err){
-                                                    fn && fn(err, results);
-                                                } else{
-                                                    async.eachSeries(qualifiedPhotos, function(qualifiedPhoto, done){
-                                                        var photoS3Obj = {facilityID : qualifiedPhoto.facilityID, sourceURL: qualifiedPhoto.sourceURL};
-                                                        
-                                                        self.photoS3.findOne(photoS3Obj, 
-                                                        function(err, s3Photo){
-                                                            if(!err && !s3Photo){
-                                                                photoS3Obj._id = qualifiedPhoto._id;
-                                                                self.photoS3.create(photoS3Obj, done);
-                                                            }
-                                                            else{
-                                                                done && done(err);
-                                                            }
-                                                        })
-                                                    }, function(err){
+                                        self.photoViewLogModel.findOneAndUpdate({_id : {$exists : true}}, { $setOnInsert: {latestPhotoByDate: lastphoto.createdDate, lastPage: lastPage}}, {upsert: true}, function(err, logItem){
+                                            if(err){
+                                                fn && fn(err, results);
+                                            } else{
 
-                                                        fn && fn(err, results);
-                                                    })    
-                                                }
-                                            })
+                                                //Move selected Photo to photoS3 collection
+                                                self.photoViewLogModel.findOneAndUpdate({_id: logItem._id, lastPage : {$lt : lastPage}}, {$set: {latestPhotoByDate: lastphoto.createdDate, lastPage: lastPage}}, function(err, count){
+                                                    //self.photoViewLogModel.
+                                                    self.modelClass.find({index : {$gte : firstphoto.index, $lte : lastphoto.index}, markDelete: false} , function(err, qualifiedPhotos){
+                                                        if(err){
+                                                            fn && fn(err, results);
+                                                        } else{
+                                                            async.eachSeries(qualifiedPhotos, function(qualifiedPhoto, done){
+                                                                var photoS3Obj = {facilityID : qualifiedPhoto.facilityID, sourceURL: qualifiedPhoto.sourceURL};
+                                                                
+                                                                self.photoS3.findOne(photoS3Obj, 
+                                                                function(err, s3Photo){
+                                                                    if(!err && !s3Photo){
+                                                                        photoS3Obj._id = qualifiedPhoto._id;
+                                                                        self.photoS3.create(photoS3Obj, done);
+                                                                    }
+                                                                    else{
+                                                                        done && done(err);
+                                                                    }
+                                                                })
+                                                            }, function(err){
+
+                                                                fn && fn(err, results);
+                                                            })    
+                                                        }
+                                                    })
+                                                });
+                                            }
                                         });
                                     }
                                 });
@@ -150,7 +156,7 @@ module.exports = BaseDBService.extend({
             if(err || !userName || userName === "") fn(err, {msg: "Can't get username"});
             else{
                 //Get latest Image 
-                self.photoViewLogModel.findOne({userName : userName}, function(err, photoviewLogItem){
+                self.photoViewLogModel.findOne({}, function(err, photoviewLogItem){
                     
                     //console.log('userName: %s' ,userName);
                     //console.log('photoviewLogItem: %j' ,photoviewLogItem);
@@ -162,20 +168,16 @@ module.exports = BaseDBService.extend({
                         console.log('Pageindex A : %s', pageIndex);
                         if(photoviewLogItem 
                             && photoviewLogItem.lastPage >= 0
-                            && (
-                                pageIndex <= photoviewLogItem.lastPage 
-                                // || 
-                                // (
-                                //     pageIndex == 0 && photoviewLogItem.lastPage == 0
-                                // )
-                            )
+                            && photoviewLogItem.lastPage 
+                            && pageIndex <= photoviewLogItem.lastPage 
+                        
                         ){
                             pageIndex = photoviewLogItem.lastPage  + 1;
                         }
 
                         console.log('Pageindex B : %s', pageIndex);
                         //Debug only
-                        //search = {debugData : true};
+                        search = {debugData : true};
 
                         var opt = {
                             paginate : { page : pageIndex, limit : perPage || 100 },
