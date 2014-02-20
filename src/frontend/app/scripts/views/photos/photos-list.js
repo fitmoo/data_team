@@ -126,15 +126,25 @@ define([
 					var nextTwoPageSize = self.collection.nextTwoPage.length,
 							nextOnePageSize = self.collection.nextOnePage.length,
 							loadedPage = self.collection.page;
+					if (loadedPage < res.currentPage) {
+						self.collection.page = res.currentPage;
+						
+						if (nextTwoPageSize > 0)
+							self.collection.nextTwoPage = res;
+						else
+							self.collection.nextOnePage = res;
 
-					// save next pagination data
-					if (nextOnePageSize === 0 && nextTwoPageSize === 0) {
-						self.collection.nextOnePage = res;
-					} else if (self.collection.nextOnePage.currentPage === loadedPage - 1  ) {
-						self.collection.nextTwoPage = res;
 					} else {
-						self.collection.nextOnePage = self.collection.nextTwoPage;
-						self.collection.nextTwoPage = res;
+						// save next pagination data
+						if (nextOnePageSize === 0 && nextTwoPageSize === 0) {
+							self.collection.nextOnePage = res;
+						} else if (self.collection.nextOnePage.currentPage === loadedPage - 1  ) {
+							self.collection.nextTwoPage = res;
+						} else {
+							self.collection.nextOnePage = self.collection.nextTwoPage;
+							self.collection.nextTwoPage = res;
+						}
+
 					}
 					if (res.photos.length > 0) {
 						var loader = new PxLoader();
