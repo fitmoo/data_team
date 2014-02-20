@@ -177,7 +177,7 @@ module.exports = BaseDBService.extend({
 
                         console.log('Pageindex B : %s', pageIndex);
                         //Debug only
-                        search = {debugData : true};
+                        //search = {debugData : true};
 
                         var opt = {
                             paginate : { page : pageIndex, limit : perPage || 100 },
@@ -187,7 +187,6 @@ module.exports = BaseDBService.extend({
 
 
                         self.find(opt, function(err, photos, count){
-                            console.log('%j', photos[0]);
                             fn(err, {photos: photos, currentPage : pageIndex + 1, count: count});
                         });
                     }
