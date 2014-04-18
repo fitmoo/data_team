@@ -10,67 +10,82 @@ var DatabaseManager = require('../../data/'),
 
 program
   .version('0.0.1')
-
+  .option('    --collection [collectionname]', 'Export collection name: class, facility')
+  .parse(process.argv);
 
 function exportClassesAndEvents(callback){
-    var db = new DatabaseManager(configs);
+    if (program.collection === 'class') {
+        var db = new DatabaseManager(configs);
 
-    db.init(["Class", "ExportEvent"], function(){
-        var classService = db.getInstance("Class"),
-            exportEventService = db.getInstance("ExportEvent");
+        db.init(["Facility", "Class", "ExportEvent"], function(){
+            var classService = db.getInstance("Class"),
+                facilityService = db.getInstance("Facility"),
+                exportEventService = db.getInstance("ExportEvent");
 
-        //classService.getAll(function(err, classes){
-        classService.modelClass.find({_id: "52ce54da839173e603001359"}, function(err, classes){
-            console.log(classes.length);
-            var firstDayOfSecondWeek =  getFirstDayOfSecondWeek();
+            
+            //classService.modelClass.find({_id: "52ce54da839173e603001359"}, function(err, classes){
+            classService.getAll(function(err, classes){
+                console.log(classes.length);
+                var firstDayOfSecondWeek =  getFirstDayOfSecondWeek();
 
-            async.eachSeries(classes, function(classItem, callback){
+                async.eachSeries(classes, function(classItem, callback){
 
-                async.eachSeries(classItem.schedule, function(scheduleItem, callback){
+                    console.log(classItem.facilityID);
                     
-                    async.eachSeries(scheduleItem.times, function(timeItem, callback){
-
-
-                        var startDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.startTime);
-                        var endDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.endTime);
-                        var obj = {
-                            eventName : classItem.className,
-                            startDateTime : startDate,
-                            endDateTime : endDate,
-                            recurring: "Weekly",
-                            eventDescription: classItem.className
-                        }
-
-
-                        if (classItem.instructor && classItem.instructor.trim().length > 0)
-                            obj.eventDescription = obj.eventDescription + " /n" + classItem.instructor;
+                    //Find Facility
+                    facilityService.getOne({_id : classItem.facilityID}, function(err, facility){
                         
-                        console.log(obj);
-                        exportEventService.create(obj, function(err, result){
-                            console.log(result);
-                            callback && callback(err);
 
+                        var location = facility.address + ' ' + facility.city + ' ' + facility.state;
+
+                        async.eachSeries(classItem.schedule, function(scheduleItem, callback){
+                        
+                            async.eachSeries(scheduleItem.times, function(timeItem, callback){
+
+
+                                var startDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.startTime);
+                                var endDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.endTime);
+                                var obj = {
+                                    eventName : classItem.className,
+                                    startDateTime : startDate,
+                                    endDateTime : endDate,
+                                    recurring: "Weekly",
+                                    eventDescription: classItem.className,
+                                    location: location
+                                }
+
+
+                                if (classItem.instructor && classItem.instructor.trim().length > 0)
+                                    obj.eventDescription = obj.eventDescription + " /n" + classItem.instructor;
+                                
+                                exportEventService.create(obj, function(err, result){
+                                    callback && callback(err);
+
+                                })
+
+                            }, function(err){
+                                callback && callback(err);
+                            })
+
+                        }, function(err){
+                            callback && callback(err);
                         })
 
-                    }, function(err){
-                        callback && callback(err);
                     })
+                    
 
                 }, function(err){
-                    callback && callback(err);
-                })
+                    if(err) console.log('Error: ' + err);
+                    callback && callback();
+                });
                 
-
-            }, function(err){
-                if(err) console.log('Error: ' + err);
-                callback && callback();
+                
             });
-            
-            
+                
         });
-            
-    });
-    
+    } else{
+        callback && callback();
+    }
     
 };
 
@@ -130,9 +145,60 @@ function getDayNumber(stringDay){
     } 
 }
 
+function exportFacilities(callback){
+    console.log(program.collection);
+    if (program.collection === 'facility') {
+        var db = new DatabaseManager(configs);
+
+        db.init(["Facility", "ExportFacility"], function(){
+            var facility = db.getInstance("Facility"),
+                exportFacility = db.getInstance("ExportFacility");
+
+            
+            //facility.modelClass.find({_id: "52736a625c4c8caa03000004"}, function(err, facilities){
+            facility.modelClass.find({status : 2}, function(err, facilities){
+                console.log('facilities found: ' + facilities.length);
+
+                async.eachSeries(facilities, function(facility, callback){
+                    
+                    var obj = {
+                        facilityname: facility.facilityName,
+                        description:  facility.aboutus,
+                        location: facility.address + ' ' + facility.city + ' ' + facility.state,
+                        country: facility.country,
+                        phone : facility.phoneNumber,
+                        email:  facility.email, 
+                        website: facility.websiteURL
+                    }
+
+
+                    if(facility.ownersName && facility.ownersName.trim().length > 0){
+                        obj.description += ' /n' + facility.ownersName;
+                    }
+                    
+                    exportFacility.create(obj, function(err, result){
+                        console.log(result);
+                        callback && callback(err);
+
+                    });
+                    
+
+                }, function(err){
+                    callback && callback(err);
+                });
+                
+            });
+
+        });
+
+    } else{
+        callback && callback();
+    }
+}
 
 async.series([
     exportClassesAndEvents,
+    exportFacilities,
    
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");

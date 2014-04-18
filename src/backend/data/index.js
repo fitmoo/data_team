@@ -16,7 +16,8 @@ var oop = require('node-g3').oop,
     LookupService = require('./services/lookup'),
     PhotoService = require('./services/photo'),
     CrawlStatusService = require('./services/crawlStatus'),
-    ExportEventService = require('./services/exportEvent');
+    ExportEventService = require('./services/exportEvent'),
+    ExportFacilityService = require('./services/exportFacility');
 
 /**
  * List of database service
@@ -33,7 +34,8 @@ var servicesClasses = {
     Lookup : LookupService,
     CrawlStatus : CrawlStatusService,
     Photo : PhotoService,
-    ExportEvent: ExportEventService
+    ExportEvent: ExportEventService,
+    ExportFacility: ExportFacilityService
 };
 
 /**

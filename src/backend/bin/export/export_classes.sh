@@ -1,1 +1,1 @@
-mongoexport --host 127.0.0.1:27017 --db ScrapingData --collection facilities --fieldFile class_export_fields.txt --csv --out classes.csv
+mongoexport --host 127.0.0.1:27017 --db ScrapingData --collection exportevents --fieldFile class_fields.txt --csv --out classes.csv

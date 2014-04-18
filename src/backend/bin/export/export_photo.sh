@@ -1,0 +1,1 @@
+mongoexport --host 127.0.0.1:27017 --db ScrapingData --collection photos3s --fieldFile photo_fields.txt --csv --out photos.csv

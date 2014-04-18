@@ -1,2 +1,2 @@
-startDateTime,endDateTime,_id,eventDescription,recurring,eventName
-2014-01-08T23:30:00Z,2014-01-09T10:30:00Z,ObjectID(5350ef730cd1832908000006),"Coached CrossFit WOD","Weekly","Coached CrossFit WOD"
+_id,eventName,startDateTime,endDateTime,eventDescription,recurring,location
+ObjectID(535119a9775923060c000006),"Coached CrossFit WOD",2014-01-08T23:30:00Z,2014-01-09T10:30:00Z,"Coached CrossFit WOD","Weekly","1090 S Milpitas Blvd. Milpitas CA"

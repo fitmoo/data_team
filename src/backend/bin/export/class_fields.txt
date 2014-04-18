@@ -1,6 +1,7 @@
+_id
+eventName
 startDateTime
 endDateTime
-_id
 eventDescription
 recurring
-eventName
+location

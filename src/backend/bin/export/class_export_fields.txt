@@ -1,7 +1,0 @@
-_id
-facilityID
-className
-facilityName
-migrationStatus
-tags
-schedule

@@ -5,7 +5,8 @@ var ExportEventSchema = new mongoose.Schema({
     startDateTime : Date,
     endDateTime : Date,
     recurring: {type: String, default: ""},
-    eventDescription: {type: String, default: ""}
+    eventDescription: {type: String, default: ""},
+    location : {type: String, default: ""},
 });
 
 ExportEventSchema.set('toJSON', { getters: true });
