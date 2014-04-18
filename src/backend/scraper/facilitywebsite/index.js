@@ -14,7 +14,7 @@ var DatabaseManager = require('../../data/');
 module.exports = {
 
 	crawlType : '',
-	pageResource : { videos: [], imageArray : [], imagesNeedLoading: [], cacheImages: [], linkArray : [], rearchedLinks : [] },
+	pageResource : { videos: [], imageArray : [], imagesNeedLoading: [], cacheImages: [], linkArray : [], rearchedLinks : [], spendTime: null },
 	DEEPLINK : 0,
 	siteCrawlerJSFile : path.resolve(__dirname, 'siteCrawler.js'),
 	facilityService: null,
@@ -63,7 +63,7 @@ module.exports = {
 			self.facilityService = db.getInstance("Facility");
 			self.photoService = db.getInstance("Photo");
 			self.facilityService.getCrawlingFacilities(websiteURL, function(err, facilities){
-				console.log('Total facilities :%s', facilities.length);
+				console.log('Total facilities 1:%s', facilities.length);
 				if(err || !facilities) fn && fn(err, null);
 				else{
 					async.eachSeries(facilities, function(facility, done){
@@ -71,6 +71,7 @@ module.exports = {
 						if(facility.websiteURL && facility.websiteURL.length > 0){
 							console.log('URL:%s', facility.websiteURL);
 							self.crawlPhotoVideo(facility.websiteURL, function(pageResource){
+
 								if(websiteURL){
 									debugPageResource = pageResource;
 								}
@@ -83,8 +84,11 @@ module.exports = {
 								})
 
 								console.log(videos);
+								console.log(facility);
 								self.facilityService.modelClass.findOneAndUpdate({_id : facility._id}, {isCrawl: true, crawlPhotos: pageResource.imageArray.length, crawlVideos: pageResource.videos.length, $pushAll: { 'video' : videos }, $inc : { videoCount : pageResource.videos.length}, spendTime: pageResource.spendTime}, function(err, savedfacility){
-									console.log('ID: %s, websiteURL: %s, crawlPhotos: %s, crawlVideos: %s, spendTime: %s', savedfacility._id, savedfacility.websiteURL, savedfacility.crawlPhotos, savedfacility.crawlVideos, savedfacility.spendTime);
+									if(savedfacility)
+										console.log('ID: %s, websiteURL: %s, crawlPhotos: %s, crawlVideos: %s, spendTime: %s', savedfacility._id, savedfacility.websiteURL, savedfacility.crawlPhotos, savedfacility.crawlVideos, savedfacility.spendTime);
+
 									if(err) done && done(err);
 									else{
 										//Insert photos url

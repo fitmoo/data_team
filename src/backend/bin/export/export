@@ -1,0 +1,148 @@
+#!/usr/bin/env node
+
+var async = require('async'),
+    _ = require('underscore'),
+    assert = require('assert'),
+    program = require('commander');
+
+var DatabaseManager = require('../../data/'),
+    configs = require('../../utils/configs');
+
+program
+  .version('0.0.1')
+
+
+function exportClassesAndEvents(callback){
+    var db = new DatabaseManager(configs);
+
+    db.init(["Class", "ExportEvent"], function(){
+        var classService = db.getInstance("Class"),
+            exportEventService = db.getInstance("ExportEvent");
+
+        //classService.getAll(function(err, classes){
+        classService.modelClass.find({_id: "52ce54da839173e603001359"}, function(err, classes){
+            console.log(classes.length);
+            var firstDayOfSecondWeek =  getFirstDayOfSecondWeek();
+
+            async.eachSeries(classes, function(classItem, callback){
+
+                async.eachSeries(classItem.schedule, function(scheduleItem, callback){
+                    
+                    async.eachSeries(scheduleItem.times, function(timeItem, callback){
+
+
+                        var startDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.startTime);
+                        var endDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.endTime);
+                        var obj = {
+                            eventName : classItem.className,
+                            startDateTime : startDate,
+                            endDateTime : endDate,
+                            recurring: "Weekly",
+                            eventDescription: classItem.className
+                        }
+
+
+                        if (classItem.instructor && classItem.instructor.trim().length > 0)
+                            obj.eventDescription = obj.eventDescription + " /n" + classItem.instructor;
+                        
+                        console.log(obj);
+                        exportEventService.create(obj, function(err, result){
+                            console.log(result);
+                            callback && callback(err);
+
+                        })
+
+                    }, function(err){
+                        callback && callback(err);
+                    })
+
+                }, function(err){
+                    callback && callback(err);
+                })
+                
+
+            }, function(err){
+                if(err) console.log('Error: ' + err);
+                callback && callback();
+            });
+            
+            
+        });
+            
+    });
+    
+    
+};
+
+function getDatebyDay(firstDayOfSecondWeek, stringDay, timeString){
+    //"endTime" : "05:30 PM"
+    var dayNumber = getDayNumber(stringDay);
+    var dat = new Date(firstDayOfSecondWeek.getTime());
+    
+    dat.setDate(dat.getDate() +  dayNumber);
+
+    var index = timeString.indexOf(":"),
+        length = timeString.length,
+        hour = parseInt(timeString.substring(0, index)),
+        mins = parseInt(timeString.substring(index + 1, index + 3)),
+        meridiem = timeString.substring(length - 2, length);
+    
+    if(meridiem.toLowerCase() == 'pm'){
+        if(hour != 12)
+            hour += 12;
+    }
+
+    dat.setHours(hour);
+    dat.setMinutes(mins);
+    
+    return dat;
+}
+
+function getFirstDayOfSecondWeek(){
+    var currentDate = new Date();
+    var firstDayOfSecondWeek = new Date('01-01-' + currentDate.getFullYear().toString());
+
+    firstDayOfSecondWeek.setDate(firstDayOfSecondWeek.getDate() +  (7 - firstDayOfSecondWeek.getDay()));
+
+    return firstDayOfSecondWeek;
+    
+}
+
+function getDayNumber(stringDay){
+    stringDay = stringDay.toLowerCase();
+
+    switch(stringDay)
+    {
+        case "sunday":
+            return 0;
+        case "monday":
+            return 1;
+        case "tuesday":
+            return 2;
+        case "wednesday":
+            return 3;
+        case "thursday":
+            return 4;
+        case "friday":
+            return 5;
+        case "saturday":
+            return 6;
+    } 
+}
+
+
+async.series([
+    exportClassesAndEvents,
+   
+], function(err, res) {
+    assert.ok(!err, "E9984837323. Command fail");
+
+    var exit = function () {
+        process.exit(0);
+    }
+
+    if (!program.waitingExit)
+        exit();
+    else
+        setTimeout(exit, program.waitingExit);
+});

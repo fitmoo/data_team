@@ -1,0 +1,8 @@
+fitmooFacilityID
+className
+facilityID
+facilityName
+migrationStatus
+_id
+tags
+schedule

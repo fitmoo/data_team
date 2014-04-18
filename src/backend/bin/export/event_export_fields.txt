@@ -1,0 +1,6 @@
+startDateTime
+endDateTime
+_id
+eventDescription
+recurring
+eventName

@@ -1,0 +1,1 @@
+db.facilities.update({$or : [{tags:null},{tags:""}]}, {$set : {tags : []}}, {multi: true})
