@@ -8,96 +8,145 @@ var async = require('async'),
 var DatabaseManager = require('../../data/'),
     configs = require('../../utils/configs');
 
+
+///////////////////////////////////////////////////////////////////////////////
+
 program
   .version('0.0.1')
   .option('    --collection [collectionname]', 'Export collection name: class, facility')
   .parse(process.argv);
 
-function exportClassesAndEvents(callback){
-    if (program.collection === 'class') {
-        var db = new DatabaseManager(configs);
-
-        db.init(["Facility", "Class", "ExportEvent"], function(){
-            var classService = db.getInstance("Class"),
-                facilityService = db.getInstance("Facility"),
-                exportEventService = db.getInstance("ExportEvent");
-
-            exportEventService.modelClass.collection.remove(function(err, count){
-
-                console.log('Removed previous migration data: ' + count);
-
-                //classService.modelClass.find({_id: "52ce54da839173e603001359"}, function(err, classes){
-                classService.getAll(function(err, classes){
-                    console.log(classes.length);
-                    var firstDayOfSecondWeek =  getFirstDayOfSecondWeek();
-
-                    async.eachSeries(classes, function(classItem, callback){
-
-                        console.log(classItem.facilityID);
-                        
-                        //Find Facility
-                        facilityService.getOne({_id : classItem.facilityID}, function(err, facility){
-                            
-
-                            var location = facility.address + ' ' + facility.city + ' ' + facility.state;
-
-                            async.eachSeries(classItem.schedule, function(scheduleItem, callback){
-                            
-                                async.eachSeries(scheduleItem.times, function(timeItem, callback){
+var debug = true;
 
 
-                                    var startDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.startTime);
-                                    var endDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.endTime);
-                                    var obj = {
-                                        eventName : classItem.className,
-                                        startDateTime : startDate,
-                                        endDateTime : endDate,
-                                        recurring: "Weekly",
-                                        eventDescription: classItem.className,
-                                        location: location
-                                    }
+///////////////////////////////////////////////////////////////////////////////
+// Export Facilities to Community
+// 1. A facility will be the community in Fitmoo.com
+//      a. Facility name, address and all other info should be imported to equivalent
+//          fields in fitmoo.com
+//          Example: URL will go to the external website link for community
+//      b. Owner name can be added to the description as a new line eventually this
+//          will the admin account.
+//      c. Owner Email should be stored in an owner email field. (This field will be
+//          used for claiming a community profile in the claiming functionality)
+//      d. Only import Status = 2 //Done
+//      e. Or a csv file may be provided.
+///////////////////////////////////////////////////////////////////////////////
 
 
-                                    if (classItem.instructor && classItem.instructor.trim().length > 0)
-                                        obj.eventDescription = obj.eventDescription + " /n" + classItem.instructor;
-                                    
-                                    exportEventService.create(obj, function(err, result){
-                                        callback && callback(err);
+/**
+ * Gets the facilities to export.
+ */
+function getVerifiedFacilities(facilityService, callback) {
+    var opts = { status: 2 };
+    if (debug)
+        opts = { "facilityID": 168 };
 
-                                    })
+    facilityService.modelClass.find(opts, callback);
+}
 
-                                }, function(err){
-                                    callback && callback(err);
-                                })
 
-                            }, function(err){
-                                callback && callback(err);
-                            })
+function getClassesByFacility(classService, facility, callback) {
+    var opts = {
+        fitmooFacilityID: facility.facilityID
+    };
 
-                        })
-                        
+    classService.modelClass.find(opts, callback);
+}
 
-                    }, function(err){
-                        if(err) console.log('Error: ' + err);
-                        callback && callback();
+
+function getCommunityLocation(facility) {
+    return facility.address + ' ' + facility.city + ', ' + facility.state;
+}
+/**
+ * Given the facility object, build the community object
+ */
+function buildCommunity(facility) {
+    var obj = {
+        id: facility.facilityID,
+        facilityname: facility.facilityName,
+        description:  facility.aboutus,
+        location: getCommunityLocation(facility),
+        country: facility.country,
+        phone : facility.phoneNumber,
+        email: facility.email, 
+        website: facility.websiteURL
+    }
+
+
+    if(facility.ownersName && facility.ownersName.trim().length > 0){
+        obj.description += ' /n' + facility.ownersName;
+    }
+
+    return obj;
+}
+
+/**
+ * Migration facilities data to fitmoo.com's community data
+ */
+function exportFacilities(callback){
+
+    if (program.collection !== 'facility')
+        return callback && callback();
+
+    var db = new DatabaseManager(configs);
+
+    db.init(["Facility", "ExportFacility"], function(){
+        var facilityService = db.getInstance("Facility"),
+            exportFacility = db.getInstance("ExportFacility");
+
+        // Remove all previously migrated records in mongo
+        exportFacility.modelClass.collection.remove(function(err, count){
+
+            console.log('Removed previous migration data: ' + count);
+
+            //facilityService.modelClass.find(, function(err, facilities){
+            // Find all verified facilitites
+            var qryFacility = { status: 2 };
+            if (debug)
+                qryFacility = {_id: "52736a625c4c8caa03000004"};
+
+            // Gets out all verified facilities to export
+            getVerifiedFacilities(facilityService, function(err, facilities){
+                console.log('facilities found: ' + facilities.length);
+
+                async.eachSeries(facilities, function(facility, callback){
+
+                    // builds the community object, given the facility object
+                    var obj = buildCommunity(facility);
+
+                    // Saves the community object to mongo so that we can
+                    // export this to csv later.
+                    exportFacility.create(obj, function(err, result){
+                        if (debug)
+                            console.log(result);
+                        callback && callback(err);
                     });
-                
-                
+
+                }, function(err){
+                    callback && callback(err);
                 });
             });
-                
         });
-    } else{
-        callback && callback();
-    }
-    
-};
+
+    });
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Export Events
+// A class for a particular date and time is an event in Fitmoo.com
+///////////////////////////////////////////////////////////////////////////////
+
+
 
 function getDatebyDay(firstDayOfSecondWeek, stringDay, timeString){
     //"endTime" : "05:30 PM"
     var dayNumber = getDayNumber(stringDay);
     var dat = new Date(firstDayOfSecondWeek.getTime());
-    
+
     dat.setDate(dat.getDate() +  dayNumber);
 
     var index = timeString.indexOf(":"),
@@ -105,7 +154,7 @@ function getDatebyDay(firstDayOfSecondWeek, stringDay, timeString){
         hour = parseInt(timeString.substring(0, index)),
         mins = parseInt(timeString.substring(index + 1, index + 3)),
         meridiem = timeString.substring(length - 2, length);
-    
+
     if(meridiem.toLowerCase() == 'pm'){
         if(hour != 12)
             hour += 12;
@@ -113,7 +162,7 @@ function getDatebyDay(firstDayOfSecondWeek, stringDay, timeString){
 
     dat.setHours(hour);
     dat.setMinutes(mins);
-    
+
     return dat;
 }
 
@@ -124,7 +173,7 @@ function getFirstDayOfSecondWeek(){
     firstDayOfSecondWeek.setDate(firstDayOfSecondWeek.getDate() +  (7 - firstDayOfSecondWeek.getDay()));
 
     return firstDayOfSecondWeek;
-    
+
 }
 
 function getDayNumber(stringDay){
@@ -146,68 +195,152 @@ function getDayNumber(stringDay){
             return 5;
         case "saturday":
             return 6;
-    } 
-}
-
-function exportFacilities(callback){
-    console.log(program.collection);
-    if (program.collection === 'facility') {
-        var db = new DatabaseManager(configs);
-
-        db.init(["Facility", "ExportFacility"], function(){
-            var facility = db.getInstance("Facility"),
-                exportFacility = db.getInstance("ExportFacility");
-
-            exportFacility.modelClass.collection.remove(function(err, count){
-
-                console.log('Removed previous migration data: ' + count);
-
-                //facility.modelClass.find({_id: "52736a625c4c8caa03000004"}, function(err, facilities){
-                facility.modelClass.find({status : 2}, function(err, facilities){
-                    console.log('facilities found: ' + facilities.length);
-
-                    async.eachSeries(facilities, function(facility, callback){
-                        
-                        var obj = {
-                            facilityname: facility.facilityName,
-                            description:  facility.aboutus,
-                            location: facility.address + ' ' + facility.city + ' ' + facility.state,
-                            country: facility.country,
-                            phone : facility.phoneNumber,
-                            email:  facility.email, 
-                            website: facility.websiteURL
-                        }
-
-
-                        if(facility.ownersName && facility.ownersName.trim().length > 0){
-                            obj.description += ' /n' + facility.ownersName;
-                        }
-                        
-                        exportFacility.create(obj, function(err, result){
-                            console.log(result);
-                            callback && callback(err);
-
-                        });
-                        
-
-                    }, function(err){
-                        callback && callback(err);
-                    });
-                    
-                });
-            });
-
-        });
-
-    } else{
-        callback && callback();
     }
 }
 
+function exportClassesAndEvents(callback){
+    if (program.collection !== 'class')
+        return callback && callback();
+
+    var db = new DatabaseManager(configs);
+
+    db.init(["Facility", "Class", "ExportEvent"], function(){
+        var classService = db.getInstance("Class"),
+            facilityService = db.getInstance("Facility"),
+            exportEventService = db.getInstance("ExportEvent");
+
+        exportEventService.modelClass.collection.remove(function(err, count){
+
+            console.log('Removed previous migration data: ' + count);
+
+            // Gets out all verified facilities to export
+            getVerifiedFacilities(facilityService, function(err, facilities){
+                console.log('facilities found: ' + facilities.length);
+
+                async.eachSeries(facilities, function(facility, callback){
+
+                    // Gets all classes for the current facility
+                    getClassesByFacility(classService, facility, function(err, classes) {
+                        if (debug)
+                            console.log('found', classes.length, 'classes');
+
+                        var firstDayOfSecondWeek =  getFirstDayOfSecondWeek();
+                        async.eachSeries(classes, function(classItem, callback){
+                            // console.log('process class', classItem);
+                            var location = getCommunityLocation(facility);
+
+                            async.eachSeries(classItem.schedule, function(scheduleItem, callback){
+
+                                async.eachSeries(scheduleItem.times, function(timeItem, callback){
+
+                                    var startDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.startTime);
+                                    var endDate = getDatebyDay(firstDayOfSecondWeek, scheduleItem.dayOfWeek, timeItem.endTime);
+
+                                    // Description: {Event name} + “ /n” + {if there is instructor} Instructor: {instructor name} {endif}
+                                    var desc = classItem.className;
+                                    if (classItem.instructor && classItem.instructor.trim().length > 0) {
+                                        console.log('class has instructor', classItem);
+                                        desc = desc + " /n" + classItem.instructor;
+                                    }
+
+
+
+                                    var obj = {
+                                        // Link Class (Event) to Facility (Community) using FacilityID
+                                        facilityId: facility.facilityID,
+
+                                        // ClassName = Event Name
+                                        eventName : classItem.className,
+                                        startDateTime : startDate,
+                                        endDateTime : endDate,
+                                        recurring: "weekly",
+                                        eventDescription: desc,
+                                        location: location
+                                    }
+
+
+
+                                    exportEventService.create(obj, callback);
+
+                                }, function(err){
+                                    callback && callback(err);
+                                }); // async.eachSeries(scheduleItem.times
+
+                            }, callback); // async.eachSeries(classItem.schedule
+
+                        }, callback); // async.eachSeries(classes
+                    }); // getClasses
+
+                }, callback); // async.eachSeries(facilities
+
+            }); // getVerifiedFacilities
+        });
+
+    });
+};
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Export Photos
+///////////////////////////////////////////////////////////////////////////////
+
+
+function getPhotosByFacility(photoService, facility, callback) {
+    var opts = {
+        facilityID: facility.facilityID
+    };
+
+    photoService.modelClass.find(opts, callback);
+}
+
+function buildAlbumPhoto(photo) {
+
+}
+
+function exportPhotos(callback){
+    if (program.collection !== 'photo')
+        return callback && callback();
+
+    var db = new DatabaseManager(configs);
+
+    db.init(['Facility', 'Class', 'ExportPhoto', 'Photo'], function() {
+        var facilityService = db.getInstance("Facility"),
+            photoS3Service = db.getInstance("Photo"),
+            exportPhoto = db.getInstance("ExportPhoto");
+
+        // Gets out all verified facilities to export
+        getVerifiedFacilities(facilityService, function(err, facilities){
+            console.log('facilities found: ' + facilities.length);
+
+            async.eachSeries(facilities, function(facility, callback) {
+
+                // Get all photos for the current facilities
+                getPhotosByFacility(photoS3Service, facility, function(photos, callback) {
+                    async.eachSeries(photos, function(photo, callback) {
+                        var obj = buildAlbumPhoto();
+
+                        // TODO: Needs to download the photo file and save to local storage
+                        exportPhoto.create(obj, callback);
+                    }, callback);
+
+                });
+
+            }, callback);
+        });
+    });
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+
 async.series([
-    exportClassesAndEvents,
     exportFacilities,
-   
+    exportClassesAndEvents,
+    exportPhotos
+
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
 

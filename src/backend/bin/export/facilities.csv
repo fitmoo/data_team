@@ -1,15 +1,2 @@
-_id,website,phone,country,location,facilityname
-ObjectID(53510fc2cc8fb4780b000006),"http://crossfitsa1.wordpress.com/","(075) 955-20601","GB","Unit 3, SA1 Business ParkLangdon Road Swansea Wales","Crossfit-SA1"
-ObjectID(53510fc2cc8fb4780b000007),"http://www.crossfitcrux.com/","(416) 662-1637","CA","118 Sandiford DriveUnit 2 Stouffville ON","Crossfit Crux"
-ObjectID(53510fc2cc8fb4780b000008),"http://unit-22.com/","(004) 479-80707557","GB","Unit 22Rothersthorpe AvenueRothersthorpe Industrial EstateFar Cotton Northampton England","Unit 22 Crossfit"
-ObjectID(53510fc2cc8fb4780b000009),"http://www.jsacrossfit.com/","(732) 965-2006","US","187 Parker Ave, Rt. 71Suite M Manasquan NJ","JSA CrossFit"
-ObjectID(53510fc2cc8fb4780b00000a),"http://www.nexusstockholm.se/","086948900","SE","Drottningholmsvägen 185Bromma/Alvik Stockholm ","CROSSFIT STHLM (STOCKHOLM)"
-ObjectID(53510fc2cc8fb4780b00000b),"http://thecrossfitbox.com/","(440) 371-1261","US","The CrossFit Box10909 Prospect Rd Strongsville OH","The Crossfit Box"
-ObjectID(53510fc2cc8fb4780b00000c),"http://crossfitcc.com/","(609) 760-2173","US","1229 Chestnut StreetBasement Philadelphia PA","CrossFit Center City"
-ObjectID(53510fc2cc8fb4780b00000d),"http://www.crossfitfastfactory.com/","320-267-9582","","2605 5th St. N Saint Cloud MN","CrossFit Fast Factory"
-ObjectID(53510fc2cc8fb4780b00000e),"http://leicestercrossfit.co.uk/","(011) 622-51886","GB","Unit 4A
-Andrea Buildings 
- 91-101 Humberstone Road Leicester Leicestershire","CrossFit Leicester"
-ObjectID(53510fc2cc8fb4780b00000f),"http://www.crossfitintegrity.com/","(434) 941-6193","US","1750 Signal Point Road#6A Charleston SC","CrossFit Integrity"
-ObjectID(53510fc2cc8fb4780b000010),"http://www.crossfitwigan.co.uk/","(078) 358-77409","GB","Unit 4 Hemfield CourtMakerfield Way Wigan Lancashire","Crossfit Wigan"
-ObjectID(53510fc2cc8fb4780b000011),"http://transitioncrossfit.com/","(647) 284-5901","CA","2334 Wyecroft Rd Unit B11 Oakville ON","Transition Crossfit"
+id,website,phone,country,location,facilityname
+"5","http://crossfitdubuque.com/","(563) 552-8423","US","3188 Hughes Ct. Dubuque, IA","CrossFit Dubuque"

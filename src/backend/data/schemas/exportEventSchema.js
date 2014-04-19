@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
-var ExportEventSchema = new mongoose.Schema({ 
+var ExportEventSchema = new mongoose.Schema({
+	facilityId : {type: String, default: ""},
     eventName : {type: String, default: ""},
     startDateTime : Date,
     endDateTime : Date,

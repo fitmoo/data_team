@@ -1,4 +1,4 @@
-_id
+facilityId
 eventName
 startDateTime
 endDateTime

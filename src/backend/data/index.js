@@ -3,7 +3,7 @@ var oop = require('node-g3').oop,
     async = require('async'),
     _ = require('underscore'),
     //log = require('../utils/logger')('databaseManager'),
-    
+
     // Services
     ActiveService = require('./services/event'),
     FacilityService = require('./services/facility'),
@@ -17,7 +17,8 @@ var oop = require('node-g3').oop,
     PhotoService = require('./services/photo'),
     CrawlStatusService = require('./services/crawlStatus'),
     ExportEventService = require('./services/exportEvent'),
-    ExportFacilityService = require('./services/exportFacility');
+    ExportFacilityService = require('./services/exportFacility'),
+    ExportPhotoService = require('./services/exportPhoto');
 
 /**
  * List of database service
@@ -35,7 +36,8 @@ var servicesClasses = {
     CrawlStatus : CrawlStatusService,
     Photo : PhotoService,
     ExportEvent: ExportEventService,
-    ExportFacility: ExportFacilityService
+    ExportFacility: ExportFacilityService,
+    ExportPhoto: ExportPhotoService
 };
 
 /**
@@ -70,7 +72,7 @@ var DatabaseManager = oop.Base.extend({
             }
             fn(error);
         });
-        
+
     },
 
     /**
@@ -89,7 +91,7 @@ var DatabaseManager = oop.Base.extend({
     getInstance: function (name) {
         return this.container[name];
     }
-    
+
 }, servicesClasses);
 
 /**
