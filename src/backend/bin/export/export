@@ -51,7 +51,7 @@ function getVerifiedFacilities(facilityService, callback) {
 function getVerifiedFacilities_photo(facilityService, callback) {
     var opts = { status: 2, downloadImage: {$ne : true}  };
     if (debug)
-        opts = { _id: "52ce4b32712f15c503000021" }; //52736a625c4c8caa03000004
+        opts = { _id: "52736a6f5c4c8caa03000010" }; //52736a625c4c8caa03000004
 
     facilityService.modelClass.find(opts, callback);
 }
@@ -361,11 +361,14 @@ function exportPhotos(callback){
 
                     exportPhoto.modelClass.remove({facilityId: facility._id}, function(err){
                         console.log('Deleted obsolete image for facilityId: %s', facility.id);
-                        var count = 0;
                         console.log('Start download %s image(s) for facilityId: %s', length, facility.id);
 
+                        var count = 0;
+
                         async.eachSeries(photos, function(photo, callback) {
+                            
                             console.log(photo.sourceURL);
+
                             downloadFile(photo.sourceURL, "photos", function(fileName){
                                 
                                 //Create exportPhoto
@@ -375,14 +378,15 @@ function exportPhotos(callback){
                                     exportPhoto.create(obj, callback);
                                     
                                 } else{
+                                    console.log('Download failed: %s', photo.sourceURL);
                                     callback();
                                 }
                             })
 
                         }, function(err){
                             facility.downloadImage = true;
-                            facility.save(function(err, count){
-                                console.log('Finish download facilityId: %s', facility.id);
+                            facility.save(function(err, savedFacility){
+                                console.log('Finish download %s images(s) facilityId: %s', count, facility.id);
                                 callback && callback();
                             })
                         });
@@ -400,7 +404,7 @@ function exportPhotos(callback){
 function downloadFile(uri, folder, callback){
 
     // if(debug)
-    //    uri = "http://crossfitdubuque.com/files/2013/03/Art-and-Maddy2-1024x529.jpg";
+    //     uri = "http://crossfitdubuque.com/files/2013/03/Art-and-Maddy2-1024x529.jpg";
 
     request.head(uri, function(err, res, body){
         if(err || !res){
@@ -410,49 +414,62 @@ function downloadFile(uri, folder, callback){
             //console.log('content-type:', res.headers['content-type']);
             //console.log('content-length:', res.headers['content-length']);
 
-            
-            if(res.headers['content-length']){
+            var content_type = res.headers['content-type'];
 
-                var content_type = res.headers['content-type'];
+            if(res.statusCode == 200 && res.headers['content-length'] && content_type && content_type.toLowerCase().indexOf('image') >= 0){
 
-                if(content_type && content_type.length > 0){
+
+                //image/jpeg;charset=UTF-8
                 var separateIndex = content_type.indexOf("/");
-                if(separateIndex >= 0)
-                    content_type = content_type.substring(separateIndex + 1, content_type.length);
+                var separateEndingIndex = content_type.indexOf(";");
+
+                if(separateIndex >= 0){
+                    if (separateEndingIndex > separateIndex)
+                        content_type = content_type.substring(separateIndex + 1, separateEndingIndex);
+                    else{
+                        content_type = content_type.substring(separateIndex + 1, content_type.length);
+                    }
                 }
+                    
 
                 var fileName = guid.generate()  + '.' + content_type;
                 var filePath = folder + "/" + fileName;
-                
-                
                 var writeStream = fs.createWriteStream(filePath);
 
-                writeStream.on('finish', function(){
-                    console.log('message finish');
-                    callback && callback(fileName);
+                writeStream.on('close', function(){
+                    return callback && callback(fileName);
                     
                 })
 
-                writeStream.on('error', function(){
-
-                    console.log('writeStream error');
-                    return callback && callback();
-                })
-                
+                // writeStream.on('error', function(){
+                //     console.log('Error');
+                //     // console.log('writeStream error');
+                //     return callback && callback();
+                // })
+            
                 request({
                     uri : uri,
-                    timeout : 120000   
+                    timeout : 4000   
                 }, function(err){
                     //on error
-                    if(err)
+                    if(err){
                         console.log('request error: ' + err);
-                    
-                    return callback && callback();
+                        //return callback && callback();
+                    }
                 })
-                .pipe(writeStream)
-                .on('close', function(){
-                    //callback && callback(fileName);
+                //.pipe(writeStream)
+                .on('data', function(data){
+                    writeStream.write(data);
                 })
+                .on('end', function(){
+                    writeStream.end();
+                })
+                .on('error', function(){
+                    if(fileName)
+                        fs.unlinkSync(filePath)
+                    fileName = null;
+                })
+
                     
             } else{
                 callback && callback();  
