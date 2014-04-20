@@ -1,3 +1,4 @@
-facilityID
 _id
-sourceURL
+facilityId
+url
+fileName

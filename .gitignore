@@ -24,6 +24,7 @@ src/backend/dump
 src/backend/temp*
 src/backend/server/routes/dump
 src/backend/bin/dump*
+src/backend/bin/export/photos
 
 
 # Design

@@ -3,11 +3,14 @@
 var async = require('async'),
     _ = require('underscore'),
     assert = require('assert'),
-    program = require('commander');
+    program = require('commander'),
+    fs = require('fs'),
+    request = require('request');
 
 var DatabaseManager = require('../../data/'),
-    configs = require('../../utils/configs');
-
+    configs = require('../../utils/configs'),
+    guid = require('../../utils/guid');
+    
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +19,7 @@ program
   .option('    --collection [collectionname]', 'Export collection name: class, facility')
   .parse(process.argv);
 
-var debug = true;
+var debug = false;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,15 +43,22 @@ var debug = true;
 function getVerifiedFacilities(facilityService, callback) {
     var opts = { status: 2 };
     if (debug)
-        opts = { "facilityID": 168 };
+        opts = { _id: "52736a625c4c8caa03000004" };
 
     facilityService.modelClass.find(opts, callback);
 }
 
+function getVerifiedFacilities_photo(facilityService, callback) {
+    var opts = { status: 2, downloadImage: {$ne : true}  };
+    if (debug)
+        opts = { _id: "52ce4b32712f15c503000021" }; //52736a625c4c8caa03000004
+
+    facilityService.modelClass.find(opts, callback);
+}
 
 function getClassesByFacility(classService, facility, callback) {
     var opts = {
-        fitmooFacilityID: facility.facilityID
+        facilityID: facility._id
     };
 
     classService.modelClass.find(opts, callback);
@@ -63,7 +73,7 @@ function getCommunityLocation(facility) {
  */
 function buildCommunity(facility) {
     var obj = {
-        id: facility.facilityID,
+        id: facility._id,
         facilityname: facility.facilityName,
         description:  facility.aboutus,
         location: getCommunityLocation(facility),
@@ -247,7 +257,7 @@ function exportClassesAndEvents(callback){
 
                                     var obj = {
                                         // Link Class (Event) to Facility (Community) using FacilityID
-                                        facilityId: facility.facilityID,
+                                        facilityId: facility._id,
 
                                         // ClassName = Event Name
                                         eventName : classItem.className,
@@ -288,15 +298,45 @@ function exportClassesAndEvents(callback){
 
 function getPhotosByFacility(photoService, facility, callback) {
     var opts = {
-        facilityID: facility.facilityID
+        facilityID : facility._id
+        
     };
+    
+    photoService.photoS3.find(opts, function(err, photos){
+        //Add facility.images to the result
+        async.eachSeries(facility.images, function(image, callback){
 
-    photoService.modelClass.find(opts, callback);
+            var newImage = {
+                _id: image.id,
+                facilityID : facility._id,
+                errMessage : "",
+                s3UploadStatus : false,
+                sourceURL : image.url,
+            }
+            
+            photos.push(newImage);
+            callback();
+        }, function(err){
+            callback && callback(err, photos);
+        })
+
+
+    });
 }
 
-function buildAlbumPhoto(photo) {
+function buildAlbumPhoto(photo, fileName) {
+    var obj = {
+        facilityId : photo.facilityID,
+        url: photo.sourceURL,
+        fileName: fileName,
+        photos3Id: photo._id,
+        index : photo.index
+    }
 
+    return obj;
 }
+
+
 
 function exportPhotos(callback){
     if (program.collection !== 'photo')
@@ -310,27 +350,116 @@ function exportPhotos(callback){
             exportPhoto = db.getInstance("ExportPhoto");
 
         // Gets out all verified facilities to export
-        getVerifiedFacilities(facilityService, function(err, facilities){
+        getVerifiedFacilities_photo(facilityService, function(err, facilities){
             console.log('facilities found: ' + facilities.length);
 
             async.eachSeries(facilities, function(facility, callback) {
 
                 // Get all photos for the current facilities
-                getPhotosByFacility(photoS3Service, facility, function(photos, callback) {
-                    async.eachSeries(photos, function(photo, callback) {
-                        var obj = buildAlbumPhoto();
+                getPhotosByFacility(photoS3Service, facility, function(err, photos) {
+                    var length = photos.length;
 
-                        // TODO: Needs to download the photo file and save to local storage
-                        exportPhoto.create(obj, callback);
-                    }, callback);
+                    exportPhoto.modelClass.remove({facilityId: facility._id}, function(err){
+                        console.log('Deleted obsolete image for facilityId: %s', facility.id);
+                        var count = 0;
+                        console.log('Start download %s image(s) for facilityId: %s', length, facility.id);
+
+                        async.eachSeries(photos, function(photo, callback) {
+                            console.log(photo.sourceURL);
+                            downloadFile(photo.sourceURL, "photos", function(fileName){
+                                
+                                //Create exportPhoto
+                                if(fileName){
+                                    count++;
+                                    var obj = buildAlbumPhoto(photo, fileName);
+                                    exportPhoto.create(obj, callback);
+                                    
+                                } else{
+                                    callback();
+                                }
+                            })
+
+                        }, function(err){
+                            facility.downloadImage = true;
+                            facility.save(function(err, count){
+                                console.log('Finish download facilityId: %s', facility.id);
+                                callback && callback();
+                            })
+                        });
+
+                    })
 
                 });
 
+              
             }, callback);
         });
     });
 }
 
+function downloadFile(uri, folder, callback){
+
+    // if(debug)
+    //    uri = "http://crossfitdubuque.com/files/2013/03/Art-and-Maddy2-1024x529.jpg";
+
+    request.head(uri, function(err, res, body){
+        if(err || !res){
+            callback && callback();  
+        } else{
+
+            //console.log('content-type:', res.headers['content-type']);
+            //console.log('content-length:', res.headers['content-length']);
+
+            
+            if(res.headers['content-length']){
+
+                var content_type = res.headers['content-type'];
+
+                if(content_type && content_type.length > 0){
+                var separateIndex = content_type.indexOf("/");
+                if(separateIndex >= 0)
+                    content_type = content_type.substring(separateIndex + 1, content_type.length);
+                }
+
+                var fileName = guid.generate()  + '.' + content_type;
+                var filePath = folder + "/" + fileName;
+                
+                
+                var writeStream = fs.createWriteStream(filePath);
+
+                writeStream.on('finish', function(){
+                    console.log('message finish');
+                    callback && callback(fileName);
+                    
+                })
+
+                writeStream.on('error', function(){
+
+                    console.log('writeStream error');
+                    return callback && callback();
+                })
+                
+                request({
+                    uri : uri,
+                    timeout : 120000   
+                }, function(err){
+                    //on error
+                    if(err)
+                        console.log('request error: ' + err);
+                    
+                    return callback && callback();
+                })
+                .pipe(writeStream)
+                .on('close', function(){
+                    //callback && callback(fileName);
+                })
+                    
+            } else{
+                callback && callback();  
+            }
+        }
+    });
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

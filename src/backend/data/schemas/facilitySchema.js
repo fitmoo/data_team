@@ -58,7 +58,10 @@ var FacilitySchema = new mongoose.Schema({
 	//Crawling time in mins
 	spendTime:  {type: Number, default: 0},
 
-	crawlIndex : {type: Number, default: 0}
+	crawlIndex : {type: Number, default: 0},
+
+	//
+	downloadImage : {type: Boolean, default: false},
 
 });
 
