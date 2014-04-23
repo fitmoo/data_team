@@ -7,7 +7,9 @@ var ExportPhotoSchema = new mongoose.Schema({
 	fileName: String,
     //Keep track photos3s._id
     photos3Id: String,
-    index: String
+    index: String,
+    width: {type: Number, default: 0},
+    height: {type: Number, default: 0}
 
 });
 ExportPhotoSchema.set('toJSON', { getters: true });

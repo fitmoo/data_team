@@ -1,0 +1,1 @@
+forever start -a -l downloadphoto.log -o out_downloadphoto.log -e err_downloadphoto.log ./export --collection photo

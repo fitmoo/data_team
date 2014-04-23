@@ -5,7 +5,9 @@ var async = require('async'),
     assert = require('assert'),
     program = require('commander'),
     fs = require('fs'),
-    request = require('request');
+    request = require('request'),
+    exec = require('child_process').exec,
+    imagesize = require('imagesize');
 
 var DatabaseManager = require('../../data/'),
     configs = require('../../utils/configs'),
@@ -51,7 +53,7 @@ function getVerifiedFacilities(facilityService, callback) {
 function getVerifiedFacilities_photo(facilityService, callback) {
     var opts = { status: 2, downloadImage: {$ne : true}  };
     if (debug)
-        opts = { _id: "52736a6f5c4c8caa03000010" }; //52736a625c4c8caa03000004
+        opts = { _id: "52736b105c4c8caa030000a8" }; //52736bca5c4c8caa03000158
 
     facilityService.modelClass.find(opts, callback);
 }
@@ -324,13 +326,15 @@ function getPhotosByFacility(photoService, facility, callback) {
     });
 }
 
-function buildAlbumPhoto(photo, fileName) {
+function buildAlbumPhoto(photo, fileName, width, height) {
     var obj = {
         facilityId : photo.facilityID,
         url: photo.sourceURL,
         fileName: fileName,
         photos3Id: photo._id,
-        index : photo.index
+        index : photo.index,
+        width : width,
+        height : height,
     }
 
     return obj;
@@ -369,13 +373,22 @@ function exportPhotos(callback){
                             
                             console.log(photo.sourceURL);
 
-                            downloadFile(photo.sourceURL, "photos", function(fileName){
+                            downloadFileByWget(photo.sourceURL, "photos", function(fileName){
                                 
                                 //Create exportPhoto
                                 if(fileName){
                                     count++;
-                                    var obj = buildAlbumPhoto(photo, fileName);
-                                    exportPhoto.create(obj, callback);
+                                    getImageSize("photos/" + fileName, function(err, result){
+                                        if(err){
+                                            callback(err)
+                                        } else{
+                                            var obj = buildAlbumPhoto(photo, fileName, result.width, result.height);
+                                            // console.log('Image size: ' + result);
+                                            exportPhoto.create(obj, callback);        
+                                        }
+                                    })
+                                    
+                                    
                                     
                                 } else{
                                     console.log('Download failed: %s', photo.sourceURL);
@@ -404,7 +417,7 @@ function exportPhotos(callback){
 function downloadFile(uri, folder, callback){
 
     // if(debug)
-    //     uri = "http://crossfitdubuque.com/files/2013/03/Art-and-Maddy2-1024x529.jpg";
+         // uri = "http://districtcrossfit.com/wp-content/uploads/2013/05/MDM2013-136-1024x682-150x150.jpg";
 
     request.head(uri, function(err, res, body){
         if(err || !res){
@@ -417,7 +430,6 @@ function downloadFile(uri, folder, callback){
             var content_type = res.headers['content-type'];
 
             if(res.statusCode == 200 && res.headers['content-length'] && content_type && content_type.toLowerCase().indexOf('image') >= 0){
-
 
                 //image/jpeg;charset=UTF-8
                 var separateIndex = content_type.indexOf("/");
@@ -441,30 +453,34 @@ function downloadFile(uri, folder, callback){
                     
                 })
 
-                // writeStream.on('error', function(){
-                //     console.log('Error');
-                //     // console.log('writeStream error');
-                //     return callback && callback();
-                // })
+                writeStream.on('error', function(){
+                    console.log('writeStream Error');
+                    //return callback && callback();
+                })
             
                 request({
                     uri : uri,
-                    timeout : 4000   
+                    timeout : 9000   
                 }, function(err){
                     //on error
                     if(err){
                         console.log('request error: ' + err);
                         //return callback && callback();
+                    } else{
+                        // console.log('request end');
                     }
                 })
                 //.pipe(writeStream)
                 .on('data', function(data){
+                    // console.log('data');
                     writeStream.write(data);
                 })
                 .on('end', function(){
+                    //console.log('end');
                     writeStream.end();
                 })
                 .on('error', function(){
+                    //console.log('error');
                     if(fileName)
                         fs.unlinkSync(filePath)
                     fileName = null;
@@ -478,6 +494,79 @@ function downloadFile(uri, folder, callback){
     });
 };
 
+
+function downloadFileByWget(uri, folder, callback){
+
+    // if(debug)
+    //      uri = "http://64.19.142.10/hybridathletics.net/wp-content/uploads/yoke.png";
+
+    request.head({
+        timeout: 5000,
+        uri : uri
+    }, function(err, res, body){
+        if(err || !res){
+            callback && callback();  
+        } else{
+
+            // console.log('content-type:', res.headers['content-type']);
+            // console.log('content-length:', res.headers['content-length']);
+
+            var content_type = res.headers['content-type'];
+
+            if(res.statusCode == 200 && res.headers['content-length'] && content_type && content_type.toLowerCase().indexOf('image') >= 0){
+
+
+                //image/jpeg;charset=UTF-8
+                var separateIndex = content_type.indexOf("/");
+                var separateEndingIndex = content_type.indexOf(";");
+
+                if(separateIndex >= 0){
+                    if (separateEndingIndex > separateIndex)
+                        content_type = content_type.substring(separateIndex + 1, separateEndingIndex);
+                    else{
+                        content_type = content_type.substring(separateIndex + 1, content_type.length);
+                    }
+                }
+                    
+
+                var fileName = guid.generate()  + '.' + content_type;
+                var filePath = folder + "/" + fileName;
+
+                
+                var wget = 'wget ' + ' -T 5 -t 1 ' + ' "' + uri + '"' + ' --output-document ' + filePath;
+                var child = exec(wget, function(err, stdout, stderr) {
+                    if (err){
+                        if (fs.existsSync(filePath)) {
+                            fs.unlinkSync(filePath)
+                        }
+                        console.log('Error on wget ' + err);
+                        callback && callback();
+                    }
+                    else {
+                        //console.log(fileName + ' downloaded to ' + folder);
+                        callback && callback(fileName);
+                    }
+                });
+
+
+                    
+            } else{
+                callback && callback();  
+            }
+        }
+    });
+};
+
+function getImageSize(filePath, callback){
+    var stream = fs.createReadStream(filePath);
+
+    imagesize(stream, function (err, result) {
+      // if (!err) {
+      //   console.log(result); // {type, width, height}
+      // }
+      callback(err, result);
+    });
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

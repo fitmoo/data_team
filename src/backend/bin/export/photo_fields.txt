@@ -2,3 +2,5 @@ _id
 facilityId
 url
 fileName
+width
+height
