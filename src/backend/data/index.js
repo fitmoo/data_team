@@ -18,7 +18,8 @@ var oop = require('node-g3').oop,
     CrawlStatusService = require('./services/crawlStatus'),
     ExportEventService = require('./services/exportEvent'),
     ExportFacilityService = require('./services/exportFacility'),
-    ExportPhotoService = require('./services/exportPhoto');
+    ExportPhotoService = require('./services/exportPhoto'),
+    ExportVideoService = require('./services/exportVideo');
 
 /**
  * List of database service
@@ -37,7 +38,8 @@ var servicesClasses = {
     Photo : PhotoService,
     ExportEvent: ExportEventService,
     ExportFacility: ExportFacilityService,
-    ExportPhoto: ExportPhotoService
+    ExportPhoto: ExportPhotoService,
+    ExportVideo: ExportVideoService,
 };
 
 /**

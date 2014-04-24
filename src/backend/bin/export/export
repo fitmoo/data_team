@@ -18,7 +18,7 @@ var DatabaseManager = require('../../data/'),
 
 program
   .version('0.0.1')
-  .option('    --collection [collectionname]', 'Export collection name: class, facility')
+  .option('    --collection [collectionname]', 'Export collection name: class, facility, photo, video')
   .parse(process.argv);
 
 var debug = false;
@@ -93,6 +93,18 @@ function buildCommunity(facility) {
     return obj;
 }
 
+/**
+*   Given the Video, build the export video object
+*/
+function buildVideo(facilityId, video){
+    var obj = {
+        facilityId : facilityId,
+        videoId: video._id,
+        url: video.url,
+    }
+
+    return obj;
+}
 /**
  * Migration facilities data to fitmoo.com's community data
  */
@@ -571,10 +583,71 @@ function getImageSize(filePath, callback){
 ///////////////////////////////////////////////////////////////////////////////
 
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Export Video
+// Export video links for verified facilities
+///////////////////////////////////////////////////////////////////////////////
+
+function exportVideos(callback){
+    if (program.collection !== 'video')
+        return callback && callback();
+
+    var db = new DatabaseManager(configs);
+
+    db.init(["Facility", "ExportVideo"], function(){
+        var facilityService = db.getInstance("Facility"),
+            exportVideoService = db.getInstance("ExportVideo");
+
+        getVerifiedFacilities(facilityService, function(err, facilities){
+
+            async.eachSeries(facilities, function(facility, callback){
+                
+                //console.log(facility.video.length);
+                
+                if(facility.video){
+                    
+                    var videos = facility.video;
+                    
+                    async.eachSeries(videos, function(video, callback){
+                        
+                        var exportVideo = buildVideo(facility._id, video);
+                        
+                        exportVideoService.create(exportVideo, function(error, savedVideo){
+
+                            console.log(savedVideo);
+                            //https://github.com/caolan/async/issues/75
+                            // callback();    
+                            process.nextTick(function(){
+                                callback(err)
+                            });    
+                        })
+                        
+                        
+                    }, function(err){
+                        callback && callback(err);
+                    })
+                    
+                } else{
+                    callback();
+                }
+
+                
+
+            }, function(err){
+                callback && callback(err);
+            }) //end async.eachSeries(facilities...)
+        }) //getVerifiedFacilities
+    });
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 async.series([
     exportFacilities,
     exportClassesAndEvents,
-    exportPhotos
+    exportPhotos,
+    exportVideos
 
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
