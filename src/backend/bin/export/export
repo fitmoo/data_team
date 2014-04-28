@@ -21,7 +21,7 @@ program
   .option('    --collection [collectionname]', 'Export collection name: class, facility, photo, video')
   .parse(process.argv);
 
-var debug = false;
+var debug = true;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ var debug = false;
 function getVerifiedFacilities(facilityService, callback) {
     var opts = { status: 2 };
     if (debug)
-        opts = { _id: "52736a625c4c8caa03000004" };
+        opts = { _id: "52736bea5c4c8caa03000176" };
 
     facilityService.modelClass.find(opts, callback);
 }
@@ -53,7 +53,7 @@ function getVerifiedFacilities(facilityService, callback) {
 function getVerifiedFacilities_photo(facilityService, callback) {
     var opts = { status: 2, downloadImage: {$ne : true}  };
     if (debug)
-        opts = { _id: "52736b105c4c8caa030000a8" }; //52736bca5c4c8caa03000158
+        opts = { _id: "52736bea5c4c8caa03000176" }; //52736bca5c4c8caa03000158
 
     facilityService.modelClass.find(opts, callback);
 }
@@ -171,7 +171,7 @@ function getDatebyDay(firstDayOfSecondWeek, stringDay, timeString){
     var dayNumber = getDayNumber(stringDay);
     var dat = new Date(firstDayOfSecondWeek.getTime());
 
-    dat.setDate(dat.getDate() +  dayNumber);
+    dat.setUTCDate(dat.getDate() +  dayNumber);
 
     var index = timeString.indexOf(":"),
         length = timeString.length,
@@ -184,8 +184,8 @@ function getDatebyDay(firstDayOfSecondWeek, stringDay, timeString){
             hour += 12;
     }
 
-    dat.setHours(hour);
-    dat.setMinutes(mins);
+    dat.setUTCHours(hour);
+    dat.setUTCMinutes(mins);
 
     return dat;
 }
@@ -282,9 +282,22 @@ function exportClassesAndEvents(callback){
                                         location: location
                                     }
 
-
-
-                                    exportEventService.create(obj, callback);
+                                    if(debug){
+                                        console.log(obj);
+                                        console.log('classid ' + classItem._id);
+                                        console.log('scheduleItem ' + scheduleItem._id);    
+                                        console.log('dayOfWeek ' + scheduleItem.dayOfWeek);    
+                                        console.log('timeItem.startTime: ' + timeItem.startTime);
+                                        console.log('timeItem.endTime: ' + timeItem.endTime);
+                                        console.log()
+                                        exportEventService.create(obj, function(err, count){
+                                            console.log('Finish');
+                                        });
+                                    }
+                                    else{
+                                        exportEventService.create(obj, callback);
+                                    }
+                                    
 
                                 }, function(err){
                                     callback && callback(err);
@@ -643,11 +656,29 @@ function exportVideos(callback){
 
 ///////////////////////////////////////////////////////////////////////////////
 
+
+function executeDebug(callback){
+    if (program.collection !== 'debug')
+        return callback && callback();
+
+    else{
+        var firstDayOfSecondWeek = getFirstDayOfSecondWeek();
+        console.log('first day of the second week: %s', firstDayOfSecondWeek);
+
+        var dayOfWeek = 'thursday'
+        var startTime = '06:30 AM'
+        var startDate = getDatebyDay(firstDayOfSecondWeek, dayOfWeek, startTime);
+        console.log('Datetime : ' + startDate);
+
+    }
+}
+
 async.series([
     exportFacilities,
     exportClassesAndEvents,
     exportPhotos,
-    exportVideos
+    exportVideos,
+    executeDebug,
 
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
