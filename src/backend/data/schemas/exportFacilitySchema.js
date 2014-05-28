@@ -8,7 +8,8 @@ var ExportFacilitySchema = new mongoose.Schema({
     country: {type: String, default: ""},
     phone : {type: String, default: ""},
     email: {type: String, default: ""}, 
-    website: {type: String, default: ""}
+    website: {type: String, default: ""},
+    zip: {type: String, default: ""}
 });
 
 ExportFacilitySchema.set('toJSON', { getters: true });

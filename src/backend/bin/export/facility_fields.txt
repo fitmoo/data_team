@@ -6,3 +6,4 @@ website
 phone
 country
 location
+zip

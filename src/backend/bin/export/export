@@ -82,7 +82,8 @@ function buildCommunity(facility) {
         country: facility.country,
         phone : facility.phoneNumber,
         email: facility.email, 
-        website: facility.websiteURL
+        website: facility.websiteURL,
+        zip : facility.zip
     }
 
 
