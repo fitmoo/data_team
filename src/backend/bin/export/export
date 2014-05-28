@@ -21,7 +21,7 @@ program
   .option('    --collection [collectionname]', 'Export collection name: class, facility, photo, video')
   .parse(process.argv);
 
-var debug = true;
+var debug = false;
 
 
 ///////////////////////////////////////////////////////////////////////////////
