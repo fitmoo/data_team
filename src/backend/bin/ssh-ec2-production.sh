@@ -10,7 +10,7 @@ echo "  This server runs:"
 echo "    - nginx for the tool-admin backbonejs frontend"
 echo "--------------------------------------------------------------------------------"
 
-HOST=23.23.190.88
+HOST=54.243.35.56
 PEM_FILE=bin/conf/ec2-vanda-production.pem
 if [ -f $PEM_FILE ];
 then
