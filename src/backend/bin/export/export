@@ -7,6 +7,7 @@ var async = require('async'),
     fs = require('fs'),
     request = require('request'),
     exec = require('child_process').exec,
+    vm = require('vm')
     imagesize = require('imagesize');
 
 var DatabaseManager = require('../../data/'),
@@ -18,7 +19,7 @@ var DatabaseManager = require('../../data/'),
 
 program
   .version('0.0.1')
-  .option('    --collection [collectionname]', 'Export collection name: class, facility, photo, video')
+  .option('    --collection [collectionname]', 'Export collection name: class, facility, photo, video, hotfix')
   .parse(process.argv);
 
 var debug = false;
@@ -368,6 +369,7 @@ function buildAlbumPhoto(photo, fileName, width, height) {
 
 
 
+
 function exportPhotos(callback){
     if (program.collection !== 'photo')
         return callback && callback();
@@ -657,6 +659,33 @@ function exportVideos(callback){
 
 ///////////////////////////////////////////////////////////////////////////////
 
+function hotfix(callback){
+    if (program.collection !== 'hotfix')
+        return callback && callback();
+
+    var db = new DatabaseManager(configs);
+
+    db.init(["Facility"], function(){
+        var facilityService = db.getInstance("Facility");
+        fs.readFile("facilities_original_id.txt", 'utf8', function(err, data ) {
+            usingscript = vm.runInThisContext(data); 
+            // facilities
+            total = 0;
+            async.eachSeries(facilities, function(facilityId, callback){
+                facilityService.modelClass.update({ _id : facilityId }, { $set : {downloadImage : true}}, function(err, count){
+                    total += count
+                    callback && callback(err);
+                })
+            }, function(err){
+                console.log(total);
+                callback && callback(err);
+            });
+        });
+
+    })
+    
+    
+}
 
 function executeDebug(callback){
     if (program.collection !== 'debug')
@@ -680,6 +709,7 @@ async.series([
     exportPhotos,
     exportVideos,
     executeDebug,
+    hotfix
 
 ], function(err, res) {
     assert.ok(!err, "E9984837323. Command fail");
